@@ -1,0 +1,32 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+.next
+.turbo
+*.tsbuildinfo
+
+# Env & secrets (never bake into images)
+.env
+.env.local
+.env.*.local
+Login Password.txt
+*.credentials.txt
+
+# VCS / editor / docs
+.git
+.github
+.vscode
+.idea
+*.md
+
+# Test artifacts
+coverage
+playwright-report
+test-results
+
+# Logs
+*.log
+npm-debug.log*
