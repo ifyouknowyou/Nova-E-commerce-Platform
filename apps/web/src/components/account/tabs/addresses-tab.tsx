@@ -125,7 +125,7 @@ export function AddressesTab() {
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-sm font-semibold">{address.label || address.type.toLowerCase()}</p>
                     {address.isDefault ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-medium text-success dark:bg-success/25 dark:text-success">
                         <Check className="h-3 w-3" /> Default
                       </span>
                     ) : null}
@@ -158,7 +158,7 @@ export function AddressesTab() {
                 <Button size="sm" variant="ghost" onClick={() => openEdit(address)}>
                   <Pencil className="h-3.5 w-3.5" /> Edit
                 </Button>
-                <Button size="sm" variant="ghost" className="text-red-600" onClick={() => void remove.mutate(address.id)}>
+                <Button size="sm" variant="ghost" className="text-danger" onClick={() => void remove.mutate(address.id)}>
                   <Trash2 className="h-3.5 w-3.5" /> Delete
                 </Button>
               </div>

@@ -27,7 +27,7 @@ function CheckRow({
       <div
         className={cn(
           'flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
-          done ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300' : 'bg-muted text-muted-foreground',
+          done ? 'bg-success/15 text-success dark:bg-success/25 dark:text-success' : 'bg-muted text-muted-foreground',
         )}
       >
         <Icon className="h-4 w-4" />
@@ -89,7 +89,7 @@ export function VerificationTab({ profile }: { profile: UserProfile }) {
       </SectionCard>
 
       {store && !storeActive ? (
-        <div className="flex items-start gap-3 rounded-xl border border-amber-300/50 bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+        <div className="flex items-start gap-3 rounded-xl border border-warning/40 bg-warning/10 p-4 text-sm text-warning dark:bg-warning/15 dark:text-warning">
           <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
           <div>
             <p className="font-medium">Your store is {store.status.toLowerCase()}</p>
@@ -102,7 +102,7 @@ export function VerificationTab({ profile }: { profile: UserProfile }) {
       ) : null}
 
       {storeActive ? (
-        <div className="flex items-start gap-3 rounded-xl border border-emerald-300/50 bg-emerald-50 p-4 text-sm text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100">
+        <div className="flex items-start gap-3 rounded-xl border border-success/40 bg-success/10 p-4 text-sm text-success dark:bg-success/15 dark:text-success">
           <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0" />
           <div>
             <p className="font-medium">Your store is live</p>

@@ -65,7 +65,7 @@ export function ReviewsSection({ productId }: { productId: string }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`h-4 w-4 ${i < review.rating ? 'fill-amber-400 text-amber-400' : 'text-muted'}`} />
+                      <Star key={i} className={`h-4 w-4 ${i < review.rating ? 'fill-warning text-warning' : 'text-muted'}`} />
                     ))}
                   </div>
                   <span className="text-xs text-muted-foreground">{formatDate(review.createdAt)}</span>
@@ -95,7 +95,7 @@ export function ReviewsSection({ productId }: { productId: string }) {
                   aria-label={`${value} star${value > 1 ? 's' : ''}`}
                   onClick={() => setRating(value)}
                 >
-                  <Star className={`h-5 w-5 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-muted'}`} />
+                  <Star className={`h-5 w-5 ${value <= rating ? 'fill-warning text-warning' : 'text-muted'}`} />
                 </button>
               ))}
             </div>

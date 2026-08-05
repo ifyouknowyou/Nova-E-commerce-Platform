@@ -71,7 +71,7 @@ export default async function ProductPage({ params }: Props) {
 
           <div className="mt-2 flex items-center gap-2 text-sm">
             <span className="flex items-center gap-1">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+              <Star className="h-4 w-4 fill-warning text-warning" />
               <span className="font-medium">{product.ratingAvg > 0 ? product.ratingAvg.toFixed(1) : '—'}</span>
             </span>
             <span className="text-muted-foreground">
@@ -81,7 +81,7 @@ export default async function ProductPage({ params }: Props) {
           </div>
 
           <div className="mt-4 flex items-baseline gap-3">
-            <span className="text-3xl font-bold">{formatPrice(product.effectivePrice)}</span>
+            <span className="font-display text-3xl font-bold">{formatPrice(product.effectivePrice)}</span>
             {product.salePrice !== null && (
               <span className="text-lg text-muted-foreground line-through">{formatPrice(product.price)}</span>
             )}

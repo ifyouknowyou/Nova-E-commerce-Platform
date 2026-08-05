@@ -75,7 +75,7 @@ export default function WishlistPage() {
                     Add to cart
                   </Button>
                   <Button variant="ghost" size="icon" aria-label={`Remove ${item.name}`} onClick={() => void remove(item.productId)}>
-                    <Trash2 className="h-4 w-4 text-red-500" />
+                    <Trash2 className="h-4 w-4 text-danger" />
                   </Button>
                 </div>
               </CardContent>

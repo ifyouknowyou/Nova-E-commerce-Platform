@@ -1,25 +1,12 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import {
-  Heart,
-  History,
-  KeyRound,
-  LogOut,
-  MapPin,
-  Package,
-  Search,
-  Settings,
-  ShieldCheck,
-  ShoppingBag,
-  ShoppingCart,
-  Store,
-  UserCircle,
-  Users,
-} from 'lucide-react';
+import { Heart, LogOut, Search, ShoppingCart, UserCircle } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { AccountBar, type AccountNavItem } from '@/components/3d/account-bar';
+import { AccountBar } from '@/components/3d/account-bar';
+import { ADMIN_NAV, SELLER_NAV, buildAccountNav, type NavLinkItem } from '@/lib/nav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -40,34 +27,6 @@ import { formatCurrency } from '@/lib/utils';
 import { MegaMenu } from './mega-menu';
 import { MobileNav } from './mobile-nav';
 
-const ROLE_MENUS: Record<string, AccountNavItem[]> = {
-  CUSTOMER: [
-    { label: 'Profile', href: '/account/profile', icon: UserCircle },
-    { label: 'Orders', href: '/account/orders', icon: ShoppingBag },
-    { label: 'Wishlist', href: '/wishlist', icon: Heart },
-    { label: 'Addresses', href: '/account/profile?tab=addresses', icon: MapPin },
-    { label: 'Security', href: '/account/profile?tab=security', icon: ShieldCheck },
-  ],
-  SELLER: [
-    { label: 'Profile', href: '/account/profile', icon: UserCircle },
-    { label: 'Seller Center', href: '/dashboard', icon: Store },
-    { label: 'Products', href: '/dashboard/products', icon: Package },
-    { label: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
-    { label: 'Store Settings', href: '/dashboard/store', icon: Settings },
-    { label: 'Security', href: '/account/profile?tab=security', icon: ShieldCheck },
-  ],
-  ADMIN: [
-    { label: 'Profile', href: '/account/profile', icon: UserCircle },
-    { label: 'Admin Dashboard', href: '/admin', icon: ShieldCheck },
-    { label: 'Users', href: '/admin/users', icon: Users },
-    { label: 'Sellers', href: '/admin/sellers', icon: Store },
-    { label: 'Products', href: '/admin/products', icon: Package },
-    { label: 'Orders', href: '/admin/orders', icon: ShoppingBag },
-    { label: 'Permissions', href: '/account/profile?tab=permissions', icon: KeyRound },
-    { label: 'Audit Logs', href: '/account/profile?tab=activity', icon: History },
-  ],
-};
-
 const NAV_LINKS = [
   { label: 'Deals', href: '/deals' },
   { label: 'Sell', href: '/sell' },
@@ -81,6 +40,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   const { authed, ready } = useAuthenticated();
   const { data: profile } = useQuery({
@@ -131,13 +91,18 @@ export function SiteHeader() {
     if (trimmed) window.location.assign(`/products?q=${encodeURIComponent(trimmed)}`);
   }
 
-  // Build the account nav for the header dropdown.
-  const accountNav =
-    roles.includes('ADMIN')
-      ? ROLE_MENUS.ADMIN
-      : roles.includes('SELLER')
-        ? [...ROLE_MENUS.SELLER, ...ROLE_MENUS.CUSTOMER]
-        : ROLE_MENUS.CUSTOMER ?? [];
+  // Grouped dropdown nav: personal account links for everyone, plus the role
+  // workspace section(s). No item belongs to two sections, so nothing repeats.
+  // A section is skipped while its own sidebar is already on screen — e.g. on
+  // /account the sidebar already lists the account links, so the dropdown does
+  // not show the same URLs again.
+  const isAdmin = roles.includes('ADMIN');
+  const sections: { title: string; items: NavLinkItem[] }[] = [];
+  if (!pathname.startsWith('/account')) sections.push({ title: 'Account', items: buildAccountNav(roles) });
+  // Admins moderate the marketplace — they never sell — so a SELLER role held
+  // alongside ADMIN does not surface the Seller workspace in the dropdown.
+  if (!isAdmin && roles.includes('SELLER') && !pathname.startsWith('/dashboard')) sections.push({ title: 'Seller', items: SELLER_NAV });
+  if (isAdmin && !pathname.startsWith('/admin')) sections.push({ title: 'Admin', items: ADMIN_NAV });
 
   const initials = (profile?.name ?? profile?.email ?? '?').slice(0, 2).toUpperCase();
 
@@ -272,9 +237,9 @@ export function SiteHeader() {
                       avatarUrl={profile.avatarUrl}
                       status={profile.status}
                       roles={roles}
-                      nav={accountNav}
+                      sections={sections}
                       footer={
-                        <DropdownMenuItem onSelect={() => void handleLogout()} className="mt-1 flex items-center gap-2 text-red-600">
+                        <DropdownMenuItem onSelect={() => void handleLogout()} className="mt-1 flex items-center gap-2 text-danger">
                           <LogOut className="h-4 w-4" />
                           Logout
                         </DropdownMenuItem>

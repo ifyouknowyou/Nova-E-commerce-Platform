@@ -41,7 +41,7 @@ export default function AdminReviewsPage() {
             <div className="min-w-0">
               <div className="flex items-center gap-1">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className={`h-3.5 w-3.5 ${i < review.rating ? 'fill-amber-400 text-amber-400' : 'text-muted'}`} />
+                  <Star key={i} className={`h-3.5 w-3.5 ${i < review.rating ? 'fill-warning text-warning' : 'text-muted'}`} />
                 ))}
               </div>
               <p className="mt-1 line-clamp-2 text-sm">{review.comment ?? 'No comment'}</p>

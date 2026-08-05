@@ -13,10 +13,10 @@ import { apiFetch } from '@/lib/api';
 import type { CategoryNode, PaginatedResult, ProductQuery, PublicBrand, PublicProduct } from '@/lib/api/types';
 
 const TRUST = [
-  { icon: ShieldCheck, title: 'Secure payments', text: 'PCI-compliant checkout.', accent: 'text-emerald-500' },
-  { icon: Truck, title: 'Fast delivery', text: 'Reliable tracked shipping.', accent: 'text-sky-500' },
-  { icon: RefreshCcw, title: 'Easy returns', text: '14-day return window.', accent: 'text-violet-500' },
-  { icon: BadgeCheck, title: 'Verified sellers', text: 'Every store reviewed.', accent: 'text-amber-500' },
+  { icon: ShieldCheck, title: 'Secure payments', text: 'PCI-compliant checkout.', accent: 'text-success' },
+  { icon: Truck, title: 'Fast delivery', text: 'Reliable tracked shipping.', accent: 'text-primary' },
+  { icon: RefreshCcw, title: 'Easy returns', text: '14-day return window.', accent: 'text-primary' },
+  { icon: BadgeCheck, title: 'Verified sellers', text: 'Every store reviewed.', accent: 'text-warning' },
 ];
 
 function productsQuery(sort: ProductQuery['sort'], sale?: 'true', pageSize = 4): ProductQuery {
@@ -66,7 +66,7 @@ export function Homepage() {
             </p>
             <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               Discover products worth
-              <span className="bg-gradient-to-r from-primary to-sky-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
                 {' '}loving
               </span>
             </h1>

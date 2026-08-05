@@ -93,7 +93,7 @@ export function SecurityTab({ email }: { email: string }) {
             </div>
           </div>
           {next && confirm && next !== confirm ? (
-            <p className="text-xs text-red-600">Passwords do not match.</p>
+            <p className="text-xs text-danger">Passwords do not match.</p>
           ) : null}
           <div className="flex justify-end">
             <Button
@@ -125,9 +125,9 @@ export function SecurityTab({ email }: { email: string }) {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 {security.emailVerified ? (
-                  <BadgeCheck className="h-5 w-5 text-emerald-600" />
+                  <BadgeCheck className="h-5 w-5 text-success" />
                 ) : (
-                  <ShieldAlert className="h-5 w-5 text-amber-500" />
+                  <ShieldAlert className="h-5 w-5 text-warning" />
                 )}
                 <div>
                   <p className="text-sm font-medium">

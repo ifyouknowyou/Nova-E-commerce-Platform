@@ -15,9 +15,9 @@ interface AnimatedKPIProps {
 
 const TONES: Record<string, string> = {
   default: 'text-foreground',
-  positive: 'text-emerald-600 dark:text-emerald-400',
-  warning: 'text-amber-600 dark:text-amber-400',
-  danger: 'text-red-600 dark:text-red-400',
+  positive: 'text-success',
+  warning: 'text-warning',
+  danger: 'text-danger',
 };
 
 /**
@@ -42,7 +42,7 @@ export function AnimatedKPI({ label, value, icon: Icon, sub, tone = 'default', c
         ) : null}
         <span className="text-xs font-semibold uppercase tracking-wide">{label}</span>
       </div>
-      <p className={cn('mt-3 text-2xl font-bold tracking-tight', TONES[tone])}>{value}</p>
+      <p className={cn('mt-3 font-display text-2xl font-bold tracking-tight', TONES[tone])}>{value}</p>
       {sub ? <p className="mt-1 text-xs text-muted-foreground">{sub}</p> : null}
     </motion.div>
   );

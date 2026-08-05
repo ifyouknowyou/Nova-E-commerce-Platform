@@ -83,8 +83,8 @@ export function ErrorState({
   onRetry?: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center rounded-xl border border-red-200 bg-red-50/40 py-12 text-center dark:border-red-900/40 dark:bg-red-950/20">
-      <TriangleAlert className="h-10 w-10 text-red-500" />
+    <div className="flex flex-col items-center rounded-xl border border-danger/30 bg-danger/10 py-12 text-center dark:border-danger/40 dark:bg-danger/15">
+      <TriangleAlert className="h-10 w-10 text-danger" />
       <p className="mt-3 text-sm font-medium">{title}</p>
       {description ? <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p> : null}
       {onRetry ? (

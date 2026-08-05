@@ -65,7 +65,7 @@ export default function AdminBrandsPage() {
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="outline" onClick={() => setEditing(brand)}>Edit</Button>
                 {brand.isActive && (
-                  <Button size="sm" variant="outline" className="text-red-500" onClick={() => void remove.mutate(brand.id)}>
+                  <Button size="sm" variant="outline" className="text-danger" onClick={() => void remove.mutate(brand.id)}>
                     Disable
                   </Button>
                 )}

@@ -20,7 +20,7 @@ function StatusStepper({ status }: { status: string }) {
     const cancelled = status === 'CANCELLED';
     return (
       <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-danger/15 text-danger dark:bg-danger/25 dark:text-danger">
           {cancelled ? <X className="h-4 w-4" /> : <Package className="h-4 w-4" />}
         </div>
         <div>
@@ -107,7 +107,7 @@ export default function TrackOrderPage() {
       />
 
       {isError ? (
-        <div className="mt-6 flex flex-col items-center rounded-xl border border-red-200 bg-red-50/40 py-12 text-center dark:border-red-900/40 dark:bg-red-950/20">
+        <div className="mt-6 flex flex-col items-center rounded-xl border border-danger/30 bg-danger/10 py-12 text-center dark:border-danger/40 dark:bg-danger/15">
           <p className="text-sm font-medium">Could not load your orders</p>
           <Button variant="outline" size="sm" className="mt-4" onClick={() => void refetch()}>
             Try again

@@ -3,9 +3,9 @@ import { cn } from '@/lib/utils';
 
 /** Role → badge color mapping (shared by header, account layout, profile). */
 const ROLE_BADGES: Record<string, string> = {
-  CUSTOMER: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200',
+  CUSTOMER: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
   SELLER: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
-  ADMIN: 'bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-200',
+  ADMIN: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
 };
 
 const ROLE_LABEL: Record<string, string> = {
