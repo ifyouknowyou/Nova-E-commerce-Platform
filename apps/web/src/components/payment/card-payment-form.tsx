@@ -3,6 +3,7 @@
 import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { Loader2, Lock } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -42,6 +43,7 @@ function PayBody({
 }) {
   const stripe = useStripe();
   const elements = useElements();
+  const { resolvedTheme } = useTheme();
   const [processing, setProcessing] = useState(false);
 
   async function handlePay(): Promise<void> {
@@ -92,8 +94,14 @@ function PayBody({
             style: {
               base: {
                 fontSize: '15px',
-                color: 'hsl(var(--foreground))',
-                '::placeholder': { color: 'hsl(var(--muted-foreground))' },
+                // Stripe renders in an iframe that cannot resolve the app's CSS
+                // variables (hsl(var(--foreground)) falls back to Stripe's dark
+                // default and becomes invisible in dark mode), so pass concrete
+                // theme colors matched to the current scheme.
+                color: resolvedTheme === 'dark' ? 'oklch(0.96 0.005 230)' : 'oklch(0.16 0.02 230)',
+                '::placeholder': {
+                  color: resolvedTheme === 'dark' ? 'oklch(0.7 0.02 230)' : 'oklch(0.49 0.02 230)',
+                },
               },
             },
           }}
