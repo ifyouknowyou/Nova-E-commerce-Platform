@@ -35,9 +35,9 @@ function Body() {
     <div className="relative overflow-hidden bg-role-soft">
       <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
       <div className="relative mx-auto max-w-lg px-4 py-20 text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-success/10">
           <span className="animate-pop">
-            <CheckCircle2 className="h-11 w-11 text-emerald-500" />
+            <CheckCircle2 className="h-11 w-11 text-success" />
           </span>
         </div>
         <h1 className="mt-5 text-2xl font-bold tracking-tight sm:text-3xl">

@@ -55,7 +55,7 @@ export function ApiStatus() {
           <dd className="font-medium">{state.health.uptime}</dd>
         </dl>
       )}
-      {state.kind === 'error' && <p className="mt-2 text-sm text-red-500">{state.message}</p>}
+      {state.kind === 'error' && <p className="mt-2 text-sm text-danger">{state.message}</p>}
     </div>
   );
 }

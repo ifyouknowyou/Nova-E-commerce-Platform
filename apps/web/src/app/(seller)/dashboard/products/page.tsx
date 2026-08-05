@@ -103,7 +103,7 @@ export default function SellerProductsPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-red-500"
+                  className="text-danger"
                   aria-label={`Delete ${product.name}`}
                   onClick={() => void del.mutate(product.id)}
                 >
@@ -291,7 +291,7 @@ function ManageImages({ product }: { product: SellerProduct }) {
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-7 w-7 text-red-500"
+                      className="h-7 w-7 text-danger"
                       aria-label="Remove image"
                       onClick={() => void remove.mutate(image.id)}
                       disabled={remove.isPending}

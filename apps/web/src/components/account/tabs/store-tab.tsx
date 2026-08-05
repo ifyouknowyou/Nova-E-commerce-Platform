@@ -11,9 +11,9 @@ import { formatDate } from '@/lib/utils';
 import { EmptyState, SectionCard } from '../ui';
 
 const STORE_STATUS: Record<string, { label: string; className: string }> = {
-  ACTIVE: { label: 'Active', className: 'border-transparent bg-emerald-600 text-white' },
-  PENDING: { label: 'Pending approval', className: 'border-transparent bg-amber-500 text-white' },
-  SUSPENDED: { label: 'Suspended', className: 'border-transparent bg-red-600 text-white' },
+  ACTIVE: { label: 'Active', className: 'border-transparent bg-success text-success-foreground' },
+  PENDING: { label: 'Pending approval', className: 'border-transparent bg-warning text-warning-foreground' },
+  SUSPENDED: { label: 'Suspended', className: 'border-transparent bg-danger text-danger-foreground' },
 };
 
 export function StoreTab() {

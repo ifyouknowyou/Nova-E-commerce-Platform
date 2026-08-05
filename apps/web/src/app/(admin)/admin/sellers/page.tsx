@@ -124,7 +124,7 @@ export default function AdminSellersPage() {
                     </Button>
                   ))}
                   {canManageSellers && (
-                    <Button size="sm" variant="outline" className="text-red-600" onClick={() => setDeleting(store)}>
+                    <Button size="sm" variant="outline" className="text-danger" onClick={() => setDeleting(store)}>
                       Delete
                     </Button>
                   )}

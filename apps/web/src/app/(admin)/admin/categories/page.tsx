@@ -77,7 +77,7 @@ export default function AdminCategoriesPage() {
                 <Button size="sm" variant="outline" onClick={() => setEditing(category)}>
                   Edit
                 </Button>
-                <Button size="sm" variant="outline" className="text-red-500" onClick={() => void remove.mutate(category.id)}>
+                <Button size="sm" variant="outline" className="text-danger" onClick={() => void remove.mutate(category.id)}>
                   Delete
                 </Button>
               </div>

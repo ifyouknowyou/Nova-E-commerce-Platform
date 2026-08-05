@@ -72,7 +72,7 @@ export function RequireRole({
   if (!allowed) {
     return (
       <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-4 text-center">
-        <ShieldX className="h-12 w-12 text-red-500" />
+        <ShieldX className="h-12 w-12 text-danger" />
         <h1 className="mt-4 text-2xl font-bold">{deniedTitle}</h1>
         {deniedMessage && <p className="mt-2 text-sm text-muted-foreground">{deniedMessage}</p>}
         <Button asChild className="mt-6">

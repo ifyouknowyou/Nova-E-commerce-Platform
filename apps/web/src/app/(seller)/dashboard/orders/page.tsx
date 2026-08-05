@@ -67,7 +67,7 @@ export default function SellerOrdersPage() {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="text-red-500"
+                  className="text-danger"
                   disabled={order.status === 'CANCELLED'}
                   onClick={() => void update.mutate({ id: order.id, status: 'CANCELLED' })}
                 >

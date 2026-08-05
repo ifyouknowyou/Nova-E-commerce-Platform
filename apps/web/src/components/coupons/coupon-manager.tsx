@@ -90,7 +90,7 @@ export function CouponManager() {
                   {coupon.isActive ? 'Disable' : 'Enable'}
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => setEditing(coupon)}>Edit</Button>
-                <Button size="sm" variant="outline" className="text-red-500" onClick={() => void remove.mutate(coupon.id)}>
+                <Button size="sm" variant="outline" className="text-danger" onClick={() => void remove.mutate(coupon.id)}>
                   Delete
                 </Button>
               </div>

@@ -121,7 +121,7 @@ export function PurchasePanel({ product }: { product: PublicProduct }) {
         onClick={() => void toggleWishlist()}
         disabled={!ready}
       >
-        <Heart className={cn('h-4 w-4', isWishlisted && 'fill-red-500 text-red-500')} />
+        <Heart className={cn('h-4 w-4', isWishlisted && 'fill-danger text-danger')} />
         {isWishlisted ? 'Saved to wishlist' : 'Save to wishlist'}
       </Button>
 

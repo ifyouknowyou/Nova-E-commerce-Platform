@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAuthenticated } from '@/hooks/use-auth';
 import { apiFetch } from '@/lib/api';
 
 export interface WishlistItem {
@@ -31,7 +32,14 @@ export const wishlistApi = {
 
 export function useWishlist() {
   const queryClient = useQueryClient();
-  const { data: items = [], isLoading } = useQuery({ queryKey: KEY, queryFn: wishlistApi.list });
+  // Wishlist is account-bound — don't hit the auth-only endpoint for guests
+  // (it would 401 + trigger a pointless refresh on every page render).
+  const { authed, ready } = useAuthenticated();
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: KEY,
+    queryFn: wishlistApi.list,
+    enabled: ready && authed,
+  });
   const add = useMutation({ mutationFn: wishlistApi.add, onSuccess: () => queryClient.invalidateQueries({ queryKey: KEY }) });
   const remove = useMutation({ mutationFn: wishlistApi.remove, onSuccess: () => queryClient.invalidateQueries({ queryKey: KEY }) });
   const isWishlisted = (productId: string) => items.some((item) => item.productId === productId);

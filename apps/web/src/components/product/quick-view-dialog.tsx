@@ -40,7 +40,7 @@ export function QuickViewDialog({
             <h3 className="mt-1 text-lg font-semibold leading-tight">{product.name}</h3>
             <div className="mt-1.5 flex items-center gap-2 text-sm">
               <span className="flex items-center gap-1">
-                <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                <Star className="h-4 w-4 fill-warning text-warning" />
                 <span className="font-medium">{product.ratingAvg > 0 ? product.ratingAvg.toFixed(1) : '—'}</span>
               </span>
               <span className="text-muted-foreground">
@@ -48,7 +48,7 @@ export function QuickViewDialog({
               </span>
             </div>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="text-xl font-bold">{formatCurrency(product.effectivePrice)}</span>
+              <span className="font-display text-xl font-bold">{formatCurrency(product.effectivePrice)}</span>
               {product.salePrice !== null && (
                 <span className="text-sm text-muted-foreground line-through">
                   {formatCurrency(product.price)}

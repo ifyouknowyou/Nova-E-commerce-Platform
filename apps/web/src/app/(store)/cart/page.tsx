@@ -93,7 +93,7 @@ export default function CartPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-red-500"
+                        className="h-8 w-8 text-danger"
                         aria-label="Remove item"
                         onClick={() => void removeItem(item.id)}
                       >
@@ -180,8 +180,8 @@ function OrderSummary({ subtotal }: { subtotal: number }) {
             Coupon code
           </label>
           {appliedCode ? (
-            <div className="flex items-center justify-between rounded-md border border-emerald-600/40 bg-emerald-600/10 px-3 py-2 text-sm">
-              <span className="font-mono font-medium text-emerald-600">{appliedCode}</span>
+            <div className="flex items-center justify-between rounded-md border border-success/40 bg-success/10 px-3 py-2 text-sm">
+              <span className="font-mono font-medium text-success">{appliedCode}</span>
               <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={removeCoupon}>
                 Remove
               </Button>
@@ -208,7 +208,7 @@ function OrderSummary({ subtotal }: { subtotal: number }) {
             <span>{formatCurrency(subtotal)}</span>
           </div>
           {discount > 0 && (
-            <div className="flex justify-between text-emerald-600">
+            <div className="flex justify-between text-success">
               <span>Discount</span>
               <span>−{formatCurrency(discount)}</span>
             </div>

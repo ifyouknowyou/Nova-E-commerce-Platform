@@ -9,15 +9,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { reportsApi } from '@/lib/reports';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
-// Semantic status / distribution colors.
+// Order lifecycle accents within the brand teal/cyan identity.
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: 'var(--amber-500, #f59e0b)',
-  CONFIRMED: 'var(--sky-500, #0ea5e9)',
-  PROCESSING: 'var(--violet-500, #8b5cf6)',
-  SHIPPED: 'var(--cyan-500, #06b6d4)',
-  DELIVERED: 'var(--emerald-500, #10b981)',
-  CANCELLED: 'var(--red-500, #ef4444)',
-  REFUNDED: 'var(--gray-500, #6b7280)',
+  PENDING: 'var(--warning)',
+  CONFIRMED: 'oklch(0.62 0.12 205)',
+  PROCESSING: 'oklch(0.7 0.14 180)',
+  SHIPPED: 'oklch(0.56 0.13 245)',
+  DELIVERED: 'var(--success)',
+  CANCELLED: 'var(--danger)',
+  REFUNDED: 'var(--muted-foreground)',
 };
 
 export default function AdminReportsPage() {
@@ -102,13 +102,13 @@ export default function AdminReportsPage() {
                     value={inventory.healthy}
                     total={inventory.total || 1}
                     label="Healthy products"
-                    color="var(--emerald-500, #10b981)"
+                    color="var(--success)"
                   />
                   <div className="flex-1 space-y-3 text-sm">
                     <div className="flex justify-between"><span className="text-muted-foreground">Listed</span><span className="font-medium">{inventory.total}</span></div>
                     <div className="flex justify-between"><span className="text-muted-foreground">Healthy</span><span className="font-medium">{inventory.healthy}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Low stock</span><span className="font-medium text-amber-500">{inventory.lowStock}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Out of stock</span><span className="font-medium text-red-500">{inventory.outOfStock}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Low stock</span><span className="font-medium text-warning">{inventory.lowStock}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Out of stock</span><span className="font-medium text-danger">{inventory.outOfStock}</span></div>
                   </div>
                 </div>
               ) : (
@@ -176,11 +176,11 @@ export default function AdminReportsPage() {
             </ChartContainer>
             <ChartContainer title="Reviews">
               <div className="flex items-center gap-6">
-                <DonutRing value={reviews?.averageRating ?? 0} total={5} label="Average rating" color="var(--amber-500, #f59e0b)" />
+                <DonutRing value={reviews?.averageRating ?? 0} total={5} label="Average rating" color="var(--warning)" />
                 <div className="flex-1 space-y-3 text-sm">
                   <div className="flex justify-between"><span className="text-muted-foreground">Average rating</span><span className="font-medium">{reviews?.averageRating ?? 0} / 5</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Approved</span><span className="font-medium text-emerald-500">{reviews?.approved ?? 0}</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Pending</span><span className="font-medium text-amber-500">{reviews?.pending ?? 0}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Approved</span><span className="font-medium text-success">{reviews?.approved ?? 0}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Pending</span><span className="font-medium text-warning">{reviews?.pending ?? 0}</span></div>
                 </div>
               </div>
             </ChartContainer>

@@ -4,31 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import {
-  Activity,
-  Bell,
-  Heart,
-  KeyRound,
-  MapPin,
-  Settings2,
-  ShieldCheck,
-  ShoppingBag,
-  UserCircle,
-} from 'lucide-react';
 import { RoleBadge } from '@/components/3d/role-badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { tabsForRoles } from '@/components/account/tab-config';
 import { useAuthenticated } from '@/hooks/use-auth';
+import { buildAccountNav, type NavLinkItem } from '@/lib/nav';
 import { usersApi, type UserProfile } from '@/lib/profile';
 import { cn } from '@/lib/utils';
-
-interface NavItem {
-  label: string;
-  href: string;
-  icon: React.ElementType;
-  tab?: string;
-}
 
 const ROLE_LABEL: Record<string, string> = {
   CUSTOMER: 'Customer',
@@ -39,30 +21,11 @@ const ROLE_LABEL: Record<string, string> = {
 /**
  * Personal account navigation, derived from the profile tabs the user's roles
  * actually get. Dashboards are NOT listed here — the header dropdown links to
- * them — so the account area stays focused on the account itself.
+ * them — so the account area stays focused on the account itself. The list is
+ * shared with the header dropdown (lib/nav) so the two can never disagree.
  */
-function buildAccountNav(roles: string[]): NavItem[] {
-  const tabs = tabsForRoles(roles).map((tab) => tab.id);
-  const isAdmin = roles.includes('ADMIN');
-  const items: NavItem[] = [
-    { label: 'Profile', href: '/account/profile', icon: UserCircle },
-    {
-      label: 'Orders',
-      href: isAdmin ? '/admin/orders' : '/account/orders',
-      icon: ShoppingBag,
-    },
-  ];
-  if (!isAdmin) items.push({ label: 'Wishlist', href: '/wishlist', icon: Heart });
-  if (tabs.includes('addresses')) items.push({ label: 'Addresses', href: '/account/profile?tab=addresses', icon: MapPin, tab: 'addresses' });
-  if (tabs.includes('security')) items.push({ label: 'Security', href: '/account/profile?tab=security', icon: ShieldCheck, tab: 'security' });
-  if (tabs.includes('preferences')) items.push({ label: 'Preferences', href: '/account/profile?tab=preferences', icon: Settings2, tab: 'preferences' });
-  if (tabs.includes('activity')) items.push({ label: 'Activity', href: '/account/profile?tab=activity', icon: Activity, tab: 'activity' });
-  if (tabs.includes('permissions')) items.push({ label: 'Permissions', href: '/account/profile?tab=permissions', icon: KeyRound, tab: 'permissions' });
-  items.push({ label: 'Notifications', href: '/account/notifications', icon: Bell });
-  return items;
-}
 
-function NavLink({ item, pathname, profileTab }: { item: NavItem; pathname: string; profileTab: string | null }) {
+function NavLink({ item, pathname, profileTab }: { item: NavLinkItem; pathname: string; profileTab: string | null }) {
   const active = item.tab
     ? profileTab === item.tab
     : pathname === item.href || pathname.startsWith(item.href + '/');

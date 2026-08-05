@@ -59,7 +59,7 @@ export default function OrderDetailPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="text-red-500"
+                className="text-danger"
                 disabled={cancel.isPending}
                 onClick={() => void cancel.mutate()}
               >

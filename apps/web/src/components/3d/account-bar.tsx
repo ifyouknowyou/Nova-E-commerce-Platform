@@ -1,23 +1,23 @@
 'use client';
 
-import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
+import type { NavLinkItem } from '@/lib/nav';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { RoleBadge } from './role-badge';
 
-export interface AccountNavItem {
-  label: string;
-  href: string;
-  icon: LucideIcon;
+/** A titled group of links in the account dropdown (e.g. "Account", "Seller"). */
+export interface AccountNavSection {
+  title: string;
+  items: NavLinkItem[];
 }
 
 /** Status → badge treatment. */
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
-  ACTIVE: { label: 'Active', className: 'bg-emerald-600 text-white' },
-  SUSPENDED: { label: 'Suspended', className: 'bg-amber-500 text-white' },
-  BANNED: { label: 'Banned', className: 'bg-red-600 text-white' },
+  ACTIVE: { label: 'Active', className: 'bg-success text-success-foreground' },
+  SUSPENDED: { label: 'Suspended', className: 'bg-warning text-warning-foreground' },
+  BANNED: { label: 'Banned', className: 'bg-danger text-danger-foreground' },
 };
 
 interface AccountBarProps {
@@ -28,8 +28,8 @@ interface AccountBarProps {
   roles?: string[];
   /** 0–1 completion used for the progress ring + label. */
   completion?: number;
-  /** Role-scoped quick links shown under the identity. */
-  nav?: AccountNavItem[];
+  /** Role-scoped quick links, grouped into labeled sections under the identity. */
+  sections?: AccountNavSection[];
   onNavigate?: () => void;
   footer?: React.ReactNode;
 }
@@ -46,7 +46,7 @@ export function AccountBar({
   status,
   roles = [],
   completion = 0,
-  nav = [],
+  sections = [],
   onNavigate,
   footer,
 }: AccountBarProps) {
@@ -109,19 +109,29 @@ export function AccountBar({
         </div>
       )}
 
-      {/* Role-scoped nav */}
-      {nav.length > 0 && (
-        <div className="mt-3 space-y-0.5 border-t pt-2">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-            >
-              <item.icon className="h-4 w-4 shrink-0" />
-              <span className="truncate">{item.label}</span>
-            </Link>
+      {/* Role-scoped nav, grouped by section so account/seller/admin links are
+          never conflated and no link can appear twice. */}
+      {sections.length > 0 && (
+        <div className="mt-3 border-t pt-2">
+          {sections.map((section, sectionIndex) => (
+            <div key={section.title} className={sectionIndex > 0 ? 'mt-2 border-t pt-2' : ''}>
+              <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {section.title}
+              </p>
+              <div className="space-y-0.5">
+                {section.items.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onNavigate}
+                    className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    <span className="truncate">{item.label}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       )}
