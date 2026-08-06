@@ -1,11 +1,13 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { Heart, LogOut, Search, ShoppingCart, UserCircle } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { AccountBar } from '@/components/3d/account-bar';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { ADMIN_NAV, SELLER_NAV, buildAccountNav, type NavLinkItem } from '@/lib/nav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -166,35 +168,46 @@ export function SiteHeader() {
               aria-expanded={open}
             />
             {open && suggestions.length > 0 && (
-              <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border bg-popover text-popover-foreground depth-2">
-                <ul role="listbox" aria-label="Search suggestions">
-                  {suggestions.slice(0, 6).map((item) => (
-                    <li key={item.id}>
-                      <Link
-                        href={`/products/${item.slug}`}
-                        onClick={() => setOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-accent"
+              <motion.div
+                className="absolute z-50 mt-2 w-full [perspective:900px]"
+                initial={{ opacity: 0, y: 8, rotateX: -8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                style={{ transformOrigin: 'top center' }}
+              >
+                <SpatialPanel depth={3} glass spotlight className="overflow-hidden p-2">
+                  <ul role="listbox" aria-label="Search suggestions" className="space-y-0.5">
+                    {suggestions.slice(0, 6).map((item) => (
+                      <li key={item.id}>
+                        <Link
+                          href={`/products/${item.slug}`}
+                          onClick={() => setOpen(false)}
+                          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent"
+                        >
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <Search className="h-3.5 w-3.5" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate font-medium">{item.name}</span>
+                            <span className="block text-xs text-muted-foreground">{item.category}</span>
+                          </span>
+                          <span className="shrink-0 text-xs font-medium">{formatCurrency(item.effectivePrice)}</span>
+                        </Link>
+                      </li>
+                    ))}
+                    <li className="border-t pt-1">
+                      <button
+                        type="button"
+                        onClick={submitSearch}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
                       >
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate font-medium">{item.name}</span>
-                          <span className="block text-xs text-muted-foreground">{item.category}</span>
-                        </span>
-                        <span className="shrink-0 text-xs font-medium">{formatCurrency(item.effectivePrice)}</span>
-                      </Link>
+                        <Search className="h-4 w-4" />
+                        See all results for “{query.trim()}”
+                      </button>
                     </li>
-                  ))}
-                  <li className="border-t">
-                    <button
-                      type="button"
-                      onClick={submitSearch}
-                      className="flex w-full items-center gap-2 px-3 py-2 text-sm font-medium text-primary hover:bg-accent"
-                    >
-                      <Search className="h-4 w-4" />
-                      See all results for “{query.trim()}”
-                    </button>
-                  </li>
-                </ul>
-              </div>
+                  </ul>
+                </SpatialPanel>
+              </motion.div>
             )}
           </div>
         </form>

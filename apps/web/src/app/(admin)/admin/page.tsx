@@ -3,25 +3,24 @@
 import { useQuery } from '@tanstack/react-query';
 import { DollarSign, Package, Receipt, ShieldCheck, ShoppingBag, Star, Store, Users } from 'lucide-react';
 import Link from 'next/link';
-import { AnimatedKPI } from '@/components/3d/animated-kpi';
+import { KPI3DCard, type KPI3DCardProps } from '@/components/3d/kpi-3d-card';
 import { PageHeader } from '@/components/3d/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { adminApi } from '@/lib/admin';
-import { formatCurrency } from '@/lib/utils';
 
 export default function AdminOverviewPage() {
   const { data, isLoading } = useQuery({ queryKey: ['admin-overview'], queryFn: adminApi.overview });
 
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>;
 
-  const stats = [
-    { label: 'Platform revenue', value: formatCurrency(data?.revenue ?? 0), icon: DollarSign, tone: 'positive' },
-    { label: 'Orders', value: String(data?.orders ?? 0), icon: Receipt },
-    { label: 'Customers', value: String(data?.customers ?? 0), icon: Users },
-    { label: 'Sellers', value: String(data?.sellers ?? 0), icon: Store },
-    { label: 'Pending products', value: String(data?.pendingProducts ?? 0), icon: Package },
-    { label: 'Pending reviews', value: String(data?.pendingReviews ?? 0), icon: Star },
+  const stats: KPI3DCardProps[] = [
+    { label: 'Platform revenue', value: data?.revenue ?? 0, prefix: '$', decimals: 2, icon: DollarSign },
+    { label: 'Orders', value: data?.orders ?? 0, icon: Receipt, tone: 'success' },
+    { label: 'Customers', value: data?.customers ?? 0, icon: Users },
+    { label: 'Sellers', value: data?.sellers ?? 0, icon: Store },
+    { label: 'Pending products', value: data?.pendingProducts ?? 0, icon: Package, tone: 'warning' },
+    { label: 'Pending reviews', value: data?.pendingReviews ?? 0, icon: Star, tone: 'warning' },
   ];
 
   return (
@@ -30,7 +29,7 @@ export default function AdminOverviewPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((s) => (
-          <AnimatedKPI key={s.label} label={s.label} value={s.value} icon={s.icon} tone={s.tone as 'positive' | 'default'} />
+          <KPI3DCard key={s.label} {...s} />
         ))}
       </div>
 

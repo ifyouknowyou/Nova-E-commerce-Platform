@@ -44,7 +44,15 @@ export function ProductCard({ product }: { product: PublicProduct }) {
       <HoverTiltCard maxTilt={5} className="h-full">
         <div className="group relative flex h-full flex-col overflow-hidden rounded-xl border bg-card text-card-foreground transition-shadow duration-300 hover:shadow-[0_20px_50px_-20px_var(--shadow-color)]">
           {/* Image */}
-          <div className="relative aspect-square overflow-hidden bg-muted">
+          <div
+            className="spotlight relative aspect-square overflow-hidden bg-muted"
+            onPointerMove={(e) => {
+              const el = e.currentTarget;
+              const r = el.getBoundingClientRect();
+              el.style.setProperty('--spot-x', `${e.clientX - r.left}px`);
+              el.style.setProperty('--spot-y', `${e.clientY - r.top}px`);
+            }}
+          >
             <Link href={`/products/${product.slug}`} className="block h-full w-full" aria-label={product.name}>
               {primary ? (
                 <>

@@ -4,6 +4,7 @@ import { Heart, Loader2, Minus, Plus, ShoppingCart, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAuthenticated } from '@/hooks/use-auth';
@@ -59,7 +60,7 @@ export function PurchasePanel({ product }: { product: PublicProduct }) {
   }
 
   return (
-    <div className="space-y-4">
+    <SpatialPanel depth={3} spotlight className="space-y-4 p-5">
       <div className="flex flex-wrap items-center gap-2">
         {outOfStock ? (
           <Badge variant="destructive">Out of stock</Badge>
@@ -128,6 +129,6 @@ export function PurchasePanel({ product }: { product: PublicProduct }) {
       <p className="text-xs text-muted-foreground">
         Estimated delivery in 3–7 business days. Free shipping on orders over $50.
       </p>
-    </div>
+    </SpatialPanel>
   );
 }

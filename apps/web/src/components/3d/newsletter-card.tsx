@@ -3,6 +3,8 @@
 import { ArrowRight, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Magnetic } from '@/components/3d/magnetic';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -30,7 +32,7 @@ export function NewsletterCard() {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border bg-role-soft p-8 text-card-foreground depth-2 sm:p-12">
+    <SpatialPanel depth={3} glass spotlight className="relative overflow-hidden p-8 sm:p-12">
       <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
       <div className="relative grid items-center gap-8 lg:grid-cols-2">
         <div>
@@ -55,12 +57,14 @@ export function NewsletterCard() {
             aria-label="Email address"
             className="h-11 sm:w-72"
           />
-          <Button type="submit" size="lg" disabled={submitting}>
-            {submitting ? 'Subscribing…' : 'Subscribe'}
-            {!submitting ? <ArrowRight className="h-4 w-4" /> : null}
-          </Button>
+          <Magnetic strength={0.2}>
+            <Button type="submit" size="lg" disabled={submitting}>
+              {submitting ? 'Subscribing…' : 'Subscribe'}
+              {!submitting ? <ArrowRight className="h-4 w-4" /> : null}
+            </Button>
+          </Magnetic>
         </form>
       </div>
-    </div>
+    </SpatialPanel>
   );
 }

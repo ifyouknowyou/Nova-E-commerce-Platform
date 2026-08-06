@@ -8,8 +8,9 @@ import { Suspense, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -158,7 +159,7 @@ function Checkout() {
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 grid gap-8 lg:grid-cols-[1fr_360px]">
           <div className="space-y-6">
-            <Card>
+            <SpatialPanel depth={2} spotlight>
               <CardContent className="space-y-4 p-6">
                 <h2 className="text-lg font-semibold">Shipping address</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -211,9 +212,9 @@ function Checkout() {
                   )} />
                 </div>
               </CardContent>
-            </Card>
+            </SpatialPanel>
 
-            <Card>
+            <SpatialPanel depth={2} spotlight>
               <CardContent className="space-y-4 p-6">
                 <h2 className="text-lg font-semibold">Delivery</h2>
                 <FormField control={form.control} name="shippingMethod" render={({ field }) => (
@@ -233,11 +234,11 @@ function Checkout() {
                   </FormItem>
                 )} />
               </CardContent>
-            </Card>
+            </SpatialPanel>
           </div>
 
           <div>
-            <Card className="h-fit glass">
+            <SpatialPanel depth={3} glass className="h-fit">
               <CardContent className="space-y-3 p-6">
                 <h2 className="text-lg font-semibold">Order summary</h2>
                 <ul className="space-y-3 text-sm">
@@ -268,7 +269,7 @@ function Checkout() {
                   By placing your order you agree to the Terms of Service.
                 </p>
               </CardContent>
-            </Card>
+            </SpatialPanel>
           </div>
         </form>
         </Form>

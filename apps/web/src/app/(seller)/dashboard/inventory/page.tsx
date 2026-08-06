@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Boxes, PackageX, TriangleAlert } from 'lucide-react';
-import { AnimatedKPI } from '@/components/3d/animated-kpi';
+import { KPI3DCard } from '@/components/3d/kpi-3d-card';
 import { PageHeader } from '@/components/3d/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { sellerApi, type SellerProduct } from '@/lib/seller';
+import { cn } from '@/lib/utils';
 
 const LOW_STOCK_THRESHOLD = 5;
 
@@ -39,9 +40,9 @@ export default function SellerInventoryPage() {
       <PageHeader title="Inventory" subtitle="Monitor and adjust stock levels." />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <AnimatedKPI icon={Boxes} label="Total SKUs" value={String(products.length)} />
-        <AnimatedKPI icon={TriangleAlert} label="Low stock" value={String(lowStock.length)} tone="warning" />
-        <AnimatedKPI icon={PackageX} label="Out of stock" value={String(outOfStock.length)} tone="danger" />
+        <KPI3DCard icon={Boxes} label="Total SKUs" value={products.length} />
+        <KPI3DCard icon={TriangleAlert} label="Low stock" value={lowStock.length} tone="warning" />
+        <KPI3DCard icon={PackageX} label="Out of stock" value={outOfStock.length} tone="danger" />
       </div>
 
       {products.length === 0 ? (
@@ -72,9 +73,24 @@ function InventoryRow({ product, onSaved }: { product: SellerProduct; onSaved: (
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 p-4">
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="truncate font-medium">{product.name}</p>
         <p className="text-xs text-muted-foreground">{product.sku}</p>
+        {/* Stock-level indicator */}
+        <div className="mt-2 flex items-center gap-2">
+          <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
+            <div
+              className={cn(
+                'h-full rounded-full transition-all duration-500',
+                status === 'out' ? 'bg-danger' : status === 'low' ? 'bg-warning' : 'bg-success',
+              )}
+              style={{ width: `${Math.min(100, (product.stock / 50) * 100)}%` }}
+            />
+          </div>
+          <span className="text-xs text-muted-foreground">
+            {product.stock} in stock{status === 'low' ? ' · reorder soon' : ''}
+          </span>
+        </div>
       </div>
       <div className="flex items-center gap-3">
         {status === 'out' && <Badge variant="destructive">Out of stock</Badge>}

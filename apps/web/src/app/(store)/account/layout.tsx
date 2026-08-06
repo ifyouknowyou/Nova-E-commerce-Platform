@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { RoleBadge } from '@/components/3d/role-badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
+import { CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthenticated } from '@/hooks/use-auth';
 import { buildAccountNav, type NavLinkItem } from '@/lib/nav';
@@ -48,13 +49,13 @@ function NavLink({ item, pathname, profileTab }: { item: NavLinkItem; pathname: 
 function ProfileCard({ profile, loading }: { profile: UserProfile | undefined; loading: boolean }) {
   if (loading) {
     return (
-      <Card className="p-4">
+      <SpatialPanel depth={2} spotlight className="p-4">
         <CardContent className="space-y-3">
           <Skeleton className="h-10 w-10 rounded-full" />
           <Skeleton className="h-4 w-32" />
           <Skeleton className="h-3 w-20" />
         </CardContent>
-      </Card>
+      </SpatialPanel>
     );
   }
 
@@ -63,7 +64,7 @@ function ProfileCard({ profile, loading }: { profile: UserProfile | undefined; l
   const roles = profile.roles.filter((r) => ROLE_LABEL[r]);
 
   return (
-    <Card className="p-4">
+    <SpatialPanel depth={2} spotlight className="p-4">
       <CardContent className="space-y-3">
         <div className="flex items-center gap-3">
           {profile.avatarUrl ? (
@@ -89,7 +90,7 @@ function ProfileCard({ profile, loading }: { profile: UserProfile | undefined; l
           ))}
         </div>
       </CardContent>
-    </Card>
+    </SpatialPanel>
   );
 }
 

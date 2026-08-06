@@ -1,9 +1,11 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { apiFetch } from '@/lib/api';
 import type { CategoryNode } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
@@ -41,7 +43,7 @@ export function MegaMenu() {
 
   return (
     <div
-      className="relative"
+      className="relative [perspective:900px]"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
@@ -57,7 +59,14 @@ export function MegaMenu() {
       </Link>
 
       {open && (
-        <div className="absolute left-1/2 top-full z-50 mt-2 w-[560px] -translate-x-1/2 rounded-xl border bg-popover p-4 text-popover-foreground depth-2 animate-pop">
+        <motion.div
+          className="absolute left-1/2 top-full z-50 mt-2 w-[560px] -translate-x-1/2"
+          initial={{ opacity: 0, y: 10, rotateX: -10 }}
+          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+          style={{ transformStyle: 'preserve-3d', transformOrigin: 'top center' }}
+        >
+          <SpatialPanel depth={3} glass spotlight className="p-4">
           <div className="grid grid-cols-2 gap-6">
             <div>
               <p className="px-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -103,7 +112,8 @@ export function MegaMenu() {
               </Link>
             </div>
           </div>
-        </div>
+          </SpatialPanel>
+        </motion.div>
       )}
     </div>
   );

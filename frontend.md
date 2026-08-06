@@ -1,255 +1,278 @@
-# FRONTEND-ONLY ADVANCED 3D UI/UX REDESIGN
+# ============================================================
 
-# PROJECT: NOVA COMMERCE
+# ADVANCED 3D E-COMMERCE FRONTEND TRANSFORMATION
 
-IMPORTANT: THIS TASK IS FRONTEND-ONLY.
+# FRONTEND ONLY — BACKEND LOCKED
 
-DO NOT MODIFY, REWRITE, REFACTOR, MIGRATE, OR DELETE ANY BACKEND CODE.
+# ============================================================
+
+You are a Principal Frontend Architect, Creative UI/UX Director,
+3D Web Designer, Motion Designer, Interaction Designer,
+Performance Engineer, and Design Systems Engineer with 10+ years
+of experience building premium production-grade web applications.
+
+Transform the EXISTING E-COMMERCE FRONTEND into an advanced,
+original, immersive 3D digital commerce experience.
+
+============================================================
+ABSOLUTE RULE — BACKEND IS LOCKED
+=================================
+
+THIS TASK IS FRONTEND ONLY.
 
 DO NOT MODIFY:
 
-* Backend
-* Database
-* Prisma schema
+* Backend source code
 * API routes
 * API contracts
+* Database
+* Prisma schema
+* Migrations
 * Authentication
 * Authorization
 * RBAC
 * Permissions
 * JWT
 * Sessions
-* Business logic
-* Payment logic
-* Order logic
-* Existing backend services
-* Existing API response formats
+* Payment processing
+* Order business logic
+* Server-side services
+* Backend configuration
 
-The existing backend is considered FINAL and MUST remain unchanged.
+Reuse the existing APIs, authentication state, roles,
+permissions, and business logic exactly as they currently work.
 
-Your job is ONLY to redesign and improve the FRONTEND.
+If a backend limitation is discovered:
 
-============================================================
-PRIMARY OBJECTIVE
-=================
+DO NOT modify the backend.
 
-Transform the existing frontend into a premium, advanced, modern 3D e-commerce experience.
-
-The frontend should feel like a high-end next-generation commercial application rather than a basic dashboard template.
-
-Create an ORIGINAL visual identity.
-
-Do NOT copy Amazon, Shopify, Apple, or any other company's exact interface, layout, branding, or proprietary visual design.
-
-Use modern design principles while creating a unique interface.
+Adapt the frontend and report the limitation.
 
 ============================================================
-ROLE-SPECIFIC FRONTEND DESIGN
-=============================
+CORE DESIGN OBJECTIVE
+=====================
 
-There are three visually distinct frontend experiences:
+Do NOT create a normal website with a few 3D cards.
 
-1. CUSTOMER
-2. SELLER
-3. ADMINISTRATOR
+Transform the frontend into a genuinely spatial interface.
 
-The underlying application and backend remain shared.
+The design should use:
 
-The frontend experience must be visually different for each role.
+3D depth
+Spatial hierarchy
+Perspective
+Layered interfaces
+Interactive objects
+Immersive transitions
+Advanced motion
+Lighting
+Parallax
+Product visualization
+Depth-aware navigation
+Contextual animation
 
-The authenticated user's existing backend role/permission information must determine which interface is displayed.
+The result should feel like a next-generation commerce platform.
 
-DO NOT change how roles are determined.
+However:
 
-DO NOT create a new authentication system.
-
-============================================================
-CUSTOMER FRONTEND
-=================
-
-Design the customer experience around:
-
-* Shopping
-* Discovery
-* Products
-* Deals
-* Personalization
-* Simplicity
-* Trust
-
-Visual direction:
-
-Premium 3D commerce interface
-
-Soft depth
-
-Layered cards
-
-Floating product cards
-
-Subtle glass surfaces
-
-Large product imagery
-
-Smooth hover effects
-
-Interactive product previews
-
-Elegant gradients
-
-Modern typography
-
-Premium whitespace
-
-Subtle parallax
-
-Micro-interactions
-
-The interface should feel exciting but remain easy to use.
+3D must improve the experience rather than become decoration.
 
 ============================================================
-CUSTOMER HOMEPAGE
-=================
+THREE DISTINCT EXPERIENCES
+==========================
 
-Create:
+Create three visually different frontend worlds:
 
-Premium Hero Section
+CUSTOMER
+→ Immersive 3D Commerce
 
-Interactive Product Showcase
+SELLER
+→ 3D Business Operations Workspace
 
-Featured Categories
+ADMIN
+→ 3D Command Center
+
+They must share the underlying design system and existing
+functionality but must NOT look like the same dashboard with
+different navigation.
+
+============================================================
+CUSTOMER — IMMERSIVE 3D COMMERCE
+================================
+
+The customer website should feel like a premium digital
+shopping environment.
+
+Use:
+
+3D hero scenes
+
+Floating product compositions
+
+Depth-based product cards
+
+Interactive product galleries
+
+Perspective scrolling
+
+Layered category worlds
+
+Spatial mega-menu
+
+Parallax sections
+
+Floating promotional elements
+
+Animated product reveals
+
+Interactive collections
+
+3D deal sections
+
+Depth-aware shopping cart
+
+Immersive checkout transitions
+
+============================================================
+3D HOMEPAGE
+===========
+
+Create an immersive homepage containing:
+
+3D Hero
+
+Featured Products
+
+Categories
 
 Trending Products
 
 Best Sellers
 
-Flash Deals
+Deals
 
 Recommended Products
 
-Popular Brands
+Brands
 
 Recently Viewed
 
-Promotional Sections
-
-Newsletter
+Promotions
 
 Footer
 
-Use subtle 3D depth between sections.
+The hero should contain a meaningful 3D composition.
 
-Do NOT make the page visually overloaded.
+Possible concepts:
 
-3D effects must support usability rather than distract from shopping.
+Floating products
 
-============================================================
-CUSTOMER PRODUCT CARDS
-======================
+Abstract commerce objects
 
-Create advanced product cards.
+Spatial product shelves
 
-Include:
+Layered geometric environment
 
-Product Image
+Interactive product constellation
 
-Product Name
-
-Rating
-
-Price
-
-Discount
-
-Stock Status
-
-Wishlist Button
-
-Quick View
-
-Add To Cart
-
-Product Badge
-
-On hover:
-
-Slight elevation
-
-Subtle 3D tilt
-
-Image movement
-
-Shadow depth
-
-Secondary product image where available
-
-Quick action controls
-
-Do not use aggressive rotations.
-
-Keep the product image readable.
+Do NOT use random 3D objects that have no relationship
+to the commerce experience.
 
 ============================================================
-CUSTOMER PRODUCT PAGE
+3D PRODUCT EXPERIENCE
 =====================
 
-Create a premium product experience.
+Product pages should be one of the strongest parts of the UI.
 
-Include:
+Create:
 
-Large Product Gallery
+Interactive product viewer
 
-3D-style visual depth
+3D-style product presentation
 
-Image Zoom
+Image depth transitions
 
-Thumbnail Navigation
+360° gallery where existing assets support it
 
-Product Information
+Zoom
 
-Price
+Perspective hover
 
-Discount
+Floating product information
 
-Rating
+Variant transitions
 
-Variants
+Animated pricing
 
-Quantity
+Stock visualization
 
-Stock
+Shipping visualization
 
-Shipping Information
-
-Add To Cart
-
-Buy Now
-
-Wishlist
+Related product carousel
 
 Reviews
 
 Specifications
 
-Related Products
+Product recommendations
 
-Recently Viewed
+Use actual product data from existing APIs.
 
-Use smooth transitions between product images.
+Never invent production product information.
 
 ============================================================
-CUSTOMER NAVIGATION
-===================
+PRODUCT CARD
+============
 
-Create a modern navigation system.
+Create an advanced reusable 3D ProductCard.
 
-Include:
+Interactions:
+
+Hover
+
+Pointer movement
+
+Subtle tilt
+
+Depth movement
+
+Image elevation
+
+Shadow displacement
+
+Lighting response
+
+Quick View
+
+Wishlist
+
+Add to Cart
+
+On hover, different layers may move at different depths.
+
+Example:
+
+Background → z:-10
+
+Product image → z:0
+
+Badge → z:10
+
+Actions → z:20
+
+Keep interaction subtle and premium.
+
+============================================================
+SPATIAL NAVIGATION
+==================
+
+Create a premium navigation system.
+
+Header:
 
 Logo
 
-Mega Menu
-
-Global Search
+Search
 
 Categories
 
@@ -263,47 +286,97 @@ Account
 
 Use:
 
-Glass navigation
+Glass/depth surfaces
 
-Sticky header
+Perspective
 
-Subtle blur
+Blur
 
-Depth
+Layered dropdowns
 
-Hover states
+Animated mega-menu
 
-Smooth dropdowns
+Spatial category transitions
 
-Mobile navigation
+Sticky behavior
 
-The navigation must remain highly usable.
+Mobile adaptation
+
+The navigation must remain usable while using 3D effects.
 
 ============================================================
-CUSTOMER ACCOUNT UI
-===================
+3D SEARCH EXPERIENCE
+====================
 
-Create an advanced account profile bar.
+Make global search feel advanced.
 
-Show:
+Include:
+
+Animated search expansion
+
+Instant results
+
+Category grouping
+
+Product previews
+
+Recent searches
+
+Suggestions
+
+Keyboard navigation
+
+Floating result panel
+
+Depth-aware result transitions
+
+Do not sacrifice search speed for animation.
+
+============================================================
+3D CART
+=======
+
+Create a premium cart drawer/page.
+
+Use:
+
+Floating cart panel
+
+Product depth
+
+Animated add-to-cart feedback
+
+Quantity transitions
+
+Subtotal animation
+
+Coupon feedback
+
+Shipping progress
+
+Checkout transition
+
+When an item is added:
+
+Animate the product visually toward the cart where practical.
+
+Do not use expensive animations for every state update.
+
+============================================================
+CUSTOMER ACCOUNT
+================
+
+Create a premium 3D account area.
+
+Include:
 
 Avatar
 
 Name
 
-Role Badge
+Role
 
-Account Status
-
-Profile Completion
-
-Dropdown
-
-Customer-specific navigation
-
-The customer must see:
-
-Dashboard
+Profile completion
 
 Orders
 
@@ -317,39 +390,40 @@ Notifications
 
 Security
 
-Account
+Settings
 
-Never show Admin or Seller controls.
+Use spatial tabs/cards rather than a generic settings template.
 
 ============================================================
-SELLER FRONTEND
-===============
+SELLER — 3D BUSINESS WORKSPACE
+==============================
 
-The Seller Dashboard must have a DIFFERENT visual identity from the Customer Website.
+The Seller Dashboard MUST have a completely different
+visual identity from the Customer website.
 
-It should feel like a premium business management application.
+The Seller experience should feel like:
 
-Visual direction:
+A premium digital business operating system.
 
-3D enterprise dashboard
+Use:
 
-Professional data visualization
+3D KPI panels
 
-Layered panels
+Floating analytics
 
-Floating widgets
+Depth-based charts
 
-Depth-based cards
+Inventory visualization
 
-Glass panels where appropriate
+Revenue visualization
 
-Advanced charts
+Order pipelines
 
-Interactive tables
+Spatial tables
 
-Smooth transitions
+Interactive business cards
 
-Professional analytics
+Store performance environment
 
 ============================================================
 SELLER DASHBOARD
@@ -357,30 +431,6 @@ SELLER DASHBOARD
 
 Create:
 
-Revenue Overview
-
-Sales Overview
-
-Orders
-
-Products
-
-Inventory
-
-Coupons
-
-Reviews
-
-Analytics
-
-Store Settings
-
-Notifications
-
-Account
-
-Dashboard cards should visually communicate:
-
 Revenue
 
 Orders
@@ -388,130 +438,168 @@ Orders
 Products
 
 Inventory
+
+Sales
 
 Conversion
 
 Average Order Value
 
-============================================================
-SELLER 3D VISUALIZATION
-=======================
-
-Use tasteful 3D visualizations for:
-
-Revenue
-
-Sales
-
-Inventory
-
-Performance
-
-Examples:
-
-3D bar-style charts
-
-Depth-based statistics cards
-
-Layered graphs
-
-Floating KPI panels
-
-Interactive chart hover states
-
-Do NOT use 3D charts when they reduce data readability.
-
-Data accuracy is more important than visual effects.
-
-============================================================
-SELLER SIDEBAR
-==============
-
-Create a premium enterprise sidebar.
-
-Sections:
-
-Dashboard
-
-Store
-
-Products
-
-Inventory
-
-Orders
-
-Coupons
-
 Reviews
+
+Store Performance
 
 Analytics
 
-Notifications
+Use large information-rich panels.
 
-Account
+Do NOT turn every metric into a 3D chart.
+
+Important information must remain easy to read.
+
+============================================================
+SELLER ORDER WORKSPACE
+======================
+
+Create a sophisticated order-management interface.
 
 Use:
 
-Expandable sections
+Spatial order cards
 
-Icons
+Kanban-style order flow
 
-Active indicators
+Depth-based status columns
 
-Hover effects
+Animated status changes
 
-Tooltips
+Order preview panel
 
-Smooth collapse animation
+Customer/order information
 
-Mobile drawer
+Product summary
+
+Shipping information
+
+Tracking information
+
+Use the existing backend data.
+
+Do not invent new order states.
 
 ============================================================
-ADMIN FRONTEND
-==============
+SELLER INVENTORY
+================
 
-IMPORTANT:
+Create an advanced inventory visualization.
 
-The ADMIN DASHBOARD MUST HAVE A VISUALLY DIFFERENT DESIGN.
-
-Do NOT simply reuse the Seller Dashboard with different menu items.
-
-The Admin interface should feel like a powerful command center.
-
-Visual direction:
-
-Advanced 3D command center
-
-Dark/modern enterprise aesthetic
-
-Layered panels
+Represent inventory using:
 
 Depth
 
-Subtle glowing accents
+Stacked visual elements
 
-Interactive analytics
+Stock-level indicators
 
-System overview
+Low-stock alerts
 
-High-information density
+Variant groups
 
-Professional monitoring interface
+Warehouse/location information if already available
 
-The Admin UI should visually communicate authority, control, monitoring, and system-wide management.
+Use color and motion carefully.
+
+Critical inventory information must remain immediately readable.
 
 ============================================================
-ADMIN DASHBOARD
-===============
+SELLER ANALYTICS
+================
 
-Create an advanced command center containing:
+Create a premium analytics environment.
+
+Include:
+
+Revenue trends
+
+Order trends
+
+Product performance
+
+Inventory movement
+
+Conversion
+
+Customer activity
+
+Use:
+
+Interactive charts
+
+Depth layers
+
+Hover exploration
+
+Animated transitions
+
+Comparison periods
+
+Tooltips
+
+Do not use decorative 3D charts when a standard chart communicates
+data more accurately.
+
+============================================================
+ADMIN — 3D COMMAND CENTER
+=========================
+
+The Admin Dashboard must be visually different from BOTH
+Customer and Seller.
+
+Create an advanced enterprise command center.
+
+Visual direction:
+
+Dark sophisticated environment
+
+Spatial panels
+
+Controlled lighting
+
+Depth
+
+Subtle glow
+
+Advanced analytics
+
+System monitoring
+
+Security visualization
+
+Operational information density
+
+The Admin interface should communicate:
+
+CONTROL
+
+MONITORING
+
+AUTHORITY
+
+SECURITY
+
+SYSTEM-WIDE VISIBILITY
+
+============================================================
+ADMIN COMMAND CENTER
+====================
+
+Create a 3D command center containing:
 
 Platform Revenue
 
-Total Orders
+Orders
 
-Customers
+Users
 
 Sellers
 
@@ -519,641 +607,793 @@ Products
 
 Pending Approvals
 
-Refund Requests
+Refunds
 
-System Activity
+Platform Activity
 
 Security Events
 
-Recent Orders
+System Health
 
-Recent Users
+Performance
 
-Sales Analytics
-
-Platform Health
+Recent Administrative Activity
 
 ============================================================
-ADMIN 3D COMMAND CENTER
-=======================
+ADMIN 3D DATA ENVIRONMENT
+=========================
 
-Use advanced visual depth for:
+Create advanced visualizations such as:
 
-KPI cards
+3D KPI towers
 
-Revenue visualization
+Layered analytics
 
-Order activity
+Spatial timelines
 
-Platform statistics
+Interactive network-style relationships
 
-Seller statistics
+Platform activity visualization
 
-System monitoring
+System health indicators
 
-Security status
+Security event visualization
 
-Use subtle 3D layers.
+Seller performance map
 
-Possible visual elements:
+Order activity visualization
 
-Floating KPI cards
+Use 3D only when it improves understanding.
 
-Depth-based panels
-
-Interactive graphs
-
-Perspective-based backgrounds
-
-Animated data transitions
-
-Soft glow effects
-
-Particle effects ONLY if performance remains excellent
-
-Do not turn the dashboard into a game interface.
-
-It must remain professional.
+Never sacrifice data accuracy for visual spectacle.
 
 ============================================================
-ADMIN SIDEBAR
-=============
+ADMIN SECURITY CENTER
+=====================
 
-Create a unique administrator navigation system.
+Create a premium security visualization.
 
-Dashboard
+Display existing backend data such as:
 
-Users
+Security events
 
-Sellers
+Login activity
 
-Products
+Account status
 
-Categories
+Suspicious activity
 
-Brands
+Audit events
 
-Orders
+System alerts
 
-Coupons
+Use:
 
-Reviews
+Timeline visualization
 
-Reports
+Severity indicators
 
-Security
+Depth-based event cards
 
-Audit Logs
+Interactive filters
 
-Settings
+Event detail panels
 
-Account
-
-Use collapsible groups.
-
-Example:
-
-COMMERCE
-
-Products
-Categories
-Brands
-Orders
-
-MANAGEMENT
-
-Users
-Sellers
-Reviews
-
-ANALYTICS
-
-Reports
-Analytics
-
-SECURITY
-
-Security Center
-Audit Logs
-
-SYSTEM
-
-Settings
-
-The sidebar should visually differ from the Customer and Seller interfaces.
+Do not fabricate security events.
 
 ============================================================
-ADMIN ORDER MANAGEMENT
-======================
+ADMIN USERS / SELLERS
+=====================
 
-The Admin frontend must expose administrative actions ONLY when the existing backend permission data allows them.
+Create advanced management interfaces.
 
-Examples:
+Use:
 
-View Order
+3D profile cards
 
-Update Status
+Data tables
 
-Reject Order
+Filtering
 
-Cancel Order
+Sorting
 
-Approve Refund
+Search
 
-Reject Refund
+Detail drawers
 
-Force Status Update
+Status indicators
 
-IMPORTANT:
+Permission-aware actions
 
-Do NOT create or modify backend permissions.
+Bulk actions where existing functionality supports them.
 
-Read the existing permission system.
-
-If the current authenticated administrator already has permission, display the appropriate action.
-
-If permission is absent, hide/disable the frontend action.
-
-Backend authorization remains the final security layer.
-
-============================================================
-ROLE-AWARE DESIGN SYSTEM
-========================
-
-Create separate visual themes:
-
-CUSTOMER
-
-Premium Commerce
-
-SELLER
-
-Premium Business
-
-ADMIN
-
-Premium Command Center
-
-Do not create three completely unrelated applications.
-
-They should share:
-
-Typography foundation
-
-Spacing system
-
-Accessibility rules
-
-Component quality
-
-Interaction principles
-
-But their visual identity, navigation, dashboard composition, backgrounds, cards, and visual hierarchy should be clearly different.
+The frontend must respect the existing backend permissions.
 
 ============================================================
 3D DESIGN SYSTEM
 ================
 
-Build reusable frontend primitives for:
+Create reusable primitives:
 
-3D Card
+PerspectiveContainer
 
-Floating Card
+DepthCard
 
-Depth Panel
+GlassDepthCard
 
-Glass Panel
+FloatingPanel
 
-Perspective Container
+SpatialPanel
 
-Hover Tilt Card
+TiltCard
 
-Layered Card
+MagneticButton
 
-Animated KPI Card
+DepthButton
 
-Floating Action Button
+ParallaxSection
 
-3D Product Card
+LayeredCard
 
-Dashboard Widget
+FloatingToolbar
 
-Interactive Chart Container
+SpatialModal
 
-Use CSS transforms and GPU-friendly animations where possible.
+3DProductCard
 
-Use perspective, transform, translateZ, scale, blur, and shadow carefully.
+KPI3DCard
+
+SpatialChart
+
+DepthTable
+
+CommandPanel
+
+AnimatedCounter
+
+SceneContainer
 
 ============================================================
-3D PERFORMANCE RULES
-====================
+LIGHTING SYSTEM
+===============
 
-3D effects MUST NOT destroy performance.
+Create a consistent visual lighting language.
 
-Prefer:
+Use:
 
-CSS transforms
+Soft directional gradients
 
-GPU-accelerated animations
+Radial lighting
 
-opacity
+Ambient glow
 
-transform
+Edge highlights
 
-will-change only where justified
+Controlled shadows
 
-Lazy loading
+Depth-based contrast
 
-Code splitting
+Avoid excessive neon.
 
-Reduced motion support
+Avoid the typical:
 
-Avoid excessive:
+"purple gradient + glassmorphism + glowing cards"
 
-WebGL
+AI aesthetic.
+
+Create a distinctive visual identity.
+
+============================================================
+3D BACKGROUNDS
+==============
+
+Use contextual environments.
+
+Customer:
+
+Elegant commerce atmosphere
+
+Seller:
+
+Professional operational environment
+
+Admin:
+
+Technical command-center atmosphere
+
+Possible techniques:
+
+CSS gradients
+
+Grid systems
+
+Perspective grids
+
+Geometric layers
+
+Noise textures
+
+SVG patterns
 
 Canvas
 
-Particle systems
+WebGL
 
-Continuous animations
+Three.js
 
-Large blur filters
+React Three Fiber
 
-Heavy shaders
-
-If WebGL/Three.js is introduced, use it only where it provides meaningful value.
-
-Do NOT add Three.js simply because the design is called "3D".
+Use WebGL only when it creates meaningful value.
 
 ============================================================
-MOTION DESIGN
-=============
+THREE.JS / REACT THREE FIBER
+============================
 
-Use smooth:
+If the existing project supports it, you may use:
 
-Page transitions
+Three.js
 
-Card hover
+React Three Fiber
 
-Dropdown animation
+@react-three/drei
 
-Sidebar transitions
+GSAP
 
-Modal transitions
+Motion
 
-Image transitions
+or equivalent established libraries.
 
-Chart animations
+Before adding dependencies:
 
-Button feedback
+Inspect package.json.
 
-Loading transitions
+Reuse existing libraries where possible.
 
-Use short, professional animations.
+Do not add unnecessary dependencies.
 
-Avoid excessive bouncing or distracting movement.
+If Three.js is introduced:
 
-Respect:
+Lazy-load scenes.
 
-prefers-reduced-motion
+Use low-poly/simple geometry when appropriate.
+
+Dispose resources correctly.
+
+Avoid memory leaks.
+
+Avoid rendering unnecessary frames.
+
+Pause animations when scenes are not visible.
 
 ============================================================
-RESPONSIVE 3D DESIGN
-====================
+ADVANCED POINTER INTERACTION
+============================
 
-The 3D experience must work on:
+Implement tasteful interactions such as:
 
-Mobile
+Pointer-based card tilt
 
-Tablet
+Magnetic buttons
 
-Laptop
+Depth parallax
 
-Desktop
+Cursor-aware lighting
 
-Large monitors
+Perspective movement
 
-On mobile:
+Hover elevation
 
-Reduce perspective
+Drag interaction where appropriate
 
-Reduce heavy effects
+Do not make the entire interface follow the cursor.
 
-Disable unnecessary hover interactions
+Interaction must feel controlled.
 
-Simplify complex dashboards
+============================================================
+SCROLL EXPERIENCE
+=================
 
-Keep touch targets large
+Create premium scrolling.
 
-Maintain readability
+Use:
+
+Section reveals
+
+Depth transitions
+
+Parallax
+
+Horizontal product journeys
+
+Sticky storytelling sections
+
+Progress indicators
+
+Layered transitions
+
+Avoid excessive scroll-jacking.
+
+Normal browser scrolling must remain functional.
+
+============================================================
+PAGE TRANSITIONS
+================
+
+Create smooth transitions between:
+
+Home
+
+Category
+
+Product
+
+Cart
+
+Checkout
+
+Dashboard
+
+Settings
+
+Admin sections
+
+Seller sections
+
+Use shared transition primitives.
+
+Do not delay navigation unnecessarily.
+
+============================================================
+LOADING EXPERIENCE
+==================
+
+Create beautiful loading states.
+
+Use:
+
+Skeleton depth
+
+Shimmer
+
+Progressive image loading
+
+Scene placeholders
+
+Animated content reveal
+
+Never show a blank screen while waiting for data.
+
+============================================================
+MICRO-INTERACTIONS
+==================
+
+Add meaningful feedback for:
+
+Add to cart
+
+Wishlist
+
+Save
+
+Delete
+
+Update quantity
+
+Apply coupon
+
+Order status
+
+Notifications
+
+Profile changes
+
+Form submission
+
+Success
+
+Error
+
+Loading
+
+Use animation to communicate state, not merely decoration.
+
+============================================================
+MOBILE 3D
+=========
+
+The 3D experience MUST be responsive.
+
+Desktop:
+
+Full 3D
+
+Perspective
+
+Parallax
+
+Advanced interactions
+
+Mobile:
+
+Reduced perspective
+
+Simplified scenes
+
+Touch-friendly interactions
+
+Reduced animation complexity
+
+No hover-dependent functionality
+
+No tiny controls
+
+No horizontal overflow
+
+Do not simply shrink desktop layouts.
+
+Create mobile-specific compositions where necessary.
+
+============================================================
+PERFORMANCE
+===========
+
+3D must not destroy performance.
+
+Target:
+
+Fast initial load
+
+Smooth scrolling
+
+Stable frame rate
+
+Minimal layout shift
+
+Efficient rendering
+
+Use:
+
+Lazy loading
+
+Dynamic imports
+
+Code splitting
+
+Asset compression
+
+Image optimization
+
+Texture optimization
+
+IntersectionObserver
+
+GPU-friendly transforms
+
+requestAnimationFrame only when necessary
+
+Pause offscreen animations
+
+Memoization where useful
+
+Virtualization for large lists
+
+Do not continuously animate objects that are not visible.
 
 ============================================================
 ACCESSIBILITY
 =============
 
-3D effects MUST NEVER reduce accessibility.
+3D is NEVER allowed to replace functionality.
 
-Maintain:
+Everything must remain accessible without 3D effects.
 
-WCAG AA
+Support:
 
 Keyboard navigation
 
 Focus states
 
-Screen reader compatibility
+Screen readers
 
-ARIA labels
+ARIA
 
-Color contrast
+WCAG AA
 
 Reduced motion
 
-Readable text
-
-Accessible buttons
+Touch interaction
 
 Accessible forms
 
-============================================================
-FRONTEND STATE HANDLING
-=======================
+Accessible tables
 
-Use the EXISTING APIs.
+If:
 
-Do not invent new backend endpoints.
+prefers-reduced-motion: reduce
 
-Do not change API response formats.
+Then significantly reduce:
 
-Do not create fake data for production screens.
+Parallax
 
-If an existing API does not provide information required by a UI element:
+Tilt
 
-Do NOT modify the backend.
+Scene animation
 
-Instead:
+Page transitions
 
-1. Identify the missing data.
-2. Check whether it can be derived from existing frontend data.
-3. If it cannot, leave the UI gracefully degraded.
-4. Report the limitation.
-
-Never fabricate production data.
+Continuous motion
 
 ============================================================
-EXISTING FUNCTIONALITY
-======================
+DARK / LIGHT MODE
+=================
 
-Do not break existing features.
+Support both themes.
 
-Before modifying a component:
+Do not simply invert colors.
 
-Understand how it currently works.
+Create intentionally designed:
 
-Preserve:
+Light environment
 
-API calls
+Dark environment
 
-Authentication
+Customer theme
 
-Authorization
+Seller theme
 
-State management
+Admin theme
 
-Form submission
-
-Validation
-
-Routing
-
-Business logic
-
-Only improve the presentation and frontend experience.
+Use shared design tokens while maintaining different visual
+identities.
 
 ============================================================
-COMPONENT ARCHITECTURE
-======================
+DESIGN TOKENS
+=============
 
-Create reusable frontend components.
+Create a centralized design system for:
 
-Avoid duplicate UI.
+Colors
 
-Examples:
+Typography
 
-RoleBadge
+Spacing
 
-AccountBar
+Radius
 
-ProfilePanel
+Elevation
 
-GlassCard
+Depth
 
-DepthCard
+Blur
 
-ProductCard
+Motion
 
-DashboardCard
+Perspective
 
-StatCard
+Lighting
 
-Sidebar
+Z-index
 
-Navbar
+Breakpoints
 
-MegaMenu
+Theme variables
 
-SearchBar
-
-Modal
-
-Drawer
-
-DataTable
-
-ChartContainer
-
-NotificationPanel
-
-LoadingSkeleton
-
-EmptyState
-
-ErrorState
+Do not scatter random CSS values throughout the application.
 
 ============================================================
-FINAL UI VALIDATION
+NO GENERIC AI DESIGN
+====================
+
+Strictly avoid:
+
+Generic dashboard templates
+
+Inter everywhere
+
+Roboto everywhere
+
+Purple gradient backgrounds
+
+Identical rounded cards
+
+Huge meaningless headings
+
+Random glassmorphism
+
+Excessive neon
+
+Excessive floating elements
+
+Generic stock illustrations
+
+Unnecessary 3D objects
+
+Random particles
+
+Overloaded dashboards
+
+Copying Amazon
+
+Copying Shopify
+
+Copying Apple
+
+The platform must have its own recognizable design language.
+
+============================================================
+DATA INTEGRITY
+==============
+
+Use ONLY existing backend/API data.
+
+Do not create fake:
+
+Products
+
+Orders
+
+Revenue
+
+Users
+
+Reviews
+
+Inventory
+
+Security events
+
+Analytics
+
+Payments
+
+If data is unavailable:
+
+Create an appropriate empty state.
+
+Do not fabricate production information.
+
+============================================================
+BACKEND PROTECTION
+==================
+
+If you discover a backend problem:
+
+DO NOT FIX IT.
+
+Record:
+
+BACKEND ISSUE
+
+and continue the frontend work.
+
+Do not modify backend files even if a frontend feature would
+be easier to implement by changing the API.
+
+============================================================
+FINAL QUALITY CHECK
 ===================
 
-After implementation test all three experiences.
+After implementation verify:
 
-CUSTOMER:
+CUSTOMER
 
-✓ Customer homepage
-✓ Customer navigation
-✓ Product pages
+✓ 3D homepage
+✓ Product experience
+✓ Product cards
+✓ Search
+✓ Categories
 ✓ Cart
 ✓ Checkout
-✓ Customer account
-✓ Customer dashboard
+✓ Account
+✓ Mobile
 
-SELLER:
+SELLER
 
-✓ Seller dashboard
-✓ Seller sidebar
-✓ Seller profile
-✓ Products
-✓ Inventory
-✓ Orders
+✓ 3D dashboard
 ✓ Analytics
+✓ Orders
+✓ Inventory
+✓ Products
+✓ Store
+✓ Account
+✓ Mobile
 
-ADMIN:
+ADMIN
 
-✓ Admin dashboard
-✓ Admin sidebar
-✓ Admin profile
+✓ 3D command center
+✓ Analytics
 ✓ Users
 ✓ Sellers
 ✓ Products
 ✓ Orders
-✓ Reports
 ✓ Security
-✓ Audit Logs
+✓ Audit
+✓ Settings
+✓ Account
+✓ Mobile
 
 ============================================================
-PERMISSION VALIDATION
-=====================
+FINAL PERFORMANCE CHECK
+=======================
 
-Do NOT modify backend permissions.
+Verify:
 
-Verify that the frontend correctly responds to the existing permission system.
+No console errors
 
-Test:
+No hydration errors
 
-Customer login
+No memory leaks
 
-Seller login
+No broken routes
 
-Admin login
+No broken API integration
 
-Different permission combinations
+No unnecessary API calls
 
-Unauthorized actions
+No animation jank
 
-Hidden navigation
+No WebGL crashes
 
-Disabled actions
+No mobile overflow
 
-Direct URL access
+No accessibility regressions
 
-The frontend must never assume that every Admin has every optional permission.
+No broken authentication UI
 
-============================================================
-STRICT BACKEND PROTECTION
-=========================
-
-This instruction has the highest priority for this task:
-
-DO NOT MODIFY BACKEND CODE.
-
-DO NOT MODIFY DATABASE.
-
-DO NOT MODIFY API CONTRACTS.
-
-DO NOT MODIFY AUTHENTICATION.
-
-DO NOT MODIFY AUTHORIZATION.
-
-DO NOT MODIFY RBAC.
-
-DO NOT MODIFY PERMISSION SEEDS.
-
-DO NOT MODIFY SERVER-SIDE BUSINESS LOGIC.
-
-DO NOT MODIFY PAYMENT PROCESSING.
-
-DO NOT MODIFY ORDER PROCESSING.
-
-If a backend issue is discovered:
-
-DO NOT FIX IT as part of this task.
-
-Report it separately as:
-
-BACKEND ISSUE — NO ACTION TAKEN
+No broken permission-based UI
 
 ============================================================
-FINAL OBJECTIVE
-===============
+EXECUTION RULE
+==============
 
-The final frontend should feel like a next-generation premium e-commerce platform.
+FIRST:
 
-Customer:
-
-Beautiful shopping experience.
-
-Seller:
-
-Powerful business workspace.
-
-Admin:
-
-Advanced 3D command center.
-
-All three must feel intentionally designed rather than being the same dashboard with different menu items.
-
-Maintain excellent:
-
-UI/UX
-
-Performance
-
-Accessibility
-
-Responsiveness
-
-Consistency
-
-Usability
-
-Visual hierarchy
-
-Security boundaries
-
-Do not sacrifice functionality for visual effects.
-
-============================================================
-START
-=====
-
-First inspect the existing frontend architecture.
+Inspect the existing frontend.
 
 Identify:
 
-Frontend framework
+Framework
 
-Existing routes
+Routing
 
-Existing components
+Components
 
-Existing design system
+Design system
 
-Existing API integration
+State management
 
-Existing authentication state
+API integration
 
-Existing role detection
+Authentication state
 
-Existing permission detection
+Role detection
 
-Then create a FRONTEND-ONLY redesign plan.
+Permission detection
 
-Do not modify the backend.
+Existing animation libraries
 
-Do not modify the database.
+Existing 3D libraries
 
-Do not start rewriting everything blindly.
+THEN:
 
-Reuse working functionality wherever possible.
+Create a frontend redesign plan.
 
-Implement the redesign incrementally and verify that existing functionality continues to work after every major change.
+THEN:
+
+Implement the new design incrementally.
+
+Do not rewrite the entire application blindly.
+
+Preserve working functionality.
+
+Do not touch the backend.
+
+The final result should feel like a premium,
+next-generation 3D commerce platform designed by an
+experienced product design and frontend engineering team.
+
+BACKEND = LOCKED.
+
+# FRONTEND = COMPLETE CREATIVE FREEDOM.
+
+"""

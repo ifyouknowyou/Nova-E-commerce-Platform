@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -60,9 +61,9 @@ export default function AdminCategoriesPage() {
       ) : (categories?.length ?? 0) === 0 ? (
         <p className="py-8 text-center text-sm text-muted-foreground">No categories yet.</p>
       ) : (
-        <div className="divide-y rounded-xl border">
+        <div className="space-y-3">
           {categories!.map((category) => (
-            <div key={category.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+            <SpatialPanel key={category.id} depth={2} spotlight className="flex flex-wrap items-center justify-between gap-3 p-4">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="truncate font-medium">{category.name}</p>
@@ -81,7 +82,7 @@ export default function AdminCategoriesPage() {
                   Delete
                 </Button>
               </div>
-            </div>
+            </SpatialPanel>
           ))}
         </div>
       )}

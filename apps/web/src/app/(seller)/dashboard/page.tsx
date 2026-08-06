@@ -1,21 +1,23 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { DollarSign, Loader2, ShoppingBag, Store as StoreIcon, TrendingUp } from 'lucide-react';
+import { DollarSign, Loader2, Plus, ShoppingBag, Store as StoreIcon, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { AnimatedKPI } from '@/components/3d/animated-kpi';
 import { BarChart3D } from '@/components/3d/charts';
+import { FloatingToolbar } from '@/components/3d/floating-toolbar';
+import { KPI3DCard } from '@/components/3d/kpi-3d-card';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { authApi } from '@/lib/auth';
 import { sellerApi } from '@/lib/seller';
-import { formatCurrency } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 
 export default function SellerDashboardPage() {
   const { data: store, isLoading } = useQuery({ queryKey: ['my-store'], queryFn: sellerApi.getMyStore });
@@ -106,17 +108,30 @@ function Overview() {
         }
       />
 
-      {/* KPI row */}
+      {/* KPI row — dimensional panels */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <AnimatedKPI icon={DollarSign} label="Revenue" value={formatCurrency(analytics?.revenue ?? 0)} />
-        <AnimatedKPI icon={ShoppingBag} label="Orders" value={String(orders?.meta.totalItems ?? 0)} />
-        <AnimatedKPI icon={TrendingUp} label="Avg order value" value={formatCurrency(analytics?.aov ?? 0)} />
-        <AnimatedKPI
-          icon={StoreIcon}
-          label="Store"
-          value={store?.status === 'ACTIVE' ? 'Active' : store?.status.toLowerCase() ?? '—'}
-          tone={store?.status === 'ACTIVE' ? 'positive' : 'default'}
-        />
+        <KPI3DCard icon={DollarSign} label="Revenue" value={analytics?.revenue ?? 0} prefix="$" decimals={2} />
+        <KPI3DCard icon={ShoppingBag} label="Orders" value={orders?.meta.totalItems ?? 0} tone="success" />
+        <KPI3DCard icon={TrendingUp} label="Avg order value" value={analytics?.aov ?? 0} prefix="$" decimals={2} />
+        <SpatialPanel depth={3} spotlight className="p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Store</p>
+              <p
+                className={cn(
+                  'mt-2 font-display text-2xl font-bold tracking-tight capitalize',
+                  store?.status === 'ACTIVE' ? 'text-success' : 'text-warning',
+                )}
+              >
+                {store?.status.toLowerCase() ?? '—'}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">Storefront status</p>
+            </div>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <StoreIcon className="h-5 w-5" />
+            </div>
+          </div>
+        </SpatialPanel>
       </div>
 
       {/* Revenue chart */}
@@ -178,6 +193,22 @@ function Overview() {
           </CardContent>
         </Card>
       )}
+
+      {/* Floating quick actions */}
+      <div className="pointer-events-none fixed bottom-6 right-6 z-40 hidden lg:block">
+        <FloatingToolbar>
+          <Button asChild size="sm" variant="ghost" className="h-9 gap-1.5 rounded-full">
+            <Link href="/dashboard/products">
+              <Plus className="h-4 w-4" /> Add product
+            </Link>
+          </Button>
+          <Button asChild size="sm" variant="ghost" className="h-9 gap-1.5 rounded-full">
+            <Link href="/dashboard/store">
+              <StoreIcon className="h-4 w-4" /> Store settings
+            </Link>
+          </Button>
+        </FloatingToolbar>
+      </div>
     </div>
   );
 }
