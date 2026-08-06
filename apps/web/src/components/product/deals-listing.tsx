@@ -81,7 +81,7 @@ export function DealsListing() {
         {deals.isLoading ? (
           <GridSkeleton />
         ) : deals.data && deals.data.items.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
             {deals.data.items.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -132,7 +132,7 @@ export function DealsListing() {
 
 function GridSkeleton() {
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="space-y-2">
           <Skeleton className="aspect-square" />

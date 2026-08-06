@@ -195,7 +195,7 @@ export function Homepage() {
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               Trusted multi-vendor marketplace
             </p>
-            <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="mt-4 text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
               Discover products worth
               <span className="bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
                 {' '}loving
@@ -358,7 +358,7 @@ export function Homepage() {
             </Button>
           }
         />
-        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
           {trending.isLoading
             ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="aspect-square rounded-xl" />)
             : (trending.data?.items ?? []).map((product) => <ProductCard key={product.id} product={product} />)}
@@ -387,7 +387,7 @@ export function Homepage() {
                 </div>
               }
             />
-            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
               {(deals.data?.items ?? []).map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -455,7 +455,7 @@ export function Homepage() {
           title="Recommended for you"
           description="Top-rated picks our shoppers love right now."
         />
-        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
           {recommended.isLoading
             ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="aspect-square rounded-xl" />)
             : (recommended.data?.items ?? []).map((product) => <ProductCard key={product.id} product={product} />)}
