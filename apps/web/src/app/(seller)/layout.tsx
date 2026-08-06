@@ -19,7 +19,8 @@ export default function SellerLayout({ children }: { children: ReactNode }) {
       deniedTitle="Seller dashboard"
       deniedMessage="Only sellers can access this section. Administrators moderate the marketplace — they do not sell."
     >
-      <div className="flex min-h-screen flex-col bg-role-soft/40">
+      <div className="relative flex min-h-screen flex-col bg-role-soft/40">
+        <div aria-hidden className="workspace-backdrop seller-atmosphere" />
         <SiteHeader />
         <div className="mx-auto flex w-full max-w-[1500px] flex-1 gap-0 px-4 sm:px-6 lg:px-8">
           <Sidebar groups={SELLER_NAV_GROUPS} accent="default" />

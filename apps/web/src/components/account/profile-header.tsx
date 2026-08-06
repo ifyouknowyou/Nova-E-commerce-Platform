@@ -5,6 +5,7 @@ import { Camera, Loader2, Mail, ShieldCheck } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { RoleBadge } from '@/components/3d/role-badge';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { usersApi, type UserProfile } from '@/lib/profile';
@@ -56,13 +57,13 @@ export function ProfileHeader({
   const roles = profile.roles;
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-card depth-1">
+    <SpatialPanel depth={2} spotlight className="overflow-hidden rounded-xl">
       {/* Banner */}
       <div className="h-20 bg-role-glow" />
       <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-end">
         <div className="-mt-14 shrink-0">
           <div className="relative h-24 w-24">
-            <Avatar className="h-24 w-24 border-4 border-background shadow">
+            <Avatar className="h-24 w-24 border-4 border-background shadow-[0_0_44px_-10px_var(--glow)]">
               {profile.avatarUrl ? (
                 <AvatarImage src={profile.avatarUrl} alt={profile.name ?? profile.email} />
               ) : null}
@@ -124,6 +125,6 @@ export function ProfileHeader({
           </div>
         </div>
       </div>
-    </div>
+    </SpatialPanel>
   );
 }

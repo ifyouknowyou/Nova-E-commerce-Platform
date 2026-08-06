@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -52,9 +53,9 @@ export default function AdminBrandsPage() {
       ) : (brands?.length ?? 0) === 0 ? (
         <p className="py-8 text-center text-sm text-muted-foreground">No brands yet.</p>
       ) : (
-        <div className="divide-y rounded-xl border">
+        <div className="space-y-3">
           {brands!.map((brand) => (
-            <div key={brand.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+            <SpatialPanel key={brand.id} depth={2} spotlight className="flex flex-wrap items-center justify-between gap-3 p-4">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="truncate font-medium">{brand.name}</p>
@@ -70,7 +71,7 @@ export default function AdminBrandsPage() {
                   </Button>
                 )}
               </div>
-            </div>
+            </SpatialPanel>
           ))}
         </div>
       )}

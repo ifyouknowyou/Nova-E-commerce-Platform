@@ -2,8 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { DollarSign, ShoppingBag, TrendingUp } from 'lucide-react';
-import { AnimatedKPI } from '@/components/3d/animated-kpi';
-import { BarChart3D, ChartContainer } from '@/components/3d';
+import { BarChart3D, ChartContainer, KPI3DCard } from '@/components/3d';
 import { PageHeader } from '@/components/3d/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { sellerApi } from '@/lib/seller';
@@ -31,9 +30,9 @@ export default function SellerAnalyticsPage() {
       <PageHeader title="Analytics" subtitle="Store performance at a glance." />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <AnimatedKPI icon={DollarSign} label="Revenue" value={formatCurrency(data?.revenue ?? 0)} />
-        <AnimatedKPI icon={ShoppingBag} label="Orders" value={String(data?.orderCount ?? 0)} />
-        <AnimatedKPI icon={TrendingUp} label="Average order value" value={formatCurrency(data?.aov ?? 0)} />
+        <KPI3DCard icon={DollarSign} label="Revenue" value={data?.revenue ?? 0} prefix="$" decimals={2} />
+        <KPI3DCard icon={ShoppingBag} label="Orders" value={data?.orderCount ?? 0} tone="success" />
+        <KPI3DCard icon={TrendingUp} label="Average order value" value={data?.aov ?? 0} prefix="$" decimals={2} />
       </div>
 
       <ChartContainer

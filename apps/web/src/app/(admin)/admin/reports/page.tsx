@@ -1,9 +1,9 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { BarChart3D, ChartContainer, DistributionBar, DonutRing, ProgressRow } from '@/components/3d';
+import { DollarSign, Package, Receipt, TrendingUp } from 'lucide-react';
+import { BarChart3D, ChartContainer, DistributionBar, DonutRing, KPI3DCard, ProgressRow } from '@/components/3d';
 import { PageHeader } from '@/components/3d/page-header';
-import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { reportsApi } from '@/lib/reports';
@@ -21,7 +21,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function AdminReportsPage() {
-  const { data: sales, isLoading: salesLoading } = useQuery({ queryKey: ['report-sales'], queryFn: () => reportsApi.sales() });
+  const { data: sales } = useQuery({ queryKey: ['report-sales'], queryFn: () => reportsApi.sales() });
   const { data: revenue } = useQuery({ queryKey: ['report-revenue'], queryFn: () => reportsApi.revenue() });
   const { data: orderStatus } = useQuery({ queryKey: ['report-orders'], queryFn: () => reportsApi.orders() });
   const { data: customers } = useQuery({ queryKey: ['report-customers'], queryFn: () => reportsApi.customers() });
@@ -36,12 +36,12 @@ export default function AdminReportsPage() {
     <div className="space-y-6">
       <PageHeader title="Reports" subtitle="Platform analytics for the last 30 days" />
 
-      {/* KPI row */}
+      {/* KPI row — command panels */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KPI label="Revenue" value={salesLoading ? '…' : formatCurrency(sales?.revenue ?? 0)} />
-        <KPI label="Orders" value={String(sales?.orders ?? 0)} />
-        <KPI label="Items sold" value={String(sales?.items ?? 0)} />
-        <KPI label="Avg order value" value={formatCurrency(sales?.averageOrderValue ?? 0)} />
+        <KPI3DCard icon={DollarSign} label="Revenue" value={sales?.revenue ?? 0} prefix="$" decimals={2} />
+        <KPI3DCard icon={Receipt} label="Orders" value={sales?.orders ?? 0} tone="success" />
+        <KPI3DCard icon={Package} label="Items sold" value={sales?.items ?? 0} />
+        <KPI3DCard icon={TrendingUp} label="Avg order value" value={sales?.averageOrderValue ?? 0} prefix="$" decimals={2} />
       </div>
 
       <Tabs defaultValue="revenue">
@@ -191,11 +191,3 @@ export default function AdminReportsPage() {
   );
 }
 
-function KPI({ label, value }: { label: string; value: string }) {
-  return (
-    <Card className="p-5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="mt-2 text-2xl font-bold tracking-tight">{value}</p>
-    </Card>
-  );
-}

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -28,16 +29,16 @@ export default function AdminReviewsPage() {
       <PageHeader title="Reviews" subtitle="Moderate customer reviews" />
 
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList>
+        <TabsList className="glass">
           <TabsTrigger value="PENDING">Pending</TabsTrigger>
           <TabsTrigger value="APPROVED">Approved</TabsTrigger>
           <TabsTrigger value="HIDDEN">Hidden</TabsTrigger>
         </TabsList>
       </Tabs>
 
-      <div className="divide-y rounded-xl border">
+      <div className="space-y-3">
         {data?.items.map((review) => (
-          <div key={review.id} className="flex flex-wrap items-start justify-between gap-3 p-4">
+          <SpatialPanel key={review.id} depth={2} spotlight className="flex flex-wrap items-start justify-between gap-3 p-4">
             <div className="min-w-0">
               <div className="flex items-center gap-1">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -55,7 +56,7 @@ export default function AdminReviewsPage() {
                 </>
               )}
             </div>
-          </div>
+          </SpatialPanel>
         ))}
         {(data?.items.length ?? 0) === 0 && (
           <p className="py-8 text-center text-sm text-muted-foreground">No {tab.toLowerCase()} reviews.</p>

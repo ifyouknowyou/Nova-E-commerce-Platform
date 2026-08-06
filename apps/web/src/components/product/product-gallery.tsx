@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,11 @@ export function ProductGallery({ product }: { product: PublicProduct }) {
   const [active, setActive] = useState(0);
   const [zoomed, setZoomed] = useState(false);
   const [mouse, setMouse] = useState({ x: 50, y: 50 });
+  // Subtle pointer-tracked tilt so the image reads as dimensional.
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const tiltX = useSpring(my, { stiffness: 130, damping: 18 });
+  const tiltY = useSpring(mx, { stiffness: 130, damping: 18 });
 
   const image = images[Math.min(active, Math.max(0, images.length - 1))];
 
@@ -34,18 +39,26 @@ export function ProductGallery({ product }: { product: PublicProduct }) {
 
   function onMove(e: React.MouseEvent<HTMLDivElement>): void {
     const rect = e.currentTarget.getBoundingClientRect();
-    setMouse({ x: ((e.clientX - rect.left) / rect.width) * 100, y: ((e.clientY - rect.top) / rect.height) * 100 });
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    setMouse({ x: px * 100, y: py * 100 });
+    mx.set((px - 0.5) * 10);
+    my.set((py - 0.5) * -10);
   }
 
   return (
     <div>
       {/* Stage */}
       <div
-        className="group relative aspect-square overflow-hidden rounded-xl border bg-muted depth-1"
+        className="group relative aspect-square overflow-hidden rounded-xl border bg-muted depth-1 [perspective:1000px]"
         onMouseMove={onMove}
         onMouseLeave={() => setZoomed(false)}
       >
-        <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div
+          className="absolute inset-0"
+          style={reduce ? undefined : { rotateX: tiltX, rotateY: tiltY, transformStyle: 'preserve-3d' }}
+        >
+          <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={active}
             initial={reduce ? false : { opacity: 0, x: 16 }}
@@ -78,6 +91,7 @@ export function ProductGallery({ product }: { product: PublicProduct }) {
             )}
           </motion.div>
         </AnimatePresence>
+        </motion.div>
 
         {!zoomed && (
           <span className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-background/80 px-2.5 py-1 text-xs text-muted-foreground backdrop-blur">
@@ -118,8 +132,10 @@ export function ProductGallery({ product }: { product: PublicProduct }) {
               aria-label={`View image ${i + 1}`}
               onClick={() => setActive(i)}
               className={cn(
-                'h-16 w-16 shrink-0 overflow-hidden rounded-lg border object-cover transition-all',
-                i === active ? 'ring-2 ring-primary' : 'opacity-70 hover:opacity-100',
+                'h-16 w-16 shrink-0 overflow-hidden rounded-lg border object-cover transition-all duration-300',
+                i === active
+                  ? 'ring-2 ring-primary -translate-y-0.5 shadow-lg'
+                  : 'opacity-70 hover:-translate-y-0.5 hover:opacity-100',
               )}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

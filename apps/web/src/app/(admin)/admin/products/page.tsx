@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -35,7 +36,7 @@ export default function AdminProductsPage() {
       <PageHeader title="Product moderation" subtitle="Approve or reject seller submissions" />
 
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList>
+        <TabsList className="glass">
           <TabsTrigger value="PENDING">Pending</TabsTrigger>
           <TabsTrigger value="APPROVED">Approved</TabsTrigger>
           <TabsTrigger value="REJECTED">Rejected</TabsTrigger>
@@ -47,9 +48,9 @@ export default function AdminProductsPage() {
       ) : (data?.items.length ?? 0) === 0 ? (
         <p className="py-8 text-center text-sm text-muted-foreground">No {tab.toLowerCase()} products.</p>
       ) : (
-        <div className="divide-y rounded-xl border">
+        <div className="space-y-3">
           {data!.items.map((product) => (
-            <div key={product.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+            <SpatialPanel key={product.id} depth={2} spotlight className="flex flex-wrap items-center justify-between gap-3 p-4">
               <div className="min-w-0">
                 <p className="truncate font-medium">{product.name}</p>
                 <p className="text-xs text-muted-foreground">
@@ -74,8 +75,8 @@ export default function AdminProductsPage() {
                   </Badge>
                 )}
               </div>
-            </div>
-          ))}
+            </SpatialPanel>
+        ))}
         </div>
       )}
     </div>

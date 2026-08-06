@@ -5,6 +5,7 @@ import { Image as ImageIcon, Loader2, Package, Plus, Trash2, Upload } from 'luci
 import { useRef, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -63,9 +64,9 @@ export default function SellerProductsPage() {
           <CreateProductButton className="mt-4" />
         </div>
       ) : (
-        <div className="divide-y rounded-xl border">
+        <div className="space-y-3">
           {data!.items.map((product) => (
-            <div key={product.id} className="flex items-center justify-between gap-4 p-4">
+            <SpatialPanel key={product.id} depth={2} spotlight className="flex items-center justify-between gap-4 p-4">
               <div className="min-w-0">
                 <p className="truncate font-medium">{product.name}</p>
                 <p className="text-xs text-muted-foreground">
@@ -110,7 +111,7 @@ export default function SellerProductsPage() {
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-            </div>
+            </SpatialPanel>
           ))}
         </div>
       )}

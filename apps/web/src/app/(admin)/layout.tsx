@@ -17,7 +17,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       deniedTitle="Access denied"
       deniedMessage="You need an Administrator role to view this section."
     >
-      <div className="flex min-h-screen flex-col bg-role-soft/30">
+      <div className="relative flex min-h-screen flex-col bg-role-soft/30">
+        <div aria-hidden className="workspace-backdrop admin-atmosphere" />
         <SiteHeader />
         <div className="mx-auto flex w-full max-w-[1500px] flex-1 px-4 sm:px-6 lg:px-8">
           <aside className="hidden shrink-0 lg:block">

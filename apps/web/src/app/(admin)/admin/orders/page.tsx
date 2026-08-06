@@ -3,8 +3,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Receipt } from 'lucide-react';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { adminApi } from '@/lib/admin';
 import { formatCurrency, formatDate } from '@/lib/utils';
@@ -31,14 +32,14 @@ export default function AdminOrdersPage() {
           {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
         </div>
       ) : (data?.items.length ?? 0) === 0 ? (
-        <Card className="p-8 text-center">
+        <SpatialPanel depth={2} className="p-8 text-center">
           <Receipt className="mx-auto h-10 w-10 text-muted-foreground" />
           <p className="mt-3 text-sm text-muted-foreground">No orders yet.</p>
-        </Card>
+        </SpatialPanel>
       ) : (
         <div className="grid gap-3">
           {data!.items.map((order) => (
-            <Card key={order.id} className="overflow-hidden transition-shadow hover:depth-2">
+            <SpatialPanel key={order.id} depth={2} spotlight className="overflow-hidden">
               <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div className="min-w-0">
                   <p className="truncate font-medium">{order.invoiceNumber ?? order.id}</p>
@@ -56,7 +57,7 @@ export default function AdminOrdersPage() {
                   <span className="font-semibold">{formatCurrency(order.total)}</span>
                 </div>
               </CardContent>
-            </Card>
+            </SpatialPanel>
           ))}
         </div>
       )}

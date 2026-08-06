@@ -5,6 +5,7 @@ import { Users } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,9 +53,9 @@ export default function AdminUsersPage() {
       {isLoading ? (
         <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-14 w-full" />)}</div>
       ) : (
-        <div className="divide-y rounded-xl border">
+        <div className="space-y-3">
           {data?.items.map((user) => (
-            <div key={user.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+            <SpatialPanel key={user.id} depth={2} spotlight className="flex flex-wrap items-center justify-between gap-3 p-4">
               <div className="min-w-0">
                 <p className="truncate font-medium">{user.email}</p>
                 <p className="text-xs text-muted-foreground">
@@ -75,8 +76,8 @@ export default function AdminUsersPage() {
                   </Button>
                 ))}
               </div>
-            </div>
-          ))}
+            </SpatialPanel>
+        ))}
         </div>
       )}
     </div>

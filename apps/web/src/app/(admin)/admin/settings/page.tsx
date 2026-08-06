@@ -5,8 +5,9 @@ import { Settings2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -44,7 +45,7 @@ export default function AdminSettingsPage() {
       />
 
       <Tabs defaultValue="general">
-        <TabsList className="flex-wrap">
+        <TabsList className="glass flex-wrap">
           {GROUPS.map((group) => (
             <TabsTrigger key={group} value={group} className="capitalize">{group}</TabsTrigger>
           ))}
@@ -70,7 +71,7 @@ function GroupEditor({ group, values, saving, onSave }: { group: string; values:
   const entries = Object.entries(values);
 
   return (
-    <Card>
+    <SpatialPanel depth={2} glass spotlight>
       <CardHeader>
         <CardTitle className="text-base capitalize">{group}</CardTitle>
       </CardHeader>
@@ -86,7 +87,7 @@ function GroupEditor({ group, values, saving, onSave }: { group: string; values:
           {saving ? 'Saving…' : 'Save changes'}
         </Button>
       </CardContent>
-    </Card>
+    </SpatialPanel>
   );
 }
 

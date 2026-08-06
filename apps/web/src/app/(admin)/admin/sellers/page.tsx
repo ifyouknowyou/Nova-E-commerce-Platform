@@ -5,9 +5,10 @@ import { Store } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePermissions } from '@/hooks/use-permissions';
 import { adminApi } from '@/lib/admin';
@@ -81,7 +82,7 @@ export default function AdminSellersPage() {
       ) : data && data.items.length > 0 ? (
         <div className="space-y-3">
           {data.items.map((store) => (
-            <Card key={store.id}>
+            <SpatialPanel key={store.id} depth={2} spotlight>
               <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
@@ -130,7 +131,7 @@ export default function AdminSellersPage() {
                   )}
                 </div>
               </CardContent>
-            </Card>
+            </SpatialPanel>
           ))}
         </div>
       ) : (

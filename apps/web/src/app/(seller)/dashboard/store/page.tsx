@@ -6,8 +6,9 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -41,7 +42,7 @@ export default function StoreSettingsPage() {
     <div className="max-w-xl">
       <PageHeader title="Store settings" subtitle="Manage your store profile" />
 
-      <Card className="mt-6 overflow-hidden depth-1">
+      <SpatialPanel depth={2} glass spotlight className="mt-6 overflow-hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Store className="h-4 w-4 text-primary" /> Public profile
@@ -69,7 +70,7 @@ export default function StoreSettingsPage() {
             {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Save changes
           </Button>
         </CardContent>
-      </Card>
+      </SpatialPanel>
     </div>
   );
 }

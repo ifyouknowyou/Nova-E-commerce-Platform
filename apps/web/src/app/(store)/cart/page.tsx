@@ -1,9 +1,11 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { ArrowRight, Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { useCart } from '@/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -31,7 +33,7 @@ export default function CartPage() {
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_360px]">
           <div className="space-y-4">
             {activeItems.map((item) => (
-              <Card key={item.id} className="overflow-hidden transition-shadow hover:depth-2">
+              <SpatialPanel key={item.id} depth={2} spotlight className="overflow-hidden">
                 <CardContent className="flex items-center gap-4 p-4">
                   {item.product.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -66,7 +68,15 @@ export default function CartPage() {
                       >
                         <Minus className="h-3.5 w-3.5" />
                       </Button>
-                      <span className="w-8 text-center text-sm">{item.quantity}</span>
+                      <motion.span
+                        key={item.quantity}
+                        initial={{ scale: 1.4, opacity: 0.4 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 26 }}
+                        className="w-8 text-center text-sm"
+                      >
+                        {item.quantity}
+                      </motion.span>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -102,7 +112,7 @@ export default function CartPage() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </SpatialPanel>
             ))}
 
             {savedItems.length > 0 && (
@@ -171,7 +181,7 @@ function OrderSummary({ subtotal }: { subtotal: number }) {
   }
 
   return (
-    <Card className="h-fit glass">
+    <SpatialPanel depth={3} glass className="h-fit">
       <CardContent className="space-y-3 p-6">
         <h2 className="text-lg font-semibold">Order summary</h2>
 
@@ -230,7 +240,7 @@ function OrderSummary({ subtotal }: { subtotal: number }) {
         </Button>
         <p className="text-center text-xs text-muted-foreground">Taxes calculated at checkout.</p>
       </CardContent>
-    </Card>
+    </SpatialPanel>
   );
 }
 
