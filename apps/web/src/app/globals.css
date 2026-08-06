@@ -160,11 +160,18 @@
   --font-display: var(--font-fraunces), var(--font-outfit), ui-serif, Georgia, serif;
 }
 
+/* Extra breakpoints for ultra-wide displays (1920px / 2560px). */
+@theme {
+  --breakpoint-3xl: 120rem;
+  --breakpoint-4xl: 160rem;
+}
+
 @layer base {
   * {
     border-color: var(--border);
   }
   html {
+    font-size: 17px; /* scale base type up — every rem utility grows with it */
     scroll-behavior: smooth;
   }
   body {
@@ -173,12 +180,16 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  /* Deliberate type hierarchy — headings set in the brand display face */
+  /* Deliberate type hierarchy — headings set in the brand display face,
+     with a tightened display rhythm for a more confident look. */
   h1,
   h2,
   h3,
   h4 {
     font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    line-height: 1.14;
+    text-wrap: balance;
   }
   /* Visible focus ring for keyboard users; WCAG AA */
   :focus-visible {
@@ -549,6 +560,40 @@
   }
   .hover-lift-lg:hover {
     transform: none;
+  }
+}
+
+/* ============================================================
+   Ultra-wide containers — widen the primary content shells so
+   large displays use available width instead of leaving gutters.
+   Capped for readability (never full-bleed); below 1440px the
+   standard Tailwind widths apply, so tablet/mobile are unchanged.
+   ============================================================ */
+@media (min-width: 90rem) {
+  /* 1440px */
+  .max-w-7xl {
+    max-width: 96rem;
+  }
+  .max-w-6xl {
+    max-width: 90rem;
+  }
+}
+@media (min-width: 120rem) {
+  /* 1920px */
+  .max-w-7xl {
+    max-width: 112rem;
+  }
+  .max-w-6xl {
+    max-width: 108rem;
+  }
+}
+@media (min-width: 160rem) {
+  /* 2560px */
+  .max-w-7xl {
+    max-width: 136rem;
+  }
+  .max-w-6xl {
+    max-width: 132rem;
   }
 }
 

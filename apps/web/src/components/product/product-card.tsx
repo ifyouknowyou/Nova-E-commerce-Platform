@@ -127,14 +127,14 @@ export function ProductCard({ product }: { product: PublicProduct }) {
 
           {/* Body */}
           <div className="flex flex-1 flex-col p-4">
-            <Link href={`/products/${product.slug}`} className="line-clamp-2 font-display text-sm font-medium hover:text-primary">
+            <Link href={`/products/${product.slug}`} className="line-clamp-2 font-display text-base font-medium leading-snug hover:text-primary">
               {product.name}
             </Link>
             <p className="mt-0.5 text-xs text-muted-foreground">{product.store.name}</p>
 
             <div className="mt-2 flex items-center justify-between">
               <div className="flex items-baseline gap-1.5">
-                <span className="font-display font-semibold">{formatCurrency(product.effectivePrice)}</span>
+                <span className="font-display text-lg font-bold">{formatCurrency(product.effectivePrice)}</span>
                 {product.salePrice !== null && (
                   <span className="text-xs text-muted-foreground line-through">{formatCurrency(product.price)}</span>
                 )}

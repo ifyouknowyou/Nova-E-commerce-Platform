@@ -27,7 +27,7 @@ export default function AdminOverviewPage() {
     <div className="space-y-6">
       <PageHeader title="Command center" subtitle="Platform-wide metrics" />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
         {stats.map((s) => (
           <KPI3DCard key={s.label} {...s} />
         ))}
