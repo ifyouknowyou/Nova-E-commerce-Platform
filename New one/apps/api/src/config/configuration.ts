@@ -8,6 +8,9 @@ export interface ApiConfig {
   jwtSecret: string;
   jwtExpiresIn: string;
   dev: boolean;
+  /** Phase 6 — AI layer. */
+  aiModel: string;
+  aiApprovalTtlMs: number;
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
@@ -17,5 +20,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     jwtSecret: env.JWT_SECRET ?? 'dev-only-insecure-secret-change-me',
     jwtExpiresIn: env.JWT_EXPIRES_IN ?? '15m',
     dev: env.NODE_ENV !== 'production',
+    aiModel: env.AI_MODEL ?? 'claude-opus-5',
+    aiApprovalTtlMs: Number(env.AI_APPROVAL_TTL_MS ?? 24 * 60 * 60 * 1000),
   };
 }
