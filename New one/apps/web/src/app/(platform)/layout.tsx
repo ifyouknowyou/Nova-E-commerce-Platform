@@ -14,6 +14,10 @@ interface OrgEntry {
 
 const NAV = [
   { href: '/dashboard', label: 'Dashboard', roles: null },
+  { href: '/crm/pipeline', label: 'CRM', roles: null },
+  { href: '/sales', label: 'Sales', roles: null },
+  { href: '/projects', label: 'Projects', roles: null },
+  { href: '/finance', label: 'Finance', roles: null },
   { href: '/settings', label: 'Settings', roles: null },
   { href: '/settings/security', label: 'Security', roles: null },
   { href: '/integrations', label: 'Integrations', roles: ['OWNER', 'ADMIN'] },

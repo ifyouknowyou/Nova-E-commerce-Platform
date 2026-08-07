@@ -1,0 +1,122 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.kpi {
+  background: var(--nexus-surface);
+  border: 1px solid var(--nexus-border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+
+.kpiLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--nexus-muted);
+}
+
+.kpiValue {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--nexus-border);
+  vertical-align: top;
+}
+
+.table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--nexus-muted);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--nexus-border);
+  color: var(--nexus-fg);
+}
+
+.badgeWon,
+.badgePaid,
+.badgeDone {
+  background: #1e8e3e;
+  color: #fff;
+}
+
+.badgeOpen,
+.badgeActive {
+  background: #1a73e8;
+  color: #fff;
+}
+
+.bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--nexus-border);
+  overflow: hidden;
+  margin-top: 0.25rem;
+}
+
+.barFill {
+  height: 100%;
+  background: var(--nexus-accent);
+}
+
+.form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.input,
+.select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--nexus-border);
+  background: var(--nexus-bg);
+  color: var(--nexus-fg);
+  font-size: 0.9rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--nexus-accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.empty {
+  color: var(--nexus-muted);
+  padding: 2rem;
+  text-align: center;
+}
+
+.error {
+  color: #c0392b;
+  font-size: 0.85rem;
+}

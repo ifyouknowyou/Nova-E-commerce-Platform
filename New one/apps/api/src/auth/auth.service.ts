@@ -180,7 +180,7 @@ export class AuthService {
     if (member) await this.events.record(member.orgId, 'EMAIL_VERIFIED', { userId: token.userId });
   }
 
-  async forgotPassword(input: { email: string }, meta: RequestMeta): Promise<void> {
+  async forgotPassword(input: { email: string }, _meta?: RequestMeta): Promise<void> {
     const email = input.email.toLowerCase().trim();
     const user = await this.prisma.client.user.findUnique({ where: { email } });
     // Never reveal whether the account exists.

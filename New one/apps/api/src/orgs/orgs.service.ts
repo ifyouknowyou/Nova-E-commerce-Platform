@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { createHash } from 'node:crypto';
 import { randomUUID } from 'node:crypto';
 import { RoleCode } from '@nexus/shared';
-import { withTenant, withUserContext } from '@nexus/db';
+import { withUserContext } from '@nexus/db';
 import { ApiException } from '../common/exceptions';
 import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -47,18 +47,22 @@ export class OrgsService {
   /** Invite a member by email with a role. Returns the invite link. */
   async invite(orgId: string, invitedById: string, input: { email: string; roleCode: RoleCode }) {
     const email = input.email.toLowerCase().trim();
-    const existing = await this.prisma.withTenant(orgId, (tx) =>
+    const existingMember = await this.prisma.withTenant(orgId, (tx) =>
       tx.organizationMember.findFirst({ where: { orgId, user: { email } } }),
     );
-    if (existing) throw new ApiException('CONFLICT');
+    if (existingMember) throw new ApiException('CONFLICT');
 
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const token = randomUUID();
     const tokenHash = hashToken(token);
 
+    // Idempotent re-invite: upsert on the unique (orgId, email) key so re-sending
+    // an invite replaces any prior invite (PENDING or REVOKED) with a fresh link.
     const invite = await this.prisma.withTenant(orgId, (tx) =>
-      tx.invitation.create({
-        data: { orgId, email, roleCode: input.roleCode, tokenHash, invitedById, expiresAt },
+      tx.invitation.upsert({
+        where: { orgId_email: { orgId, email } },
+        update: { tokenHash, roleCode: input.roleCode, invitedById, status: 'PENDING', expiresAt, acceptedById: null, acceptedAt: null },
+        create: { orgId, email, roleCode: input.roleCode, tokenHash, invitedById, expiresAt },
       }),
     );
 
