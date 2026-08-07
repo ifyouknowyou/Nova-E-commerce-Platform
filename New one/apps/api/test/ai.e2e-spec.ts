@@ -13,7 +13,7 @@ import request from 'supertest';
 import { hash } from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 import { CSRF_COOKIE, CSRF_HEADER } from '@nexus/shared';
-import { prisma } from '@nexus/db';
+import { prisma, withTenant } from '@nexus/db';
 import { AppModule } from '../src/app.module';
 
 type SuperAgent = ReturnType<typeof request.agent>;
@@ -68,7 +68,7 @@ describe('NEXUS OS — Phase 6 AI Layer e2e', () => {
       expect(res.body.answer).toContain(String(invoiceCount));
 
       // Conversation persisted.
-      const conv = await prisma.withTenant(acmeOrgId, (tx) =>
+      const conv = await withTenant(acmeOrgId, (tx) =>
         tx.aiConversation.findFirst({ where: { id: res.body.conversationId } }),
       );
       expect(conv).toBeTruthy();

@@ -1,15 +1,23 @@
+/* NEXUS OS — data primitives; all values from design tokens (globals.css). */
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+
+.dense {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--sp-3);
 }
 
 .kpi {
   background: var(--nexus-surface);
   border: 1px solid var(--nexus-border);
-  border-radius: 10px;
-  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  padding: var(--sp-4) 1.25rem;
+  box-shadow: var(--shadow-1);
 }
 
 .kpiLabel {
@@ -22,7 +30,7 @@
 .kpiValue {
   font-size: 1.6rem;
   font-weight: 700;
-  margin-top: 0.25rem;
+  margin-top: var(--sp-1);
 }
 
 .table {
@@ -34,7 +42,7 @@
 .table th,
 .table td {
   text-align: left;
-  padding: 0.6rem 0.75rem;
+  padding: var(--sp-2) var(--sp-3);
   border-bottom: 1px solid var(--nexus-border);
   vertical-align: top;
 }
@@ -49,7 +57,7 @@
 .badge {
   display: inline-block;
   padding: 0.15rem 0.5rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 0.7rem;
   font-weight: 600;
   background: var(--nexus-border);
@@ -59,40 +67,53 @@
 .badgeWon,
 .badgePaid,
 .badgeDone {
-  background: #1e8e3e;
+  background: var(--nexus-ok);
   color: #fff;
 }
 
 .badgeOpen,
 .badgeActive {
-  background: #1a73e8;
+  background: var(--nexus-info);
   color: #fff;
 }
 
-.bar {
+.badgeWarn {
+  background: var(--nexus-warn-bg);
+  color: var(--nexus-warn);
+}
+
+.bar,
+.barH {
   height: 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--nexus-border);
   overflow: hidden;
-  margin-top: 0.25rem;
+  margin-top: var(--sp-1);
 }
 
 .barFill {
   height: 100%;
   background: var(--nexus-accent);
+  border-radius: var(--radius-sm);
+}
+
+/* Vertical bars (SVG-backed MANAGER tier). */
+.barVRow {
+  height: 140px;
+  width: 100%;
 }
 
 .form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 0.5rem;
-  margin: 1rem 0;
+  gap: var(--sp-2);
+  margin: var(--sp-4) 0;
 }
 
 .input,
 .select {
-  padding: 0.5rem 0.75rem;
-  border-radius: 8px;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--nexus-border);
   background: var(--nexus-bg);
   color: var(--nexus-fg);
@@ -100,9 +121,9 @@
 }
 
 .btn {
-  padding: 0.5rem 1rem;
+  padding: var(--sp-2) var(--sp-4);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--nexus-accent);
   color: #fff;
   font-weight: 600;
@@ -110,13 +131,17 @@
   font-size: 0.85rem;
 }
 
+.btnSecondary {
+  background: var(--nexus-info);
+}
+
 .empty {
   color: var(--nexus-muted);
-  padding: 2rem;
+  padding: var(--sp-6);
   text-align: center;
 }
 
 .error {
-  color: #c0392b;
+  color: var(--nexus-danger);
   font-size: 0.85rem;
 }

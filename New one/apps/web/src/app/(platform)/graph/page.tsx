@@ -14,11 +14,26 @@ const COLORS: Record<string, string> = {
   company: '#7c5cff', contact: '#3d8bff', deal: '#00b386', invoice: '#f59e0b',
   payment: '#10b981', product: '#ef4444', ticket: '#8b5cf6', project: '#0ea5e9',
 };
+const FG_LIGHT = '#17170f';
+const FG_DARK = '#f2f2ea';
+const STROKE_LIGHT = '#0f1117';
+const STROKE_DARK = '#1a1a14';
+const EDGE_LIGHT = '#c9c9bd';
+const EDGE_DARK = '#3a4157';
 
 export default function GraphPage() {
   const [graph, setGraph] = useState<Graph>({ nodes: [], edges: [] });
   const [selected, setSelected] = useState<Node | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    setDark(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setDark(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   useEffect(() => {
     apiFetch<Graph>('/ai/graph').then(setGraph).catch((e) => setMsg(e instanceof Error ? e.message : 'Failed'));
@@ -33,20 +48,28 @@ export default function GraphPage() {
       {msg && <p className={styles.error}>{msg}</p>}
 
       <div className={shell.card}>
-        <svg viewBox={`0 0 ${dims.w} ${dims.h}`} style={{ width: '100%', height: 480, background: 'var(--surface, #0f1117)' }}>
+        <svg viewBox={`0 0 ${dims.w} ${dims.h}`} style={{ width: '100%', height: 480, background: dark ? '#0f1117' : '#ffffff', border: '1px solid var(--nexus-border)', borderRadius: 'var(--radius-sm)' }}>
           {graph.edges.map((e, i) => {
             const s = positioned.get(String(e.source));
             const t = positioned.get(String(e.target));
             if (!s || !t) return null;
-            return <line key={i} x1={s.x} y1={s.y} x2={t.x} y2={t.y} stroke="#3a4157" strokeWidth={1} />;
+            return <line key={i} x1={s.x} y1={s.y} x2={t.x} y2={t.y} stroke={dark ? EDGE_DARK : EDGE_LIGHT} strokeWidth={1} />;
           })}
           {graph.nodes.map((n) => {
             const p = positioned.get(String(n.id));
             if (!p) return null;
             return (
-              <g key={n.id} onClick={() => setSelected(n)} style={{ cursor: 'pointer' }}>
-                <circle cx={p.x} cy={p.y} r={10} fill={COLORS[n.type] ?? '#64748b'} stroke="#0f1117" strokeWidth={2} />
-                <text x={p.x} y={p.y - 14} textAnchor="middle" fontSize={11} fill="#e5e7eb">{n.label.slice(0, 16)}</text>
+              <g
+                key={n.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`${n.type}: ${n.label}`}
+                onClick={() => setSelected(n)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelected(n); } }}
+                style={{ cursor: 'pointer', outline: 'none' }}
+              >
+                <circle cx={p.x} cy={p.y} r={10} fill={COLORS[n.type] ?? (dark ? '#64748b' : '#94a3b8')} stroke={dark ? STROKE_DARK : STROKE_LIGHT} strokeWidth={2} />
+                <text x={p.x} y={p.y - 14} textAnchor="middle" fontSize={11} fill={dark ? FG_DARK : FG_LIGHT}>{n.label.slice(0, 16)}</text>
               </g>
             );
           })}
