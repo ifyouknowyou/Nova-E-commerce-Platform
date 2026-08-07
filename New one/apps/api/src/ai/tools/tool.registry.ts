@@ -78,12 +78,13 @@ export class ToolRegistry {
             this.crm.deals(orgId, {}),
             this.finance.invoices(orgId),
           ]);
+          const num = (v: unknown): number => (typeof v === 'number' ? v : Number(v ?? 0));
           const openDeals = deals.items.filter((d) => d.stage === 'QUALIFIED' || d.stage === 'PROPOSAL' || d.stage === 'NEGOTIATION');
           const wonDeals = deals.items.filter((d) => d.stage === 'WON');
-          const openValue = openDeals.reduce((s, d) => s + (d.value ?? 0), 0);
-          const wonValue = wonDeals.reduce((s, d) => s + (d.value ?? 0), 0);
-          const invoicedTotal = invoices.reduce((s, i) => s + (i.total ?? 0), 0);
-          const paidTotal = invoices.reduce((s, i) => s + (i.paidAmount ?? 0), 0);
+          const openValue = openDeals.reduce((s, d) => s + num(d.value), 0);
+          const wonValue = wonDeals.reduce((s, d) => s + num(d.value), 0);
+          const invoicedTotal = invoices.reduce((s, i) => s + num(i.total), 0);
+          const paidTotal = invoices.reduce((s, i) => s + num(i.paidAmount), 0);
           const items = [{ metric: 'openDeals', value: openDeals.length, openValue }, { metric: 'wonDeals', value: wonDeals.length, wonValue }, { metric: 'invoiced', value: invoices.length, invoicedTotal }, { metric: 'collected', value: paidTotal }];
           return {
             summary: `Sales: ${openDeals.length} open deals (${openValue} pipeline), ${wonDeals.length} won (${wonValue}), ${invoices.length} invoices totalling ${invoicedTotal}, ${paidTotal} collected.`,
