@@ -153,7 +153,7 @@ describe('NEXUS OS e2e', () => {
         number: `INV-${Date.now()}`, taxRate: 0, items: [{ description: 'Service', qty: 1, unitPrice: 1000 }],
       }).expect(201);
       const paid = await agent.post(`/api/finance/invoices/${inv.body.id}/payments`).set(CSRF_HEADER, csrf).send({ amount: 1000 }).expect(201);
-      expect(paid.body.paidAmount).toBe(1000);
+      expect(Number(paid.body.paidAmount)).toBe(1000);
       expect(paid.body.status).toBe('PAID');
     });
 
@@ -167,6 +167,52 @@ describe('NEXUS OS e2e', () => {
         pipelineValue: expect.any(Number),
         forecast: { actual: expect.any(Number), projected: expect.any(Number), estimated: expect.any(Number) },
       });
+    });
+  });
+
+  describe('Phase 4 — operations & support', () => {
+    it('stock movement is immutable and cannot go negative', async () => {
+      const { agent, csrf } = await signIn(ownerEmail, ownerPassword);
+      const product = await agent.post('/api/sales/products').set(CSRF_HEADER, csrf).send({ name: 'NoNeg', price: 1 }).expect(201);
+      const wh = await agent.post('/api/inventory/warehouses').set(CSRF_HEADER, csrf).send({ name: 'WH-e2e' }).expect(201);
+      const loc = await agent.post('/api/inventory/locations').set(CSRF_HEADER, csrf).send({ name: 'A', warehouseId: wh.body.id }).expect(201);
+      const key = { productId: product.body.id, locationId: loc.body.id };
+
+      const in1 = await agent.post('/api/inventory/stock/movements').set(CSRF_HEADER, csrf).send({ ...key, type: 'IN', qty: 5 }).expect(201);
+      expect(in1.body.qty).toBe(5);
+      const out = await agent.post('/api/inventory/stock/movements').set(CSRF_HEADER, csrf).send({ ...key, type: 'OUT', qty: 2 }).expect(201);
+      expect(out.body.qty).toBe(3);
+
+      // Overdraw must fail (409) and NOT drive the balance negative.
+      await agent.post('/api/inventory/stock/movements').set(CSRF_HEADER, csrf).send({ ...key, type: 'OUT', qty: 99 }).expect(409);
+
+      const stock = await agent.get('/api/inventory/stock').expect(200);
+      const row = stock.body.find((l: { productId: string }) => l.productId === product.body.id);
+      expect(row.qty).toBe(3);
+    });
+
+    it('ticket reads are RBAC-gated and agents see internal notes', async () => {
+  const owner = await signIn(ownerEmail, ownerPassword);
+  const ticket = await owner.agent.post('/api/support/tickets').set(CSRF_HEADER, owner.csrf).send({ subject: 'Secure ticket', priority: 'MEDIUM' }).expect(201);
+  await owner.agent.post(`/api/support/tickets/${ticket.body.id}/comments`).set(CSRF_HEADER, owner.csrf).send({ body: 'internal note', internal: true }).expect(201);
+
+  // Owner (with support.ticket.update) sees the internal note.
+  const ownerDetail = await owner.agent.get(`/api/support/tickets/${ticket.body.id}`).expect(200);
+  expect(ownerDetail.body.comments.some((c: { internal: boolean }) => c.internal)).toBe(true);
+
+  // A FINANCE member lacks support.ticket.read → gets 403 on the ticket.
+  const fin = await makeMember('fin-tx@phase4.local', 'FINANCE');
+  const fa = await signIn(fin.email, fin.password);
+  await fa.agent.get(`/api/support/tickets/${ticket.body.id}`).expect(403);
+});
+
+    it('document upload rejects a disallowed MIME', async () => {
+      const { agent, csrf } = await signIn(ownerEmail, ownerPassword);
+      const res = await agent
+        .post('/api/documents/upload')
+        .set(CSRF_HEADER, csrf)
+        .attach('file', Buffer.from('bad'), { filename: 'evil.exe', contentType: 'application/octet-stream' });
+      expect([400, 422]).toContain(res.status);
     });
   });
 });

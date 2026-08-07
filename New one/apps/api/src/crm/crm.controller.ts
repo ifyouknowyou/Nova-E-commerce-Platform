@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Patch, Post, Query, Req } from '@nestjs/c
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DEAL_STAGES, type DealStage } from '@nexus/shared';
 import { ApiException } from '../common/exceptions';
+import { NotificationsService } from '../hooks/notifications.service';
 import { RequirePermissions } from '../rbac/decorators/rbac.decorators';
 import type { AuthenticatedUser } from '../tenant/session.types';
 import { CrmService } from './crm.service';
@@ -9,7 +10,10 @@ import { CrmService } from './crm.service';
 @ApiTags('crm')
 @Controller('crm')
 export class CrmController {
-  constructor(private readonly crm: CrmService) {}
+  constructor(
+    private readonly crm: CrmService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   // ── Companies ────────────────────────────────────────────────
   @Get('companies')
@@ -80,10 +84,17 @@ export class CrmController {
 
   @Post('deals/:id/stage')
   @RequirePermissions('crm.deal.update')
-  @ApiOperation({ summary: 'Move a deal through the pipeline (logs an activity).' })
-  moveDeal(@Req() req: ReqWithUser, @Param('id') id: string, @Body() body: { stage: string }) {
+  @ApiOperation({ summary: 'Move a deal through the pipeline (logs an activity, notifies on WON).' })
+  async moveDeal(@Req() req: ReqWithUser, @Param('id') id: string, @Body() body: { stage: string }) {
     if (!(DEAL_STAGES as readonly string[]).includes(body.stage)) throw new ApiException('VALIDATION_FAILED');
-    return this.crm.moveDeal(req.user!.orgId, id, req.user!.userId, body.stage as DealStage);
+    const updated = await this.crm.moveDeal(req.user!.orgId, id, req.user!.userId, body.stage as DealStage);
+    if (body.stage === 'WON') {
+      await this.notifications.notify(req.user!.orgId, {
+        userId: updated.ownerId ?? req.user!.userId,
+        type: 'SUCCESS', title: 'Deal won 🎉', body: `"${updated.name}" closed.`,
+      });
+    }
+    return updated;
   }
 
   // ── Activities / notes ───────────────────────────────────────

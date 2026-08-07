@@ -206,6 +206,36 @@ enum PaymentMethod {
   OTHER
 }
 
+// ─── Phase 4: ops/support enums ────────────────────────────────
+
+enum StockMovementType {
+  IN
+  OUT
+  ADJUSTMENT
+  TRANSFER
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  ON_LEAVE
+  TERMINATED
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Platform tables (non-tenant; no RLS on these)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -605,16 +635,18 @@ model Note {
 // ---- Sales ------------------------------------------------------------------
 
 model Product {
-  id        String   @id @default(uuid()) @db.Uuid
-  orgId     String   @map("org_id") @db.Uuid
-  name      String
-  sku       String?
-  price     Decimal  @default(0) @db.Decimal(12, 2)
-  cost      Decimal  @default(0) @db.Decimal(12, 2)
-  currency  String   @default("USD")
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid()) @db.Uuid
+  orgId        String   @map("org_id") @db.Uuid
+  name         String
+  sku          String?
+  categoryId   String?  @map("category_id") @db.Uuid
+  reorderLevel Int      @default(0) @map("reorder_level")
+  price        Decimal  @default(0) @db.Decimal(12, 2)
+  cost         Decimal  @default(0) @db.Decimal(12, 2)
+  currency     String   @default("USD")
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([orgId])
   @@map("products")
@@ -842,4 +874,199 @@ model Vendor {
 
   @@index([orgId])
   @@map("vendors")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 4: ops / support — all tenant-scoped (orgId + RLS).
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ---- Inventory ---------------------------------------------------------------
+
+model ProductCategory {
+  id       String   @id @default(uuid()) @db.Uuid
+  orgId    String   @map("org_id") @db.Uuid
+  name     String
+  parentId String?  @map("parent_id") @db.Uuid
+  createdAt DateTime @default(now())
+
+  @@index([orgId])
+  @@map("product_categories")
+}
+
+model Supplier {
+  id        String   @id @default(uuid()) @db.Uuid
+  orgId     String   @map("org_id") @db.Uuid
+  name      String
+  email     String?
+  phone     String?
+  createdAt DateTime @default(now())
+
+  @@index([orgId])
+  @@map("suppliers")
+}
+
+model Warehouse {
+  id        String   @id @default(uuid()) @db.Uuid
+  orgId     String   @map("org_id") @db.Uuid
+  name      String
+  address   String?
+  createdAt DateTime @default(now())
+
+  @@index([orgId])
+  @@map("warehouses")
+}
+
+model StockLocation {
+  id          String   @id @default(uuid()) @db.Uuid
+  orgId       String   @map("org_id") @db.Uuid
+  warehouseId String   @map("warehouse_id") @db.Uuid
+  name        String
+  createdAt   DateTime @default(now())
+
+  @@unique([warehouseId, name])
+  @@index([orgId])
+  @@map("stock_locations")
+}
+
+model StockLevel {
+  id         String   @id @default(uuid()) @db.Uuid
+  orgId      String   @map("org_id") @db.Uuid
+  productId  String   @map("product_id") @db.Uuid
+  locationId String   @map("location_id") @db.Uuid
+  qty        Int      @default(0)
+  updatedAt  DateTime @updatedAt
+
+  @@unique([productId, locationId])
+  @@index([orgId])
+  @@map("stock_levels")
+}
+
+model StockMovement {
+  id          String            @id @default(uuid()) @db.Uuid
+  orgId       String            @map("org_id") @db.Uuid
+  productId   String            @map("product_id") @db.Uuid
+  locationId  String?           @map("location_id") @db.Uuid
+  type        StockMovementType
+  qty         Int               // always positive; direction is the type
+  referenceType String?         @map("reference_type")
+  referenceId String?           @map("reference_id") @db.Uuid
+  note        String?
+  createdById String?           @map("created_by_id") @db.Uuid
+  createdAt   DateTime          @default(now())
+
+  @@index([orgId, productId])
+  @@index([orgId, createdAt])
+  @@map("stock_movements")
+}
+
+// ---- Support -----------------------------------------------------------------
+
+model Ticket {
+  id          String         @id @default(uuid()) @db.Uuid
+  orgId       String         @map("org_id") @db.Uuid
+  subject      String
+  description String?
+  customerId  String?        @map("customer_id") @db.Uuid
+  status      TicketStatus   @default(OPEN)
+  priority    TicketPriority @default(MEDIUM)
+  assignedToId String?       @map("assigned_to_id") @db.Uuid
+  createdById String?        @map("created_by_id") @db.Uuid
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([orgId])
+  @@map("tickets")
+}
+
+model TicketComment {
+  id         String   @id @default(uuid()) @db.Uuid
+  orgId      String   @map("org_id") @db.Uuid
+  ticketId   String   @map("ticket_id") @db.Uuid
+  authorId   String?  @map("author_id") @db.Uuid
+  body       String
+  internal   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([orgId, ticketId])
+  @@map("ticket_comments")
+}
+
+// ---- Team / HR ---------------------------------------------------------------
+
+model Department {
+  id        String   @id @default(uuid()) @db.Uuid
+  orgId     String   @map("org_id") @db.Uuid
+  name      String
+  createdAt DateTime @default(now())
+
+  @@unique([orgId, name])
+  @@index([orgId])
+  @@map("departments")
+}
+
+model Employee {
+  id           String         @id @default(uuid()) @db.Uuid
+  orgId        String         @map("org_id") @db.Uuid
+  userId       String?        @map("user_id") @db.Uuid
+  departmentId String?        @map("department_id") @db.Uuid
+  firstName    String         @map("first_name")
+  lastName     String         @map("last_name")
+  title        String?
+  email        String?
+  phone        String?
+  status       EmployeeStatus @default(ACTIVE)
+  hireDate     DateTime?      @map("hire_date")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([orgId])
+  @@map("employees")
+}
+
+// ---- Documents ---------------------------------------------------------------
+
+model DocumentFolder {
+  id        String   @id @default(uuid()) @db.Uuid
+  orgId     String   @map("org_id") @db.Uuid
+  name      String
+  parentId  String?  @map("parent_id") @db.Uuid
+  createdAt DateTime @default(now())
+
+  @@index([orgId])
+  @@map("document_folders")
+}
+
+model Document {
+  id         String   @id @default(uuid()) @db.Uuid
+  orgId      String   @map("org_id") @db.Uuid
+  folderId   String?  @map("folder_id") @db.Uuid
+  name       String
+  mimeType   String   @map("mime_type")
+  size       Int
+  storageKey String   @map("storage_key")
+  version    Int      @default(1)
+  ownerId    String?  @map("owner_id") @db.Uuid
+  tags       Json?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([orgId])
+  @@map("documents")
+}
+
+model DocumentVersion {
+  id          String   @id @default(uuid()) @db.Uuid
+  orgId       String   @map("org_id") @db.Uuid
+  documentId  String   @map("document_id") @db.Uuid
+  version     Int
+  size        Int
+  mimeType    String   @map("mime_type")
+  storageKey  String   @map("storage_key")
+  createdById String?  @map("created_by_id") @db.Uuid
+  createdAt   DateTime @default(now())
+
+  @@unique([documentId, version])
+  @@index([orgId])
+  @@map("document_versions")
 }

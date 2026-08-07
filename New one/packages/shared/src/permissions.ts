@@ -85,6 +85,33 @@ export const PERMISSION_SPECS: readonly PermissionSpec[] = [
   { code: 'project.task.create', entity: 'project.task', action: 'create', description: 'Create tasks.' },
   { code: 'project.task.update', entity: 'project.task', action: 'update', description: 'Update tasks.' },
   { code: 'project.task.delete', entity: 'project.task', action: 'delete', description: 'Delete tasks.' },
+  // Search / notifications
+  { code: 'search.read', entity: 'search', action: 'read', description: 'Run global search.' },
+  { code: 'notification.read', entity: 'notification', action: 'read', description: 'Read notifications.' },
+  { code: 'notification.update', entity: 'notification', action: 'update', description: 'Mark notifications read.' },
+  // Inventory
+  { code: 'inventory.product.read', entity: 'inventory.product', action: 'read', description: 'Read products/stock.' },
+  { code: 'inventory.product.update', entity: 'inventory.product', action: 'update', description: 'Manage products + stock levels.' },
+  { code: 'inventory.product.create', entity: 'inventory.product', action: 'create', description: 'Create products.' },
+  { code: 'inventory.category.update', entity: 'inventory.category', action: 'update', description: 'Manage categories.' },
+  { code: 'inventory.supplier.update', entity: 'inventory.supplier', action: 'update', description: 'Manage suppliers.' },
+  { code: 'inventory.warehouse.update', entity: 'inventory.warehouse', action: 'update', description: 'Manage warehouses/locations.' },
+  { code: 'inventory.stock.movement', entity: 'inventory.stock', action: 'execute', description: 'Record stock movements (IN/OUT/ADJUST).' },
+  // Support
+  { code: 'support.ticket.read', entity: 'support.ticket', action: 'read', description: 'Read tickets.' },
+  { code: 'support.ticket.create', entity: 'support.ticket', action: 'create', description: 'Create tickets.' },
+  { code: 'support.ticket.update', entity: 'support.ticket', action: 'update', description: 'Update/assign/resolve tickets + read internal notes.' },
+  { code: 'support.comment.create', entity: 'support.comment', action: 'create', description: 'Add comments to tickets.' },
+  // HR
+  { code: 'hr.employee.read', entity: 'hr.employee', action: 'read', description: 'Read employees.' },
+  { code: 'hr.employee.create', entity: 'hr.employee', action: 'create', description: 'Create employees.' },
+  { code: 'hr.employee.update', entity: 'hr.employee', action: 'update', description: 'Update employee status.' },
+  { code: 'hr.department.update', entity: 'hr.department', action: 'update', description: 'Manage departments.' },
+  // Documents
+  { code: 'documents.read', entity: 'documents', action: 'read', description: 'Read/download documents.' },
+  { code: 'documents.create', entity: 'documents', action: 'create', description: 'Upload documents.' },
+  { code: 'documents.update', entity: 'documents', action: 'update', description: 'Edit documents/folders.' },
+  { code: 'documents.delete', entity: 'documents', action: 'delete', description: 'Delete documents.' },
   // Finance
   { code: 'finance.invoice.read', entity: 'finance.invoice', action: 'read', description: 'Read invoices.' },
   { code: 'finance.invoice.create', entity: 'finance.invoice', action: 'create', description: 'Create invoices.' },
