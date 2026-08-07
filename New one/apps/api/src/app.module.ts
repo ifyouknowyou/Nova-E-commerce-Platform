@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
+import { AiModule } from './ai/ai.module';
 import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
 import { AutomationModule } from './automation/automation.module';
@@ -61,6 +62,7 @@ import { loadConfig } from './config/configuration';
     AuditModule,
     ObservabilityModule,
     IamModule,
+    AiModule,
     HealthModule,
   ],
   providers: [
