@@ -25,13 +25,20 @@ const migrateClient = new PrismaClient({
 // Extend per-module in later phases; the guard reads these rows at runtime.
 const ROLE_PERMISSIONS: Record<RoleCode, string[]> = {
   OWNER: ['*'],
-  ADMIN: ['iam.*', 'org.*', 'settings.*', 'audit.read'],
-  MANAGER: ['iam.roles.read', 'iam.members.read', 'org.read', 'settings.read', 'audit.read'],
-  SALES: ['org.read', 'iam.members.read'],
-  FINANCE: ['org.read'],
-  OPERATIONS: ['org.read', 'audit.read'],
+  ADMIN: ['iam.*', 'org.*', 'settings.*', 'audit.read', 'dashboard.read', 'analytics.read',
+    'crm.*', 'sales.*', 'project.*', 'finance.*'],
+  MANAGER: ['iam.roles.read', 'iam.members.read', 'org.read', 'settings.read', 'audit.read',
+    'dashboard.read', 'crm.*', 'project.*',
+    'sales.product.read', 'sales.target.read', 'finance.invoice.read', 'finance.expense.read'],
+  SALES: ['org.read', 'iam.members.read', 'dashboard.read',
+    'crm.lead.*', 'crm.deal.*', 'crm.contact.read', 'crm.company.read', 'crm.activity.*',
+    'sales.quote.*', 'sales.product.read', 'sales.target.read'],
+  FINANCE: ['org.read', 'dashboard.read', 'analytics.read',
+    'finance.*', 'crm.company.read', 'crm.contact.read'],
+  OPERATIONS: ['org.read', 'audit.read', 'dashboard.read',
+    'project.*', 'sales.product.*', 'finance.invoice.read', 'finance.expense.read'],
   HR: ['org.read', 'iam.members.read'],
-  SUPPORT: ['org.read'],
+  SUPPORT: ['org.read', 'dashboard.read', 'crm.company.read', 'crm.contact.read', 'project.task.read'],
 };
 
 const ROLE_NAMES: Record<RoleCode, string> = {
@@ -203,9 +210,97 @@ async function main() {
     },
   });
 
+  // ---- Phase 3: rich revenue-module demo data for the acme org ----------------
+  const { c: companyCount, acc: accountCount } = await seedBusinessData(org.id, migrateClient);
+
   console.log(
-    `Seeded: ${PERMISSION_SPECS.length} permissions, 8 roles x 2 orgs, policy settings, webhook connector.`,
+    `Seeded: ${PERMISSION_SPECS.length} permissions, 8 roles x 2 orgs, policy settings, webhook connector, and Phase3 business data (${companyCount} companies, ${accountCount} accounts).`,
   );
+}
+
+/** Phase-3 demo rows for a tenant — real DB writes so the dashboard has live KPIs. */
+async function seedBusinessData(orgId: string, db: PrismaClient) {
+  // Reset tenant business rows so re-seeding is idempotent (safe ordering for FK columns).
+  await db.payment.deleteMany({ where: { orgId } });
+  await db.invoiceItem.deleteMany({ where: { orgId } });
+  await db.invoice.deleteMany({ where: { orgId } });
+  await db.expense.deleteMany({ where: { orgId } });
+  await db.vendor.deleteMany({ where: { orgId } });
+  await db.transaction.deleteMany({ where: { orgId } });
+  await db.account.deleteMany({ where: { orgId } });
+  await db.taskComment.deleteMany({ where: { orgId } });
+  await db.milestone.deleteMany({ where: { orgId } });
+  await db.task.deleteMany({ where: { orgId } });
+  await db.projectMember.deleteMany({ where: { orgId } });
+  await db.project.deleteMany({ where: { orgId } });
+  await db.salesTarget.deleteMany({ where: { orgId } });
+  await db.quoteItem.deleteMany({ where: { orgId } });
+  await db.quote.deleteMany({ where: { orgId } });
+  await db.product.deleteMany({ where: { orgId } });
+  await db.note.deleteMany({ where: { orgId } });
+  await db.activity.deleteMany({ where: { orgId } });
+  await db.deal.deleteMany({ where: { orgId } });
+  await db.lead.deleteMany({ where: { orgId } });
+  await db.contact.deleteMany({ where: { orgId } });
+  await db.company.deleteMany({ where: { orgId } });
+
+  const company = await db.company.create({ data: { orgId, name: 'Meridian Systems', industry: 'Software' } });
+  const acmeContact = await db.contact.create({ data: { orgId, companyId: company.id, firstName: 'Ada', lastName: 'Lovelace', email: 'ada@meridian.io' } });
+
+  await db.lead.createMany({
+    data: [
+      { orgId, contactId: acmeContact.id, source: 'Website', status: 'NEW', value: 25000 },
+      { orgId, source: 'Referral', status: 'CONTACTED', value: 40000 },
+      { orgId, source: 'Conference', status: 'QUALIFIED', value: 15000 },
+    ],
+  });
+
+  const dealIds = await Promise.all([
+    db.deal.create({ data: { orgId, name: 'Enterprise License', companyId: company.id, value: 120000, stage: 'QUALIFIED', probability: 40 } }),
+    db.deal.create({ data: { orgId, name: 'Support Renewal', companyId: company.id, value: 30000, stage: 'NEGOTIATION', probability: 70 } }),
+    db.deal.create({ data: { orgId, name: 'Onboarding Project', value: 18000, stage: 'WON', probability: 100 } }),
+  ]);
+
+  await db.activity.create({
+    data: { orgId, userId: acmeContact.id, type: 'CALL', subject: 'Intro call', entityType: 'deal', entityId: dealIds[0]?.id },
+  });
+
+  await db.project.create({ data: { orgId, name: 'Website Redesign', status: 'ACTIVE' } });
+  const proj = await db.project.create({ data: { orgId, name: 'ERP Migration', description: 'Platform migration', status: 'PLANNING' } });
+  await db.task.createMany({
+    data: [
+      { orgId, projectId: proj.id, title: 'Audit current state', status: 'IN_PROGRESS', priority: 'HIGH' },
+      { orgId, projectId: proj.id, title: 'Data cleanup', status: 'TODO', priority: 'MEDIUM' },
+    ],
+  });
+  await db.milestone.create({ data: { orgId, projectId: proj.id, title: 'Kickoff' } });
+
+  const accountSeed = await db.account.createMany({
+    data: [
+      { orgId, name: 'Operating', type: 'ASSET' },
+      { orgId, name: 'Revenue', type: 'REVENUE' },
+      { orgId, name: 'Expenses', type: 'EXPENSE' },
+    ],
+  });
+
+  await db.vendor.create({ data: { orgId, name: 'Cloud Hosting Co', email: 'billing@cloud.example' } });
+
+  await db.expense.createMany({
+    data: [
+      { orgId, category: 'Hosting', amount: 1200, date: new Date('2026-05-01') },
+      { orgId, category: 'Software', amount: 800, date: new Date('2026-05-10') },
+      { orgId, category: 'Marketing', amount: 2000, date: new Date('2026-06-02') },
+    ],
+  });
+
+  const inv = await db.invoice.create({
+    data: { orgId, number: 'INV-2026-001', companyId: company.id, status: 'SENT', total: 5000, paidAmount: 0 },
+  });
+  await db.invoiceItem.create({ data: { orgId, invoiceId: inv.id, description: 'Implementation', qty: 5, unitPrice: 1000, lineTotal: 5000 } });
+  await db.payment.create({ data: { orgId, invoiceId: inv.id, amount: 5000, method: 'BANK_TRANSFER' } });
+  await db.invoice.update({ where: { id: inv.id }, data: { status: 'PAID', paidAmount: 5000 } });
+
+  return { c: await db.company.count({ where: { orgId } }), acc: accountSeed.count };
 }
 
 main()
