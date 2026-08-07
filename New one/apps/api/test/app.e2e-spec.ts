@@ -11,7 +11,6 @@ import { PrismaClient } from '@prisma/client';
 import { CSRF_COOKIE, CSRF_HEADER } from '@nexus/shared';
 import { withTenant, prisma } from '@nexus/db';
 import { AppModule } from '../src/app.module';
-import { AllExceptionsFilter } from '../src/common/all-exceptions.filter';
 
 /**
  * NEXUS OS — Phase 2 + Phase 3 e2e gates. Requires docker compose up +
@@ -67,7 +66,6 @@ describe('NEXUS OS e2e', () => {
     app.setGlobalPrefix('api');
     app.use(cookieParser());
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-    app.useGlobalFilters(new AllExceptionsFilter());
     await app.init();
   });
 
@@ -213,6 +211,53 @@ describe('NEXUS OS e2e', () => {
         .set(CSRF_HEADER, csrf)
         .attach('file', Buffer.from('bad'), { filename: 'evil.exe', contentType: 'application/octet-stream' });
       expect([400, 422]).toContain(res.status);
+    });
+  });
+
+  describe('Phase 5 — automation, audit, observability', () => {
+    it('a DEAL_WON workflow fires: task created + execution logged', async () => {
+      const { agent, csrf } = await signIn(ownerEmail, ownerPassword);
+      await agent.post('/api/automation/workflows').set(CSRF_HEADER, csrf).send({
+        name: 'Auto test',
+        triggerType: 'DEAL_WON',
+        conditions: [{ field: 'dealValue', op: 'gte', value: 1 }],
+        actions: [{ type: 'TASK', title: 'Auto follow-up' }],
+      }).expect(201);
+
+      const deal = await agent.post('/api/crm/deals').set(CSRF_HEADER, csrf).send({ name: 'Auto e2e', value: 100, stage: 'NEW' }).expect(201);
+      await agent.post(`/api/crm/deals/${deal.body.id}/stage`).set(CSRF_HEADER, csrf).send({ stage: 'WON' }).expect(201);
+
+      // The workflow should have created the task.
+      const tasks = await agent.get('/api/projects/tasks/all').expect(200);
+      expect(tasks.body.some((t: { title: string }) => t.title === 'Auto follow-up')).toBe(true);
+
+      // And logged an execution.
+      const executions = await agent.get('/api/automation/executions').expect(200);
+      expect(executions.body.some((e: { status: string; triggerType: string }) => e.status === 'SUCCESS' && e.triggerType === 'DEAL_WON')).toBe(true);
+    });
+
+    it('SUPPORT is denied workflow creation (RBAC)', async () => {
+      const supp = await makeMember('su-auto@phase5.local', 'SUPPORT');
+      const { agent, csrf } = await signIn(supp.email, supp.password);
+      const res = await agent.post('/api/automation/workflows').set(CSRF_HEADER, csrf).send({ name: 'nope', triggerType: 'DEAL_WON', actions: [] });
+      expect(res.status).toBe(403);
+    });
+
+    it('audit records a mutation and is tenant-scoped + queryable', async () => {
+      const { agent, csrf } = await signIn(ownerEmail, ownerPassword);
+      const deal = await agent.post('/api/crm/deals').set(CSRF_HEADER, csrf).send({ name: 'Audit me', value: 10, stage: 'NEW' }).expect(201);
+      await agent.post(`/api/crm/deals/${deal.body.id}/stage`).set(CSRF_HEADER, csrf).send({ stage: 'QUALIFIED' }).expect(201);
+
+      const audit = await agent.get('/api/audit?entity=deal').expect(200);
+      expect(audit.body.total).toBeGreaterThan(0);
+      expect(audit.body.items.some((i: { action: string }) => i.action === 'UPDATE')).toBe(true);
+    });
+
+    it('observability health returns db + uptime + counters', async () => {
+      const { agent } = await signIn(ownerEmail, ownerPassword);
+      const res = await agent.get('/api/observability/health').expect(200);
+      expect(res.body).toMatchObject({ db: 'up', uptimeSeconds: expect.any(Number) });
+      expect(res.body.executions).toBeDefined();
     });
   });
 });

@@ -84,6 +84,25 @@ export type TicketPriority = (typeof TICKET_PRIORITIES)[number];
 export const EMPLOYEE_STATUSES = ['ACTIVE', 'ON_LEAVE', 'TERMINATED'] as const;
 export type EmployeeStatus = (typeof EMPLOYEE_STATUSES)[number];
 
+// Phase 6 — AI layer enums (mirror the Prisma schema)
+export const AI_MESSAGE_ROLES = ['USER', 'AGENT', 'TOOL'] as const;
+export type AiMessageRole = (typeof AI_MESSAGE_ROLES)[number];
+
+export const AI_RUN_STATUSES = ['RUNNING', 'NEEDS_APPROVAL', 'COMPLETED', 'FAILED', 'CANCELLED'] as const;
+export type AiRunStatus = (typeof AI_RUN_STATUSES)[number];
+
+export const AI_APPROVAL_STATUSES = ['PENDING', 'APPROVED', 'DENIED', 'EDITED', 'CANCELLED', 'EXPIRED'] as const;
+export type AiApprovalStatus = (typeof AI_APPROVAL_STATUSES)[number];
+
+export const AI_APPROVAL_SOURCES = ['TOOL_CALL', 'AGENT_RUN'] as const;
+export type AiApprovalSource = (typeof AI_APPROVAL_SOURCES)[number];
+
+export const AI_TOOL_RISKS = ['READ', 'LOW', 'HIGH', 'SENSITIVE'] as const;
+export type AiToolRisk = (typeof AI_TOOL_RISKS)[number];
+
+export const AI_TOOL_CALL_STATUSES = ['PROPOSED', 'EXECUTED', 'NEEDS_APPROVAL', 'APPROVED', 'DENIED', 'ABORTED'] as const;
+export type AiToolCallStatus = (typeof AI_TOOL_CALL_STATUSES)[number];
+
 /** Public profile of the authenticated principal + tenant context. */
 export interface SessionUser {
   userId: string;

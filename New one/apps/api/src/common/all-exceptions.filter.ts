@@ -1,7 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiErrorEnvelope, HTTP_STATUS, resolveErrorCode } from '@nexus/shared';
-import type { ObservabilityService } from '../observability/observability.service';
+import { ObservabilityService } from '../observability/observability.service';
 
 /**
  * Global exception filter — the ONLY place HTTP errors are shaped.
