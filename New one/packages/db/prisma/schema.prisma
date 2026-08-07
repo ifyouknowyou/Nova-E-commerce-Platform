@@ -1205,15 +1205,17 @@ model AiConversation {
 }
 
 model AIChatMessage {
-  id             String        @id @default(uuid()) @db.Uuid
-  orgId          String        @map("org_id") @db.Uuid
-  conversationId String        @map("conversation_id") @db.Uuid
+  id             String         @id @default(uuid()) @db.Uuid
+  orgId          String         @map("org_id") @db.Uuid
+  conversationId String         @map("conversation_id") @db.Uuid
   role           AiMessageRole
   content        String
   evidence       Json?
   records        Json?
-  toolCalls      Json?         @map("tool_calls")
-  createdAt      DateTime      @default(now())
+  toolCalls      Json?          @map("tool_calls")
+  createdAt      DateTime       @default(now())
+
+  conversation AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   @@index([orgId, conversationId])
   @@map("ai_chat_messages")
