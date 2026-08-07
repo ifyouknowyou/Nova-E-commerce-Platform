@@ -1,0 +1,19 @@
+{
+  "name": "@nexus/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared TypeScript / ESLint / Prettier presets for NEXUS OS",
+  "exports": {
+    "./tsconfig/*": "./tsconfig/*.json",
+    "./eslint/*": "./eslint/*.mjs"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.26.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.3.0",
+    "typescript-eslint": "^8.36.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0"
+  }
+}

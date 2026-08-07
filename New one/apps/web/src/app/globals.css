@@ -1,0 +1,46 @@
+/* NEXUS OS — Phase-1 theme primitives (CSS variables, light/dark).
+   Full design system ships in a later phase. */
+
+:root {
+  --nexus-bg: #f7f7f5;
+  --nexus-fg: #17170f;
+  --nexus-accent: #e0531f;
+  --nexus-muted: #6b6b5f;
+  --nexus-border: #e2e2d8;
+  --nexus-surface: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --nexus-bg: #12120e;
+    --nexus-fg: #f2f2ea;
+    --nexus-accent: #ff6a33;
+    --nexus-muted: #a3a394;
+    --nexus-border: #2a2a21;
+    --nexus-surface: #1a1a14;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--nexus-bg);
+  color: var(--nexus-fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+a {
+  color: var(--nexus-accent);
+}
+
+code {
+  background: var(--nexus-surface);
+  border: 1px solid var(--nexus-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+}

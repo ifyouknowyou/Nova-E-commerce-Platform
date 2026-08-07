@@ -1,0 +1,31 @@
+# deps
+node_modules/
+
+# build output
+dist/
+build/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# env / secrets
+.env
+.env.local
+.env.*.local
+
+# editor / os
+.vscode/
+.idea/
+.DS_Store
+
+# turbo / logs
+.turbo/
+*.log
+npm-debug.log*
+
+# prisma
+packages/db/prisma/migrations/dev.db*
+
+# prisma generated client
+node_modules/.prisma/client
