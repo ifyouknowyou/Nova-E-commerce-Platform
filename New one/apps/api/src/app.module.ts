@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { AllExceptionsFilter } from './common/all-exceptions.filter';
+import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
+import { AutomationModule } from './automation/automation.module';
 import { CrmModule } from './crm/crm.module';
 import { CsrfGuard } from './common/csrf.guard';
 import { DashboardModule } from './dashboard/dashboard.module';
@@ -15,6 +18,7 @@ import { IntegrationsModule } from './integrations/integrations.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { MailModule } from './mail/mail.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { ObservabilityModule } from './observability/observability.module';
 import { OrgsModule } from './orgs/orgs.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProjectsModule } from './projects/projects.module';
@@ -53,6 +57,9 @@ import { loadConfig } from './config/configuration';
     DocumentsModule,
     SearchModule,
     NotificationsModule,
+    AutomationModule,
+    AuditModule,
+    ObservabilityModule,
     IamModule,
     HealthModule,
   ],
@@ -60,6 +67,10 @@ import { loadConfig } from './config/configuration';
     {
       provide: APP_GUARD,
       useClass: CsrfGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
     },
   ],
 })

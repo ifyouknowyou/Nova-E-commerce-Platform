@@ -45,7 +45,7 @@ export class AuditService {
       ...(opts.entity ? { entity: opts.entity } : {}),
       ...(opts.action ? { action: opts.action } : {}),
       ...(opts.actorId ? { actorId: opts.actorId } : {}),
-    };
+    } as never;
     return this.prisma.withTenant(orgId, async (tx) => {
       const [items, total] = await Promise.all([
         tx.auditLog.findMany({ where, orderBy: { createdAt: 'desc' }, skip: (page - 1) * pageSize, take: pageSize }),
