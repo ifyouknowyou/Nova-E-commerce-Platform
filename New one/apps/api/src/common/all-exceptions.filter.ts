@@ -1,20 +1,24 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiErrorEnvelope, HTTP_STATUS, resolveErrorCode } from '@nexus/shared';
+import type { ObservabilityService } from '../observability/observability.service';
 
 /**
  * Global exception filter — the ONLY place HTTP errors are shaped.
  * Every response (success or error) is consistent, and every error carries a
- * stable code from ERROR_CODES (upgrade Decision 2).
+ * stable code from ERROR_CODES (upgrade Decision 2). Unhandled (≥500) errors are
+ * forwarded to ObservabilityService so they're tracked alongside metrics.
  */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
 
+  constructor(private readonly obs?: ObservabilityService) {}
+
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
-    const req = ctx.getRequest<{ url?: string; method?: string }>();
+    const req = ctx.getRequest<{ url?: string; method?: string; user?: { orgId: string } }>();
 
     if (exception instanceof HttpException && exception.getStatus() < 500) {
       // Known client errors: honor the code if it came from ApiException,
@@ -49,9 +53,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     // Unhandled: internal error. Never leak stack/details to the client.
     this.logger.error(
-      `Unhandled exception on ${req.method ?? '?'} ${req.url ?? '?'}`,
-      exception instanceof Error ? exception.stack : String(exception),
+      `Unhandled exception on ${req.method ?? '?'} ${req.url ?? '?'}: ${exception instanceof Error ? exception.message : String(exception)}`,
+      exception instanceof Error ? exception.stack : undefined,
     );
+    void this.obs?.recordError({
+      orgId: req.user?.orgId,
+      code: resolveErrorCode('INTERNAL_ERROR').code,
+      statusCode: HTTP_STATUS.InternalServerError,
+      requestMethod: req.method,
+      requestUrl: req.url,
+      message: exception instanceof Error ? exception.message : String(exception),
+      stack: exception instanceof Error ? exception.stack : undefined,
+    });
     const def = resolveErrorCode('INTERNAL_ERROR');
     const envelope: ApiErrorEnvelope = {
       statusCode: HTTP_STATUS.InternalServerError,

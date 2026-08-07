@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { STOCK_MOVEMENT_TYPES, type StockMovementType } from '@nexus/shared';
+import { WorkflowDispatcher } from '../automation/workflow.dispatcher';
 import { ApiException } from '../common/exceptions';
 import { NotificationsService } from '../hooks/notifications.service';
 import { RequirePermissions } from '../rbac/decorators/rbac.decorators';
@@ -13,6 +14,7 @@ export class InventoryController {
   constructor(
     private readonly inventory: InventoryService,
     private readonly notifications: NotificationsService,
+    private readonly dispatcher: WorkflowDispatcher,
   ) {}
 
   @Get('categories')
@@ -87,6 +89,9 @@ export class InventoryController {
     return this.inventory.movement(req.user!.orgId, req.user!.userId, type, body, async (p) => {
       await this.notifications.notify(req.user!.orgId, {
         type: 'WARNING', title: `Low stock: ${p.name}`, body: 'Re-order is due.',
+      });
+      await this.dispatcher.emit(req.user!.orgId, 'INVENTORY_LOW', {
+        productId: p.id, productName: p.name, actorId: req.user!.userId,
       });
     });
   }

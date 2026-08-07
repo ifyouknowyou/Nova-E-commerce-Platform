@@ -112,6 +112,14 @@ export const PERMISSION_SPECS: readonly PermissionSpec[] = [
   { code: 'documents.create', entity: 'documents', action: 'create', description: 'Upload documents.' },
   { code: 'documents.update', entity: 'documents', action: 'update', description: 'Edit documents/folders.' },
   { code: 'documents.delete', entity: 'documents', action: 'delete', description: 'Delete documents.' },
+  // Automation
+  { code: 'automation.workflow.read', entity: 'automation.workflow', action: 'read', description: 'Read workflows.' },
+  { code: 'automation.workflow.create', entity: 'automation.workflow', action: 'create', description: 'Create workflows.' },
+  { code: 'automation.workflow.update', entity: 'automation.workflow', action: 'update', description: 'Edit/enable workflows.' },
+  { code: 'automation.workflow.delete', entity: 'automation.workflow', action: 'delete', description: 'Delete workflows.' },
+  { code: 'automation.execution.read', entity: 'automation.execution', action: 'read', description: 'Read workflow executions.' },
+  // Observability
+  { code: 'observability.read', entity: 'observability', action: 'read', description: 'Read health/metrics/errors.' },
   // Finance
   { code: 'finance.invoice.read', entity: 'finance.invoice', action: 'read', description: 'Read invoices.' },
   { code: 'finance.invoice.create', entity: 'finance.invoice', action: 'create', description: 'Create invoices.' },
