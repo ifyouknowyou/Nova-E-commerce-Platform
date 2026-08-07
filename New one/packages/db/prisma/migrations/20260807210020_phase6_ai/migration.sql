@@ -120,3 +120,24 @@ CREATE INDEX "ai_approval_requests_org_id_status_idx" ON "ai_approval_requests"(
 
 -- CreateIndex
 CREATE INDEX "ai_approval_requests_org_id_createdAt_idx" ON "ai_approval_requests"("org_id", "createdAt");
+
+-- Phase6 RLS (mirrors phase5 pattern): tenant-scoped, org_scope_all policies
+GRANT SELECT, INSERT, UPDATE, DELETE ON "ai_conversations" TO nexus_app;
+ALTER TABLE "ai_conversations" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY org_scope_all ON "ai_conversations" USING (org_id = NULLIF(current_setting('app.org', true), '')::uuid) WITH CHECK (org_id = NULLIF(current_setting('app.org', true), '')::uuid);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON "ai_chat_messages" TO nexus_app;
+ALTER TABLE "ai_chat_messages" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY org_scope_all ON "ai_chat_messages" USING (org_id = NULLIF(current_setting('app.org', true), '')::uuid) WITH CHECK (org_id = NULLIF(current_setting('app.org', true), '')::uuid);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON "ai_tool_call_logs" TO nexus_app;
+ALTER TABLE "ai_tool_call_logs" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY org_scope_all ON "ai_tool_call_logs" USING (org_id = NULLIF(current_setting('app.org', true), '')::uuid) WITH CHECK (org_id = NULLIF(current_setting('app.org', true), '')::uuid);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON "ai_agent_runs" TO nexus_app;
+ALTER TABLE "ai_agent_runs" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY org_scope_all ON "ai_agent_runs" USING (org_id = NULLIF(current_setting('app.org', true), '')::uuid) WITH CHECK (org_id = NULLIF(current_setting('app.org', true), '')::uuid);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON "ai_approval_requests" TO nexus_app;
+ALTER TABLE "ai_approval_requests" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY org_scope_all ON "ai_approval_requests" USING (org_id = NULLIF(current_setting('app.org', true), '')::uuid) WITH CHECK (org_id = NULLIF(current_setting('app.org', true), '')::uuid);
