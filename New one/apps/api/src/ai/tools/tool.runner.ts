@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AiApprovalSource, AiMessageRole, AiToolRisk } from '@nexus/shared';
+import { AiMessageRole, AiToolRisk } from '@nexus/shared';
 import { ApiException } from '../../common/exceptions';
 import { AuditService } from '../../hooks/audit.service';
 import { NotificationsService } from '../../hooks/notifications.service';
@@ -145,7 +145,7 @@ export class ToolRunner {
 
   private async logCall(
     orgId: string,
-    actorId: string,
+    actorId: string | undefined,
     opts: RunToolOpts,
     toolName: string,
     input: Record<string, unknown>,

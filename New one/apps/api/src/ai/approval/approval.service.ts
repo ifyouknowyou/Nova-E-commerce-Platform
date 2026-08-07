@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AiApprovalStatus, AiApprovalSource, AiMessageRole } from '@nexus/shared';
+import { AiApprovalStatus, AiApprovalSource } from '@nexus/shared';
 import { ApiException } from '../../common/exceptions';
 import { AuditService } from '../../hooks/audit.service';
 import { NotificationsService } from '../../hooks/notifications.service';

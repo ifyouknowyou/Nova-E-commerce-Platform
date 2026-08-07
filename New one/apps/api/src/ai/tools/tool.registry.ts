@@ -222,7 +222,7 @@ export class ToolRegistry {
             reference: { type: 'string' },
           }, required: ['invoiceId', 'amount'],
         },
-        handler: async ({ orgId, actorId }, input) => {
+        handler: async ({ orgId }, input) => {
           const payment = await this.finance.recordPayment(orgId, String(input.invoiceId), {
             amount: Number(input.amount), method: input.method as never, reference: input.reference as string | undefined,
           });

@@ -179,11 +179,13 @@ export function normalizeMessages(messages: LlmMessage[]): LlmMessage[] {
   let prev = '';
   for (const m of messages) {
     if (prev === 'user' && m.role === 'user') {
-      out[out.length - 1] = { role: 'user', content: `${out[out.length - 1].content}\n\n${m.content}` };
+      const last = out[out.length - 1] as LlmMessage;
+      out[out.length - 1] = { role: 'user', content: `${last.content}\n\n${m.content}` };
       continue;
     }
     if (prev === 'assistant' && m.role === 'assistant') {
-      out[out.length - 1] = { role: 'assistant', content: `${out[out.length - 1].content}\n\n${m.content}` };
+      const last = out[out.length - 1] as LlmMessage;
+      out[out.length - 1] = { role: 'assistant', content: `${last.content}\n\n${m.content}` };
       continue;
     }
     out.push(m);
