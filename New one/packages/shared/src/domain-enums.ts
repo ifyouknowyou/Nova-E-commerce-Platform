@@ -71,6 +71,19 @@ export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 export const PAYMENT_METHODS = ['CARD', 'BANK_TRANSFER', 'CASH', 'OTHER'] as const;
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
+// Phase 4 ops/support enums
+export const STOCK_MOVEMENT_TYPES = ['IN', 'OUT', 'ADJUSTMENT', 'TRANSFER'] as const;
+export type StockMovementType = (typeof STOCK_MOVEMENT_TYPES)[number];
+
+export const TICKET_STATUSES = ['OPEN', 'IN_PROGRESS', 'WAITING', 'RESOLVED', 'CLOSED'] as const;
+export type TicketStatus = (typeof TICKET_STATUSES)[number];
+
+export const TICKET_PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] as const;
+export type TicketPriority = (typeof TICKET_PRIORITIES)[number];
+
+export const EMPLOYEE_STATUSES = ['ACTIVE', 'ON_LEAVE', 'TERMINATED'] as const;
+export type EmployeeStatus = (typeof EMPLOYEE_STATUSES)[number];
+
 /** Public profile of the authenticated principal + tenant context. */
 export interface SessionUser {
   userId: string;

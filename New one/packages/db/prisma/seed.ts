@@ -25,20 +25,21 @@ const migrateClient = new PrismaClient({
 // Extend per-module in later phases; the guard reads these rows at runtime.
 const ROLE_PERMISSIONS: Record<RoleCode, string[]> = {
   OWNER: ['*'],
-  ADMIN: ['iam.*', 'org.*', 'settings.*', 'audit.read', 'dashboard.read', 'analytics.read',
-    'crm.*', 'sales.*', 'project.*', 'finance.*'],
+  ADMIN: ['*'],
   MANAGER: ['iam.roles.read', 'iam.members.read', 'org.read', 'settings.read', 'audit.read',
-    'dashboard.read', 'crm.*', 'project.*',
+    'dashboard.read', 'crm.*', 'project.*', 'inventory.*', 'support.ticket.*', 'search.read', 'notification.*',
     'sales.product.read', 'sales.target.read', 'finance.invoice.read', 'finance.expense.read'],
   SALES: ['org.read', 'iam.members.read', 'dashboard.read',
     'crm.lead.*', 'crm.deal.*', 'crm.contact.read', 'crm.company.read', 'crm.activity.*',
-    'sales.quote.*', 'sales.product.read', 'sales.target.read'],
+    'sales.quote.*', 'sales.product.read', 'sales.target.read', 'search.read'],
   FINANCE: ['org.read', 'dashboard.read', 'analytics.read',
-    'finance.*', 'crm.company.read', 'crm.contact.read'],
+    'finance.*', 'crm.company.read', 'crm.contact.read', 'search.read'],
   OPERATIONS: ['org.read', 'audit.read', 'dashboard.read',
-    'project.*', 'sales.product.*', 'finance.invoice.read', 'finance.expense.read'],
-  HR: ['org.read', 'iam.members.read'],
-  SUPPORT: ['org.read', 'dashboard.read', 'crm.company.read', 'crm.contact.read', 'project.task.read'],
+    'project.*', 'sales.product.*', 'finance.invoice.read', 'finance.expense.read',
+    'inventory.*', 'support.ticket.*', 'hr.employee.read', 'documents.read', 'search.read', 'notification.*'],
+  HR: ['org.read', 'iam.members.read', 'hr.*', 'documents.read', 'search.read', 'notification.*'],
+  SUPPORT: ['org.read', 'dashboard.read', 'crm.company.read', 'crm.contact.read', 'project.task.read',
+    'support.ticket.*', 'search.read', 'notification.*'],
 };
 
 const ROLE_NAMES: Record<RoleCode, string> = {
@@ -212,10 +213,62 @@ async function main() {
 
   // ---- Phase 3: rich revenue-module demo data for the acme org ----------------
   const { c: companyCount, acc: accountCount } = await seedBusinessData(org.id, migrateClient);
+  await seedOpsData(org.id, migrateClient);
 
   console.log(
-    `Seeded: ${PERMISSION_SPECS.length} permissions, 8 roles x 2 orgs, policy settings, webhook connector, and Phase3 business data (${companyCount} companies, ${accountCount} accounts).`,
+    `Seeded: ${PERMISSION_SPECS.length} permissions, 8 roles x 2 orgs, policy settings, webhook connector, Phase3 business data, and Phase4 ops data.`,
   );
+}
+
+/** Phase-4 demo rows: inventory ledger, tickets, employees, notifications. */
+async function seedOpsData(orgId: string, db: PrismaClient) {
+  await db.stockMovement.deleteMany({ where: { orgId } });
+  await db.stockLevel.deleteMany({ where: { orgId } });
+  await db.ticketComment.deleteMany({ where: { orgId } });
+  await db.ticket.deleteMany({ where: { orgId } });
+  await db.employee.deleteMany({ where: { orgId } });
+  await db.department.deleteMany({ where: { orgId } });
+
+  // Inventory: one warehouse + location, a few products with opening stock.
+  const wh = await db.warehouse.create({ data: { orgId, name: 'Central Warehouse' } });
+  const loc = await db.stockLocation.create({ data: { orgId, warehouseId: wh.id, name: 'Aisle A' } });
+  const prod = await db.product.create({ data: { orgId, name: 'Cloud Seat', sku: 'CLOUD-1', price: 40, reorderLevel: 5 } });
+  await db.stockLevel.create({ data: { orgId, productId: prod.id, locationId: loc.id, qty: 2 } });
+  await db.stockMovement.createMany({
+    data: [
+      { orgId, productId: prod.id, locationId: loc.id, type: 'IN', qty: 10, note: 'opening stock' },
+      { orgId, productId: prod.id, locationId: loc.id, type: 'OUT', qty: 8, note: 'sold' },
+    ],
+  });
+
+  // Support: an open ticket with a public comment + an internal note.
+  const adminUser = await db.user.findFirstOrThrow({ where: { email: 'admin@nexus.local' } });
+  const ticket = await db.ticket.create({
+    data: { orgId, subject: 'Cannot reset password', status: 'IN_PROGRESS', priority: 'HIGH', createdById: adminUser.id },
+  });
+  await db.ticketComment.create({ data: { orgId, ticketId: ticket.id, authorId: adminUser.id, body: 'Reported by customer.' } });
+  await db.ticketComment.create({ data: { orgId, ticketId: ticket.id, authorId: adminUser.id, body: 'Waiting on IDP', internal: true } });
+
+  // HR: a department + a couple of employees.
+  const eng = await db.department.create({ data: { orgId, name: 'Engineering' } });
+  await db.employee.createMany({
+    data: [
+      { orgId, departmentId: eng.id, firstName: 'Ada', lastName: 'Lovelace', title: 'Eng Lead', email: 'ada@nexus.local', status: 'ACTIVE' },
+      { orgId, departmentId: eng.id, firstName: 'Grace', lastName: 'Hopper', title: 'Engineer', email: 'grace@nexus.local', status: 'ACTIVE' },
+    ],
+  });
+
+  // Notifications: seed a couple for the owner.
+  const members = await db.organizationMember.findMany({ where: { orgId, status: 'ACTIVE' } });
+  for (const m of members) {
+    await db.notification.create({
+      data: { orgId, userId: m.userId, type: 'INFO', title: 'Welcome to NEXUS OS', body: 'Your workspace is ready.' },
+    });
+    await db.notification.create({
+      data: { orgId, userId: m.userId, type: 'WARNING', title: 'Low stock: Cloud Log', body: 'Reorder is due.' },
+    });
+  }
+  await db.notification.updateMany({ where: { orgId, title: 'Welcome to NEXUS OS' }, data: { readAt: new Date() } });
 }
 
 /** Phase-3 demo rows for a tenant — real DB writes so the dashboard has live KPIs. */
