@@ -87,7 +87,7 @@ function pickTool(tools: LlmToolDef[], question: string): LlmToolDef | undefined
 function scoreTool(tool: LlmToolDef, question: string): number {
   const keys: string[] = [
     tool.name,
-    ...((tool as { keywords?: string[] }).keywords ?? []),
+    ...(tool.keywords ?? []),
     ...tool.description.toLowerCase().split(/\W+/),
   ];
   let score = 0;
