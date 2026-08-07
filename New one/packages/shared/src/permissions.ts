@@ -133,12 +133,12 @@ export const PERMISSION_SPECS: readonly PermissionSpec[] = [
   { code: 'finance.account.read', entity: 'finance.account', action: 'read', description: 'Read accounts.' },
   { code: 'finance.account.update', entity: 'finance.account', action: 'update', description: 'Manage accounts.' },
   // Phase 6 — AI layer
-  { code: 'ai.copilot.ask', entity: 'ai.copilot', action: 'ask', description: 'Ask the AI copilot.' },
+  { code: 'ai.copilot.ask', entity: 'ai.copilot', action: 'execute', description: 'Ask the AI copilot.' },
   { code: 'ai.copilot.read', entity: 'ai.copilot', action: 'read', description: 'Read copilot conversations.' },
-  { code: 'ai.agent.run', entity: 'ai.agent', action: 'run', description: 'Run AI agents.' },
+  { code: 'ai.agent.run', entity: 'ai.agent', action: 'execute', description: 'Run AI agents.' },
   { code: 'ai.tool.execute', entity: 'ai.tool', action: 'execute', description: 'Permit AI read/low tool execution within RBAC scope.' },
   { code: 'ai.approval.read', entity: 'ai.approval', action: 'read', description: 'Read pending AI approvals.' },
-  { code: 'ai.approval.decide', entity: 'ai.approval', action: 'decide', description: 'Approve / reject / edit AI approval requests.' },
+  { code: 'ai.approval.decide', entity: 'ai.approval', action: 'execute', description: 'Approve / reject / edit AI approval requests.' },
   { code: 'ai.graph.read', entity: 'ai.graph', action: 'read', description: 'Read the business graph.' },
 ] as const;
 
