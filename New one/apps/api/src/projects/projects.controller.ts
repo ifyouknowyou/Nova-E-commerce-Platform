@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PROJECT_STATUSES, TASK_STATUSES, type ProjectStatus, type TaskStatus } from '@nexus/shared';
+import { WorkflowDispatcher } from '../automation/workflow.dispatcher';
 import { ApiException } from '../common/exceptions';
 import { RequirePermissions } from '../rbac/decorators/rbac.decorators';
 import type { AuthenticatedUser } from '../tenant/session.types';
@@ -9,7 +10,10 @@ import { ProjectsService } from './projects.service';
 @ApiTags('projects')
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projects: ProjectsService) {}
+  constructor(
+    private readonly projects: ProjectsService,
+    private readonly dispatcher: WorkflowDispatcher,
+  ) {}
 
   @Get()
   @RequirePermissions('project.project.read')
@@ -64,9 +68,13 @@ export class ProjectsController {
 
   @Post('tasks')
   @RequirePermissions('project.task.create')
-  @ApiOperation({ summary: 'Create a task.' })
-  createTask(@Req() req: Req, @Body() body: Record<string, unknown>) {
-    return this.projects.createTask(req.user!.orgId, body);
+  @ApiOperation({ summary: 'Create a task (fires RECORD_CREATED automations).' })
+  async createTask(@Req() req: Req, @Body() body: Record<string, unknown>) {
+    const task = await this.projects.createTask(req.user!.orgId, body);
+    await this.dispatcher.emit(req.user!.orgId, 'RECORD_CREATED', {
+      entity: 'task', taskId: task.id, title: task.title, status: task.status, actorId: req.user!.userId,
+    });
+    return task;
   }
 
   @Post('tasks/:id/status')

@@ -236,6 +236,21 @@ enum EmployeeStatus {
   TERMINATED
 }
 
+// ─── Phase 5: automation/observability enums ────────────────────
+
+enum WorkflowTriggerType {
+  DEAL_WON
+  INVENTORY_LOW
+  STATUS_CHANGED
+  RECORD_CREATED
+  SCHEDULED
+}
+
+enum WorkflowExecutionStatus {
+  SUCCESS
+  FAILED
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Platform tables (non-tenant; no RLS on these)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1069,4 +1084,68 @@ model DocumentVersion {
   @@unique([documentId, version])
   @@index([orgId])
   @@map("document_versions")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 5: automation & observability — all tenant-scoped (orgId + RLS).
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Workflow {
+  id          String              @id @default(uuid()) @db.Uuid
+  orgId       String              @map("org_id") @db.Uuid
+  name        String
+  description String?
+  enabled     Boolean             @default(true)
+  triggerType WorkflowTriggerType @map("trigger_type")
+  triggerConfig Json               @map("trigger_config")
+  conditions  Json
+  actions     Json
+  createdById String?             @map("created_by_id") @db.Uuid
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([orgId])
+  @@map("workflows")
+}
+
+model WorkflowExecution {
+  id            String                 @id @default(uuid()) @db.Uuid
+  orgId         String                 @map("org_id") @db.Uuid
+  workflowId    String                 @map("workflow_id") @db.Uuid
+  status        WorkflowExecutionStatus
+  triggerType   WorkflowTriggerType    @map("trigger_type")
+  summary       Json
+  error         String?
+  triggeredById String?                @map("triggered_by_id") @db.Uuid
+  createdAt     DateTime               @default(now())
+
+  @@index([orgId, workflowId])
+  @@index([orgId, createdAt])
+  @@map("workflow_executions")
+}
+
+model ErrorRecord {
+  id             String   @id @default(uuid()) @db.Uuid
+  orgId          String?  @map("org_id") @db.Uuid
+  code           String
+  statusCode     Int      @map("status_code")
+  requestMethod  String?  @map("request_method")
+  requestUrl     String?  @map("request_url")
+  message        String
+  stack          String?
+  createdAt      DateTime @default(now())
+
+  @@index([orgId, createdAt])
+  @@map("error_records")
+}
+
+model MetricEvent {
+  id        String   @id @default(uuid()) @db.Uuid
+  orgId     String   @map("org_id") @db.Uuid
+  name      String
+  value     Float    @default(1)
+  createdAt DateTime @default(now())
+
+  @@index([orgId, name])
+  @@map("metric_events")
 }

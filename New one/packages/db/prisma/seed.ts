@@ -28,6 +28,7 @@ const ROLE_PERMISSIONS: Record<RoleCode, string[]> = {
   ADMIN: ['*'],
   MANAGER: ['iam.roles.read', 'iam.members.read', 'org.read', 'settings.read', 'audit.read',
     'dashboard.read', 'crm.*', 'project.*', 'inventory.*', 'support.ticket.*', 'search.read', 'notification.*',
+    'automation.workflow.*', 'automation.execution.read',
     'sales.product.read', 'sales.target.read', 'finance.invoice.read', 'finance.expense.read'],
   SALES: ['org.read', 'iam.members.read', 'dashboard.read',
     'crm.lead.*', 'crm.deal.*', 'crm.contact.read', 'crm.company.read', 'crm.activity.*',

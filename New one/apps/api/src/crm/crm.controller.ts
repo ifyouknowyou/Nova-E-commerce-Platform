@@ -1,7 +1,9 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DEAL_STAGES, type DealStage } from '@nexus/shared';
+import { WorkflowDispatcher } from '../automation/workflow.dispatcher';
 import { ApiException } from '../common/exceptions';
+import { AuditService } from '../hooks/audit.service';
 import { NotificationsService } from '../hooks/notifications.service';
 import { RequirePermissions } from '../rbac/decorators/rbac.decorators';
 import type { AuthenticatedUser } from '../tenant/session.types';
@@ -13,6 +15,8 @@ export class CrmController {
   constructor(
     private readonly crm: CrmService,
     private readonly notifications: NotificationsService,
+    private readonly dispatcher: WorkflowDispatcher,
+    private readonly audit: AuditService,
   ) {}
 
   // ── Companies ────────────────────────────────────────────────
@@ -88,10 +92,16 @@ export class CrmController {
   async moveDeal(@Req() req: ReqWithUser, @Param('id') id: string, @Body() body: { stage: string }) {
     if (!(DEAL_STAGES as readonly string[]).includes(body.stage)) throw new ApiException('VALIDATION_FAILED');
     const updated = await this.crm.moveDeal(req.user!.orgId, id, req.user!.userId, body.stage as DealStage);
+    await this.audit.record(req.user!.orgId, 'UPDATE', 'deal', updated.id, {
+      actorId: req.user!.userId, meta: { stage: body.stage },
+    });
     if (body.stage === 'WON') {
       await this.notifications.notify(req.user!.orgId, {
         userId: updated.ownerId ?? req.user!.userId,
         type: 'SUCCESS', title: 'Deal won 🎉', body: `"${updated.name}" closed.`,
+      });
+      await this.dispatcher.emit(req.user!.orgId, 'DEAL_WON', {
+        dealId: updated.id, dealName: updated.name, dealValue: Number(updated.value), actorId: req.user!.userId,
       });
     }
     return updated;
