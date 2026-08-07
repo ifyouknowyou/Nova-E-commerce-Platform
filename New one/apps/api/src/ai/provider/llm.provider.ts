@@ -35,8 +35,6 @@ export interface LlmResult {
   toolCall?: { name: string; input: Record<string, unknown> };
 }
 
-export const LLM_PROVIDER = Symbol('LLM_PROVIDER');
-
 export interface LlmProvider {
   complete(opts: {
     system?: string;
