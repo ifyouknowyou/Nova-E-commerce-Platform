@@ -24,7 +24,7 @@ export default function CartPage() {
   const savedItems = cart?.items.filter((item) => item.savedForLater) ?? [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="page-container py-8">
       <h1 className="text-2xl font-bold tracking-tight">Shopping cart</h1>
 
       {activeItems.length === 0 && savedItems.length === 0 ? (
@@ -259,7 +259,7 @@ function EmptyCart() {
 
 function CartSkeleton() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="page-container py-8">
       <Skeleton className="h-8 w-48" />
       <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_360px]">
         <div className="space-y-4">

@@ -86,7 +86,7 @@ export function ProductListing({ initial }: { initial: ListingInitial }) {
   const activeCount = products.data?.items.length ?? 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="page-container py-8">
       <div className="relative overflow-hidden rounded-2xl border bg-role-soft p-6 depth-1">
         <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
         <div className="relative flex flex-col gap-1">

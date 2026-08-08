@@ -110,7 +110,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-transparent glass-strong">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="page-container flex h-16 items-center gap-4">
         <button
           type="button"
           className="inline-flex items-center lg:hidden"

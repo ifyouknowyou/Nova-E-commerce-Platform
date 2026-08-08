@@ -19,7 +19,7 @@ export default function DealsPage() {
 
 function DealsSkeleton() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="page-container py-8">
       <Skeleton className="h-56 rounded-2xl" />
       <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (

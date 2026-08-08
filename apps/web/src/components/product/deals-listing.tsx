@@ -40,7 +40,7 @@ export function DealsListing() {
   const totalPages = deals.data?.meta.totalPages ?? 1;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="page-container py-8">
       {/* Hero banner */}
       <div className="relative overflow-hidden rounded-2xl bg-role-glow p-8 text-card-foreground depth-2 sm:p-12">
         <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />

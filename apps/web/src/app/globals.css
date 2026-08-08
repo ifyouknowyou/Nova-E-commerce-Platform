@@ -564,60 +564,46 @@
 }
 
 /* ============================================================
-   Ultra-wide containers — widen the primary content shells so
-   large displays use available width instead of leaving gutters.
-   Capped for readability (never full-bleed); below 1440px the
-   standard Tailwind widths apply, so tablet/mobile are unchanged.
+   Shared fluid page container — symmetric horizontal gutters on
+   every side for the storefront, admin and seller shells. Replaces
+   the old fixed max-w-7xl (1280px) so desktop content fills the
+   viewport with an equal, comfortable margin on both sides instead
+   of leaving wide empty bands on the two edges. Content stays full
+   width up to 2560px, then the cap keeps line lengths sane.
+   Gutter ≈16px @mobile, 24px @sm, ~29px @1440, ~38px @1920, ~51px
+   @2560 — always identical on the left and right.
    ============================================================ */
-@media (min-width: 90rem) {
-  /* 1440px */
-  .max-w-7xl {
-    max-width: 96rem;
-  }
-  .max-w-6xl {
-    max-width: 90rem;
-  }
-}
-@media (min-width: 120rem) {
-  /* 1920px */
-  .max-w-7xl {
-    max-width: 112rem;
-  }
-  .max-w-6xl {
-    max-width: 108rem;
-  }
-}
-@media (min-width: 160rem) {
-  /* 2560px */
-  .max-w-7xl {
-    max-width: 136rem;
-  }
-  .max-w-6xl {
-    max-width: 132rem;
-  }
-}
-
-/* ============================================================
-   Responsive page gutters — shared horizontal padding for the
-   full-width shells and the wide .max-w-7xl containers. Replaces
-   the old fixed lg:px-8 (32px) with a clamp that scales to the
-   viewport so content breathes on large displays without touching
-   the edges: ~24px @1024, ~36px @1440, 48px @1920, 64px @2560.
-   Below lg the standard px-4 / sm:px-6 apply, so mobile and
-   tablet layouts are unchanged.
-   ============================================================ */
-.page-gutter {
+.page-container {
+  width: 100%;
+  max-width: 112rem;
+  margin-inline: auto;
   padding-inline: 1rem;
 }
 @media (min-width: 40rem) {
-  .page-gutter {
+  .page-container {
     padding-inline: 1.5rem;
   }
 }
 @media (min-width: 64rem) {
-  .page-gutter,
-  .max-w-7xl {
-    padding-inline: clamp(1rem, 2.5vw, 4rem);
+  .page-container {
+    padding-inline: clamp(1.25rem, 2vw, 3rem);
+  }
+}
+/* Widen the cap in step with the viewport so 1440px / 1920px /
+   2560px displays each use the full width instead of a fixed box. */
+@media (min-width: 90rem) {
+  .page-container {
+    max-width: 120rem;
+  }
+}
+@media (min-width: 120rem) {
+  .page-container {
+    max-width: 152rem;
+  }
+}
+@media (min-width: 160rem) {
+  .page-container {
+    max-width: 160rem;
   }
 }
 

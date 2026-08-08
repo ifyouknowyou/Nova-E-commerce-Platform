@@ -49,7 +49,7 @@ export default async function ProductPage({ params }: Props) {
   const related = await getRelated(product);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="page-container py-8">
       <Breadcrumbs
         items={[
           { label: 'Shop', href: '/products' },

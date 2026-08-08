@@ -189,7 +189,7 @@ export function Homepage() {
       {/* ========================= HERO — spatial scene ========================= */}
       <div ref={heroRef}>
       <SceneContainer grid aurora noise parallax={3} className="border-b bg-role-glow">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-20">
+        <div className="page-container grid items-center gap-12 pb-20 pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pb-24 lg:pt-20">
           <div className="relative z-10">
             <p className="inline-flex items-center gap-2 rounded-full border bg-background/60 px-3 py-1 text-xs font-medium text-foreground/80 backdrop-blur-sm">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
@@ -312,7 +312,7 @@ export function Homepage() {
       {/* ========================= CATEGORIES ========================= */}
       {(categories.data?.length ?? 0) > 0 && (
         <Reveal3D delay={0.05}>
-        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <section className="page-container py-14">
           <SectionHeading
             kicker="Browse"
             title="Shop by category"
@@ -348,7 +348,7 @@ export function Homepage() {
 
       {/* ========================= TRENDING ========================= */}
       <Reveal3D delay={0.1}>
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <section className="page-container py-8">
         <SectionHeading
           kicker="Popular right now"
           title="Trending products"
@@ -370,7 +370,7 @@ export function Homepage() {
       {(deals.data?.items.length ?? 0) > 0 && (
         <Reveal3D delay={0.15}>
         <ParallaxSection distance={36}>
-          <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <section className="page-container py-8">
           <div className="relative overflow-hidden rounded-3xl bg-role-glow p-6 sm:p-8">
             <div aria-hidden className="scene-grid" />
             <div className="relative">
@@ -401,7 +401,7 @@ export function Homepage() {
 
       {/* ========================= PROMO STRIP ========================= */}
       <Reveal3D delay={0.1}>
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <section className="page-container py-8">
         <div className="grid gap-4 sm:grid-cols-3">
           {[
             { title: 'Free shipping over $50', text: 'On eligible orders, automatically applied at checkout.', icon: Truck },
@@ -421,7 +421,7 @@ export function Homepage() {
       {/* ========================= BRANDS ========================= */}
       {(brands.data?.length ?? 0) > 0 && (
         <Reveal3D delay={0.1}>
-        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <section className="page-container py-8">
           <SectionHeading kicker="Trusted names" title="Popular brands" />
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {brands.data!
@@ -449,7 +449,7 @@ export function Homepage() {
 
       {/* ========================= RECOMMENDED ========================= */}
       <Reveal3D delay={0.15}>
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <section className="page-container py-8">
         <SectionHeading
           kicker="For you"
           title="Recommended for you"
@@ -465,7 +465,7 @@ export function Homepage() {
 
       {/* ========================= NEWSLETTER ========================= */}
       <Reveal3D delay={0.1}>
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <section className="page-container py-8">
         <NewsletterCard />
       </section>
       </Reveal3D>

@@ -82,7 +82,7 @@ const STATS = [
 
 export default function SellPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="page-container py-12">
       {/* Hero */}
       <section className="relative mx-auto max-w-3xl overflow-hidden rounded-2xl bg-role-glow px-6 py-12 text-center sm:px-12 sm:py-16">
         <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
