@@ -9,6 +9,12 @@ export interface NewRefreshSession {
   expiresAt: Date;
 }
 
+/** Rotated session: new token + the discovered user/org so callers skip an RLS-hidden re-lookup. */
+export interface RotatedSession extends NewRefreshSession {
+  userId: string;
+  orgId: string;
+}
+
 /**
  * Refresh-session lifecycle. Refresh tokens are stored server-side (a `Session`
  * row whose id IS the token — high-entropy uuid, revocable, rotatable).
@@ -37,15 +43,17 @@ export class SessionService {
     oldToken: string,
     ip?: string,
     userAgent?: string,
-  ): Promise<NewRefreshSession | null> {
+  ): Promise<RotatedSession | null> {
     let session:
       | { id: string; userId: string; orgId: string; status: string; expiresAt: Date }
       | null = null;
 
     // Lookup + revoke inside the org context is impossible without knowing orgId,
     // so resolve the session by id (session id is global), then scope revoke+create
-    // by the org we discover. RLS still protects the row from other tenants.
-    const found = await this.prisma.client.session.findUnique({ where: { id: oldToken } });
+    // by the org we discover. `sessions` is RLS-scoped to app.org, so the id lookup
+    // runs under the session_token_lookup policy (app.session_token), which exposes
+    // a row only to the caller holding that exact refresh token.
+    const found = await this.lookupByToken(oldToken);
     if (!found) return null;
     session = found;
     if (session.status !== 'ACTIVE') return null;
@@ -55,20 +63,34 @@ export class SessionService {
       tx.session.update({ where: { id: oldToken }, data: { status: 'REVOKED', revokedAt: new Date() } }),
     );
 
-    return this.create(session.userId, session.orgId, ip, userAgent);
+    const next = await this.create(session.userId, session.orgId, ip, userAgent);
+    return { ...next, userId: session.userId, orgId: session.orgId };
   }
 
-  /** Revoke a refresh session by token. Returns whether it existed. */
-  async revoke(token: string): Promise<boolean> {
-    const found = await this.prisma.client.session.findUnique({ where: { id: token } });
-    if (!found) return false;
+  /**
+   * Resolve a Session row by its raw id (the refresh token) on a public route
+   * where no org claim exists yet. Runs with app.session_token set so the
+   * session_token_lookup policy reveals exactly this row — RLS stays fail-closed
+   * for any other caller.
+   */
+  private async lookupByToken(token: string) {
+    return this.prisma.client.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.session_token', ${token}, true)`;
+      return tx.session.findUnique({ where: { id: token } });
+    });
+  }
+
+  /** Revoke a refresh session by token. Returns the revoked row (null if none). */
+  async revoke(token: string): Promise<{ id: string; userId: string; orgId: string } | null> {
+    const found = await this.lookupByToken(token);
+    if (!found) return null;
     await this.prisma.withTenant(found.orgId, (tx) =>
       tx.session.update({
         where: { id: token },
         data: { status: 'REVOKED', revokedAt: new Date() },
       }),
     );
-    return true;
+    return { id: found.id, userId: found.userId, orgId: found.orgId };
   }
 
   /** List a user's sessions within an org (active first). */

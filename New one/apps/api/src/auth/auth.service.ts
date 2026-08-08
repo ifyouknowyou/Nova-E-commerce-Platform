@@ -139,8 +139,7 @@ export class AuthService {
 
   async signOut(refreshToken: string | undefined, meta: RequestMeta, userId?: string): Promise<void> {
     if (refreshToken) {
-      const session = await this.prisma.client.session.findUnique({ where: { id: refreshToken } });
-      await this.sessionService.revoke(refreshToken);
+      const session = await this.sessionService.revoke(refreshToken);
       if (session?.orgId) {
         await this.events.record(session.orgId, 'LOGOUT', { userId, ip: meta.ip, userAgent: meta.userAgent });
       }
@@ -152,20 +151,19 @@ export class AuthService {
     const next = await this.sessionService.rotate(refreshToken, meta.ip, meta.userAgent);
     if (!next) return null;
 
-    const session = await this.prisma.client.session.findUnique({ where: { id: next.token } });
-    if (!session) return null;
-
-    const roles = await withTenant(session.orgId, async (tx) => {
+    // rotate() returns the user/org it resolved. A re-lookup here would be
+    // RLS-invisible (sessions are org-scoped, and this is a public route).
+    const roles = await withTenant(next.orgId, async (tx) => {
       const mrs = await tx.membershipRole.findMany({
-        where: { member: { userId: session.userId } },
+        where: { member: { userId: next.userId } },
         include: { role: { select: { code: true } } },
       });
       return mrs.map((mr) => mr.role.code);
     });
 
-    const claims: SessionClaim = { userId: session.userId, orgId: session.orgId, roles };
+    const claims: SessionClaim = { userId: next.userId, orgId: next.orgId, roles };
     const accessToken = await this.jwtService.signAsync(claims);
-    return { user: claims, accessToken, refreshToken: next.token, csrf: this.csrf.mint(session.userId) };
+    return { user: claims, accessToken, refreshToken: next.token, csrf: this.csrf.mint(next.userId) };
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
