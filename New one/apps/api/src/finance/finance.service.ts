@@ -87,15 +87,18 @@ export class FinanceService {
 
   /** Record a payment; recompute paidAmount + status server-side. */
   async recordPayment(orgId: string, invoiceId: string, input: { amount: number; method?: PaymentMethod; reference?: string; date?: string }) {
-    const invoice = await this.prisma.withTenant(orgId, (tx) => tx.invoice.findFirst({ where: { id: invoiceId, orgId } }));
-    if (!invoice) throw new ApiException('NOT_FOUND');
-    if (input.amount <= 0) throw new ApiException('VALIDATION_FAILED', { message: 'payment amount must be positive' });
+    if (!Number.isFinite(input.amount) || input.amount <= 0) throw new ApiException('VALIDATION_FAILED', { message: 'payment amount must be positive' });
 
+    // Single atomic transaction: read + increment + status in one tx, so two
+    // concurrent payments can't both read the same paidAmount and lose one.
     return this.prisma.withTenant(orgId, async (tx) => {
+      const invoice = await tx.invoice.findFirst({ where: { id: invoiceId, orgId } });
+      if (!invoice) throw new ApiException('NOT_FOUND');
+
       await tx.payment.create({
         data: { orgId, invoiceId, amount: input.amount, method: input.method ?? 'BANK_TRANSFER', reference: input.reference, date: input.date ? new Date(input.date) : undefined },
       });
-      const paidAmount = Number(invoice.paidAmount) + input.amount;
+      const paidAmount = Math.round((Number(invoice.paidAmount) + input.amount) * 100) / 100;
       const status = deriveInvoiceStatus(invoice.status as InvoiceStatus, Number(invoice.total), paidAmount);
       return tx.invoice.update({ where: { id: invoiceId }, data: { paidAmount, status } });
     });

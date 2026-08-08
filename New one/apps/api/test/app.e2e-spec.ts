@@ -82,6 +82,25 @@ describe('NEXUS OS e2e', () => {
       expect(res.body.roles).toContain('OWNER');
     });
 
+    it('refresh rotates the session and /auth/me works with the fresh cookie', async () => {
+      const { agent } = await signIn(ownerEmail, ownerPassword);
+      // Refresh must actually return a user (regression: RLS hid the session row
+      // on this public route, so refresh silently no-op'd).
+      const res = await agent.post('/api/auth/refresh').expect(201);
+      expect(res.body.user).toBeTruthy();
+      expect(res.body.user.userId).toBeTruthy();
+      const me = await agent.get('/api/auth/me').expect(200);
+      expect(me.body.userId).toBe(res.body.user.userId);
+    });
+
+    it('sign-out revokes the refresh session and records a LOGOUT event', async () => {
+      const { agent, csrf } = await signIn(ownerEmail, ownerPassword);
+      const before = await migrator.securityEvent.count({ where: { type: 'LOGOUT' } });
+      await agent.post('/api/auth/sign-out').set(CSRF_HEADER, csrf).expect(201);
+      const after = await migrator.securityEvent.count({ where: { type: 'LOGOUT' } });
+      expect(after).toBeGreaterThan(before);
+    });
+
     it('state-changing request WITHOUT CSRF token is rejected', async () => {
       const { agent } = await signIn(ownerEmail, ownerPassword);
       const res = await agent.patch('/api/settings').send({ theme: 'dark' });
