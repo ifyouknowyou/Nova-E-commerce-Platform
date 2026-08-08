@@ -2,7 +2,7 @@
   "name": "nexus-os",
   "version": "0.1.0",
   "private": true,
-  "description": "NEXUS OS — AI-Native Business Operating System. Full-stack, multi-tenant, production-grade ERP.",
+  "description": "NEXUS OS \u2014 AI-Native Business Operating System. Full-stack, multi-tenant, production-grade ERP.",
   "license": "UNLICENSED",
   "workspaces": [
     "apps/*",
@@ -19,7 +19,9 @@
     "db:migrate": "npm run db:migrate -w @nexus/db",
     "db:seed": "npm run db:seed -w @nexus/db",
     "db:generate": "npm run db:generate -w @nexus/db",
-    "gen:types": "npm run gen:types -w @nexus/web"
+    "gen:types": "npm run gen:types -w @nexus/web",
+    "verify": "./scripts/verify-phase.sh",
+    "test:web": "npm run test -w @nexus/web"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

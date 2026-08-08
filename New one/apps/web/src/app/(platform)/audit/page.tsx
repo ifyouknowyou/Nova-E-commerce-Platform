@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api/client';
 import { DataTable, fmtDate } from '@/components/data/table';
 import styles from '@/components/data/data.module.css';
@@ -12,10 +12,10 @@ export default function AuditPage() {
   const [rows, setRows] = useState<AuditRow[]>([]);
   const [entity, setEntity] = useState('');
 
-  const load = () => {
+  const load = useCallback(() => {
     apiFetch<{ items: AuditRow[] }>(`/audit${entity ? `?entity=${entity}` : ''}`).then((d) => setRows(d.items)).catch(() => undefined);
-  };
-  useEffect(() => { void load(); }, [entity]);
+  }, [entity]);
+  useEffect(() => { void load(); }, [load]);
 
   return (
     <div className={shell.page}>
