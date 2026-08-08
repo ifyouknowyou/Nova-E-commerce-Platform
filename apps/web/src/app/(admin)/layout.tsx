@@ -20,7 +20,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <div className="relative flex min-h-screen flex-col bg-role-soft/30">
         <div aria-hidden className="workspace-backdrop admin-atmosphere" />
         <SiteHeader />
-        <div className="mx-auto flex w-full max-w-none flex-1 px-4 sm:px-6 lg:px-8">
+        <div className="page-gutter mx-auto flex w-full max-w-none flex-1">
           <aside className="hidden shrink-0 lg:block">
             <AdminNav />
           </aside>

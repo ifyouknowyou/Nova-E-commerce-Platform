@@ -598,6 +598,30 @@
 }
 
 /* ============================================================
+   Responsive page gutters — shared horizontal padding for the
+   full-width shells and the wide .max-w-7xl containers. Replaces
+   the old fixed lg:px-8 (32px) with a clamp that scales to the
+   viewport so content breathes on large displays without touching
+   the edges: ~24px @1024, ~36px @1440, 48px @1920, 64px @2560.
+   Below lg the standard px-4 / sm:px-6 apply, so mobile and
+   tablet layouts are unchanged.
+   ============================================================ */
+.page-gutter {
+  padding-inline: 1rem;
+}
+@media (min-width: 40rem) {
+  .page-gutter {
+    padding-inline: 1.5rem;
+  }
+}
+@media (min-width: 64rem) {
+  .page-gutter,
+  .max-w-7xl {
+    padding-inline: clamp(1rem, 2.5vw, 4rem);
+  }
+}
+
+/* ============================================================
    Reduced motion — respect the OS preference everywhere.
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {

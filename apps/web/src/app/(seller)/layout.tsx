@@ -22,7 +22,7 @@ export default function SellerLayout({ children }: { children: ReactNode }) {
       <div className="relative flex min-h-screen flex-col bg-role-soft/40">
         <div aria-hidden className="workspace-backdrop seller-atmosphere" />
         <SiteHeader />
-        <div className="mx-auto flex w-full max-w-none flex-1 gap-0 px-4 sm:px-6 lg:px-8">
+        <div className="page-gutter mx-auto flex w-full max-w-none flex-1">
           <Sidebar groups={SELLER_NAV_GROUPS} accent="default" />
           <main id="main" className="min-w-0 flex-1 py-8 lg:pl-8">
             <div className="mx-auto max-w-6xl">{children}</div>
