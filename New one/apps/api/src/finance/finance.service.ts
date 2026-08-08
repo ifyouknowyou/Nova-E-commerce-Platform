@@ -16,8 +16,10 @@ export function computeInvoiceTotals(lines: InvoiceLine[], taxRate = 0): { subto
   return { subtotal, tax, total: Math.round((subtotal + tax) * 100) / 100 };
 }
 
-/** Derive invoice status from balance. */
+/** Derive invoice status from balance. CANCELLED and DRAFT are terminal/preserved. */
 export function deriveInvoiceStatus(current: InvoiceStatus, total: number, paid: number): InvoiceStatus {
+  // Never resurrect a cancelled invoice.
+  if (current === 'CANCELLED') return 'CANCELLED';
   if (paid <= 0) return current === 'DRAFT' ? 'DRAFT' : 'SENT';
   if (paid >= total) return 'PAID';
   return 'PARTIALLY_PAID';
