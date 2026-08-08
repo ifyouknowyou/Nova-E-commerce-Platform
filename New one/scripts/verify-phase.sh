@@ -65,11 +65,17 @@ npm run test >/dev/null || fail "unit tests"
 
 # ── 5. Build both apps ───────────────────────────────────────────────────────
 log "Build"
-npm run build >/dev/null || fail "build"
+# The repo .env carries NODE_ENV=development (for `next dev`). `next build` must
+# run under production or it mis-evaluates the next/document guard. Scoped here
+# so tests/e2e keep their natural environment.
+rm -rf apps/web/.next   # clean: multi-stage dev/prod builds can leave stale chunks
+NODE_ENV=production npm run build >/dev/null || fail "build"
 
 # ── 6. E2E tests ─────────────────────────────────────────────────────────────
 log "E2E tests"
-DATABASE_URL="$DB_URL" DATABASE_MIGRATE_URL="$MIGRATE_URL" npm run test:e2e >/dev/null || fail "e2e"
+# Run the workspace's jest config directly (turbo doesn't wire per-task db:migrate).
+DATABASE_URL="$DB_URL" DATABASE_MIGRATE_URL="$MIGRATE_URL" \
+  npm run test:e2e -w @nexus/api -- --runInBand >/dev/null || fail "e2e"
 
 # ── 7. Boot + health smoke ───────────────────────────────────────────────────
 if [ "${SKIP_BOOT:-0}" != "1" ]; then
