@@ -34,7 +34,7 @@ export default async function ProductsPage({ searchParams }: Props) {
 
 function ListingSkeleton() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="page-container py-8">
       <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
         <Skeleton className="hidden h-96 lg:block" />
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">

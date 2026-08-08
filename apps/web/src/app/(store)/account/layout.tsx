@@ -113,7 +113,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   const nav = buildAccountNav(profile?.roles ?? []);
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div className="page-container py-6">
       {/* Mobile navigation */}
       <div className="-mx-4 mb-6 overflow-x-auto border-b px-4 pb-3 lg:hidden" aria-label="Account navigation (mobile)">
         <div className="flex gap-1.5">
