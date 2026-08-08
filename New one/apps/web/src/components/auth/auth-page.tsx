@@ -46,7 +46,7 @@ export function SubmitButton({ children, busy }: { children: ReactNode; busy?: b
 
 export function ErrorBanner({ message }: { message?: string | null }) {
   if (!message) return null;
-  return <p className={styles.error}>{message}</p>;
+  return <p className={styles.error} role="alert">{message}</p>;
 }
 
 export function useSubmit() {

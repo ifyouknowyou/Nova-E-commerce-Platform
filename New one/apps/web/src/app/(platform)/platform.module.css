@@ -29,7 +29,20 @@
   cursor: pointer;
 }
 
+/* Mobile top bar (hamburger + brand) visible only under 900px. */
+.mobileTopBar {
+  display: none;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--nexus-border);
+  background: var(--nexus-surface);
+}
+
 @media (max-width: 900px) {
+  .mobileTopBar {
+    display: flex;
+  }
   .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
@@ -44,7 +57,7 @@
   .menuToggle {
     display: block;
   }
-  .shellSidebarHidden .content {
+  .content {
     margin-left: 0;
   }
 }

@@ -10,18 +10,20 @@ export interface Column {
   render: (row: Record<string, any>) => ReactNode;
 }
 
-export function DataTable({ columns, rows, empty }: {
+export function DataTable({ columns, rows, empty, caption }: {
   columns: Column[];
   rows: Record<string, unknown>[];
   empty?: string;
+  caption?: string;
 }) {
   if (!rows.length) {
     return <p className={styles.empty}>{empty ?? 'No rows yet.'}</p>;
   }
   return (
     <table className={styles.table}>
+      {caption && <caption className="nexus-sr-only">{caption}</caption>}
       <thead>
-        <tr>{columns.map((c) => <th key={c.key}>{c.label}</th>)}</tr>
+        <tr>{columns.map((c) => <th key={c.key} scope="col">{c.label}</th>)}</tr>
       </thead>
       <tbody>
         {rows.map((row, i) => (

@@ -5,6 +5,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, ReactNode, useState } from 'react';
 import { apiFetch } from '@/lib/api/client';
 import { useSession } from '@/lib/api/session';
+import { tierOf, tierLabel } from '@/lib/role-tier';
+import { SrOnly } from '@/components/a11y';
 import styles from './platform.module.css';
 
 interface OrgEntry {
@@ -42,10 +44,16 @@ export default function PlatformLayout({ children }: { children: ReactNode }) {
   const { loading, user, signOut } = useSession();
   const [orgs, setOrgs] = useState<OrgEntry[]>([]);
   const [currentOrgName, setCurrentOrgName] = useState<string>('');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) router.replace('/sign-in');
   }, [loading, user, router]);
+
+  // Collapse the mobile drawer once navigation happens.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!user) return;
@@ -75,11 +83,34 @@ export default function PlatformLayout({ children }: { children: ReactNode }) {
   }
 
   const visibleNav = NAV.filter((item) => !item.roles || item.roles.some((r) => user!.roles.includes(r)));
+  const tier = tierOf(user.roles);
 
   return (
     <div className={styles.shell}>
-      <aside className={styles.sidebar}>
-        <div className={styles.brand}>NEXUS OS</div>
+      <a href="#main-content" className="nexus-skip">Skip to content</a>
+
+      <header className={styles.mobileTopBar}>
+        <button
+          className={styles.menuToggle}
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-expanded={menuOpen}
+          aria-controls="app-sidebar"
+        >
+          ☰<SrOnly>{menuOpen ? 'Close navigation' : 'Open navigation'}</SrOnly>
+        </button>
+        <span className={styles.brand}>NEXUS OS</span>
+      </header>
+
+      {menuOpen && <div className={styles.sidebarOverlay} onClick={() => setMenuOpen(false)} />}
+
+      <aside
+        id="app-sidebar"
+        className={`${styles.sidebar} ${menuOpen ? styles.sidebarOpen : ''}`}
+        aria-label="Main navigation"
+      >
+        <div className={styles.brand}>
+          NEXUS OS <span className={styles.tierBadge}>{tierLabel(tier)}</span>
+        </div>
 
         <div className={styles.orgBox}>
           <span className={styles.orgLabel}>Organization</span>
@@ -110,7 +141,7 @@ export default function PlatformLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <main className={styles.content}>{children}</main>
+      <main id="main-content" className={styles.content} tabIndex={-1}>{children}</main>
     </div>
   );
 }
