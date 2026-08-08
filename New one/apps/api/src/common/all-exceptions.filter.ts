@@ -1,4 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 import { ApiErrorEnvelope, HTTP_STATUS, resolveErrorCode } from '@nexus/shared';
 import { ObservabilityService } from '../observability/observability.service';
@@ -51,7 +52,59 @@ export class AllExceptionsFilter implements ExceptionFilter {
       return;
     }
 
-    // Unhandled: internal error. Never leak stack/details to the client.
+    // Prisma known-request errors: map database constraint/not-found failures to
+    // the canonical 4xx codes instead of leaking a generic 500. (Auth/sign-up and
+    // fresh-org flows rely on CONFLICT for P2002; AI/approval not-found uses P2025.)
+    if (exception instanceof Prisma.PrismaClientKnownRequestError) {
+      const prismaCode = exception.code;
+      let status: number;
+      let code: string;
+      let message: string;
+      if (prismaCode === 'P2002') {
+        status = HttpStatus.CONFLICT;
+        code = 'CONFLICT';
+        message = 'Resource already exists or conflicts with an existing record.';
+      } else if (prismaCode === 'P2003') {
+        status = HttpStatus.CONFLICT;
+        code = 'CONFLICT';
+        message = 'Record is still referenced by other data.';
+      } else if (prismaCode === 'P2025') {
+        status = HttpStatus.NOT_FOUND;
+        code = 'NOT_FOUND';
+        message = resolveErrorCode('NOT_FOUND').message;
+      } else if (prismaCode === 'P2014' || prismaCode === 'P2000' || prismaCode === 'P2004') {
+        status = HttpStatus.BAD_REQUEST;
+        code = 'VALIDATION_FAILED';
+        message = 'Data constraint failed.';
+      } else {
+        // Any other Prisma error is genuinely unexpected — surface as 500.
+        this.logger.error(
+          `Prisma error ${prismaCode} on ${req.method ?? '?'} ${req.url ?? '?'}: ${exception.message}`,
+          exception.stack,
+        );
+        void this.obs?.recordError({
+          orgId: req.user?.orgId,
+          code: resolveErrorCode('INTERNAL_ERROR').code,
+          statusCode: HTTP_STATUS.InternalServerError,
+          requestMethod: req.method,
+          requestUrl: req.url,
+          message: exception.message,
+          stack: exception.stack,
+        });
+        res.status(HTTP_STATUS.InternalServerError).json({
+          statusCode: HTTP_STATUS.InternalServerError,
+          code: resolveErrorCode('INTERNAL_ERROR').code,
+          message: resolveErrorCode('INTERNAL_ERROR').message,
+        });
+        return;
+      }
+
+      this.logger.warn(`Prisma constraint (${prismaCode}) on ${req.method ?? '?'} ${req.url ?? '?'}`);
+      res.status(status).json({ statusCode: status, code, message });
+      return;
+    }
+
+    // Unhandled: internal error. Stream to observability. Never leak stack/details.
     this.logger.error(
       `Unhandled exception on ${req.method ?? '?'} ${req.url ?? '?'}: ${exception instanceof Error ? exception.message : String(exception)}`,
       exception instanceof Error ? exception.stack : undefined,
