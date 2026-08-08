@@ -1,11 +1,12 @@
 import Link from 'next/link';
+import styles from '../app/403/notice.module.css';
 
 export default function NotFound() {
   return (
-    <main style={{ padding: '4rem 2rem', maxWidth: 560, margin: '0 auto' }}>
-      <h1>404 — Not found</h1>
-      <p>The page or resource you requested doesn’t exist.</p>
-      <p><Link href="/dashboard">Back to dashboard</Link></p>
+    <main className={styles.notice}>
+      <h1 className={styles.title}>404 — Not found</h1>
+      <p className={styles.body}>The page or resource you requested doesn’t exist.</p>
+      <p className={styles.cta}><Link href="/dashboard">Back to dashboard</Link></p>
     </main>
   );
 }

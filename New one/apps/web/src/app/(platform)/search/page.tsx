@@ -30,7 +30,7 @@ export default function SearchPage() {
       <h1 className={shell.h1}>Global search</h1>
       <p className={shell.lede}>RBAC-aware, tenant-scoped results across your modules.</p>
       <input className={styles.input} style={{ width: '100%', fontSize: '1.1rem' }}
-        placeholder="Search companies, deals, projects, tickets, employees…" value={q} onChange={(e) => setQ(e.target.value)} autoFocus />
+        aria-label="Search" onChange={(e) => setQ(e.target.value)} value={q} autoFocus />
 
       <div style={{ marginTop: '1rem' }}>
         {busy && <p className={styles.empty}>Searching…</p>}
@@ -39,21 +39,23 @@ export default function SearchPage() {
             {Object.entries(data.results).map(([cat, rows]) => (
               <div key={cat} className={shell.card}>
                 <h2 className={shell.cardTitle}>{label(cat)} ({rows.length})</h2>
-                {rows.map((r) => (
-                  <div key={String(r.id)} className={shell.row}>
-                    <span className="tooltip">{JSON.stringify(display(r))}</span>
-                  </div>
-                ))}
+                {rows.length === 0 ? (
+                  <p className={styles.empty}>No {label(cat).toLowerCase()}.</p>
+                ) : (
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {rows.map((r) => (
+                      <li key={String(r.id)} className={shell.row}>
+                        <span>{String(r.name ?? r.title ?? r.subject ?? r.number ?? r.id)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             ))}
-            {!Object.keys(data.results).length && <p className={styles.empty}>No results.</p>}
+            {!Object.keys(data.results).length && <p className={styles.empty}>No results for “{data.query}”.</p>}
           </>
         )}
       </div>
     </div>
   );
-}
-
-function display(r: Row): string {
-  return Object.values(r).filter((v) => v != null && typeof v !== 'object').join(' · ');
 }
