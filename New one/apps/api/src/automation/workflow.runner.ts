@@ -3,6 +3,7 @@ import { NotificationsService } from '../hooks/notifications.service';
 import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { evaluateConditions, Condition } from './conditions';
+import { assertSafeWebhookUrl } from './ssrf';
 
 export interface ActionSpec {
   type: 'TASK' | 'NOTIFY' | 'ASSIGN' | 'EMAIL' | 'WEBHOOK' | 'UPDATE_RECORD';
@@ -86,7 +87,8 @@ export class WorkflowRunner {
         return { action: 'EMAIL' };
       }
       case 'WEBHOOK': {
-        const url = String(action.url ?? '');
+        // SSRF guard: public http(s) only, no loopback/private/unspecified targets.
+        const url = assertSafeWebhookUrl(String(action.url ?? ''));
         const resp = await fetch(url, {
           method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(context), signal: AbortSignal.timeout(5000),
         });
