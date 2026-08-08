@@ -1,0 +1,65 @@
+/* NEXUS OS — spatial SVG chart primitives (token-driven). */
+
+.chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.barV {
+  fill: var(--nexus-accent);
+  border-radius: 2px;
+}
+
+.barV:hover {
+  fill: var(--nexus-info);
+}
+
+.barTrack {
+  fill: var(--nexus-border);
+}
+
+.gridLine {
+  stroke: var(--nexus-border);
+  stroke-width: 1;
+}
+
+.axisLabel {
+  fill: var(--nexus-muted);
+  font-size: 9px;
+}
+
+.line {
+  fill: none;
+  stroke: var(--nexus-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lineArea {
+  fill: var(--nexus-accent);
+  opacity: 0.08;
+}
+
+.donutHole {
+  fill: var(--nexus-surface);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+  font-size: 0.75rem;
+  color: var(--nexus-muted);
+}
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
