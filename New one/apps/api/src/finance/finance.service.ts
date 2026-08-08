@@ -96,6 +96,10 @@ export class FinanceService {
     return this.prisma.withTenant(orgId, async (tx) => {
       const invoice = await tx.invoice.findFirst({ where: { id: invoiceId, orgId } });
       if (!invoice) throw new ApiException('NOT_FOUND');
+      // Do not accept payments against a cancelled invoice.
+      if (invoice.status === 'CANCELLED') {
+        throw new ApiException('CONFLICT', { message: 'Cannot record a payment on a cancelled invoice' });
+      }
 
       await tx.payment.create({
         data: { orgId, invoiceId, amount: input.amount, method: input.method ?? 'BANK_TRANSFER', reference: input.reference, date: input.date ? new Date(input.date) : undefined },

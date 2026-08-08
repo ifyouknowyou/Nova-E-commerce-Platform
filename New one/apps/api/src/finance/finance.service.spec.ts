@@ -16,4 +16,15 @@ describe('FinanceService — server-computed money', () => {
     expect(deriveInvoiceStatus('SENT', 1000, 500)).toBe('PARTIALLY_PAID');
     expect(deriveInvoiceStatus('SENT', 1000, 1000)).toBe('PAID');
   });
+
+  it('never resurrects a cancelled invoice via payment status', () => {
+    expect(deriveInvoiceStatus('CANCELLED', 1000, 0)).toBe('CANCELLED');
+    expect(deriveInvoiceStatus('CANCELLED', 1000, 500)).toBe('CANCELLED');
+    expect(deriveInvoiceStatus('CANCELLED', 1000, 2000)).toBe('CANCELLED');
+  });
+
+  it('keeps DRAFT terminal until it has a paid balance', () => {
+    expect(deriveInvoiceStatus('DRAFT', 1000, 0)).toBe('DRAFT');
+    expect(deriveInvoiceStatus('DRAFT', 1000, 500)).toBe('PARTIALLY_PAID');
+  });
 });
