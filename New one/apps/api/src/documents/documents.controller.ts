@@ -65,7 +65,10 @@ export class DocumentsController {
     const meta = await this.docs.getMeta(req.user!.orgId, id);
     const { stream, mimeType, name } = this.docs.stream(req.user!.orgId, meta);
     res.setHeader('Content-Type', mimeType);
-    res.setHeader('Content-Disposition', `attachment; filename="${name}"`);
+    // Sanitize the client-controlled filename: strip quotes + CR/LF so a hostile
+    // name can't inject extra response headers or break the Content-Disposition.
+    const safeName = String(name).replace(/[\r\n"]/g, '_');
+    res.setHeader('Content-Disposition', `attachment; filename="${safeName}"`);
     stream.pipe(res);
   }
 
