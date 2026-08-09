@@ -83,6 +83,13 @@ export class AdminController {
     return this.admin.toggleFeatured(id);
   }
 
+  @Delete('products/:id')
+  @HttpCode(HttpStatus.OK)
+  @Permissions('products:delete')
+  deleteProduct(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.admin.deleteProduct(id, user.id);
+  }
+
   @Get('orders')
   listOrders(@Query('page') page?: string, @Query('pageSize') pageSize?: string) {
     return this.admin.listOrders(parsePage(page), parsePageSize(pageSize));

@@ -63,7 +63,14 @@ function clearAuthState(): void {
 }
 
 export const authApi = {
-  async register(input: { email: string; password: string; name?: string; phone?: string }): Promise<{ message: string; email: string }> {
+  async register(input: {
+    email: string;
+    password: string;
+    name?: string;
+    phone?: string;
+    accountType?: 'CUSTOMER' | 'SELLER';
+    storeName?: string;
+  }): Promise<{ message: string; email: string }> {
     return apiFetch<{ message: string; email: string }>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(input),

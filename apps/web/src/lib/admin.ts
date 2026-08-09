@@ -1,4 +1,4 @@
-import { apiFetch } from '@/lib/api';
+import { apiFetch, notifyProductsChange } from '@/lib/api';
 import type { PaginatedResult } from '@/lib/api/types';
 
 export interface AdminOverview {
@@ -104,6 +104,11 @@ export const adminApi = {
   },
   toggleFeatured(id: string): Promise<unknown> {
     return apiFetch(`/admin/products/${id}/feature`, { method: 'POST' });
+  },
+  async deleteProduct(id: string): Promise<{ message: string }> {
+    const res = await apiFetch<{ message: string }>(`/admin/products/${id}`, { method: 'DELETE' });
+    notifyProductsChange();
+    return res;
   },
   orders(page = 1): Promise<PaginatedResult<AdminOrder>> {
     return apiFetch(`/admin/orders?page=${page}`);

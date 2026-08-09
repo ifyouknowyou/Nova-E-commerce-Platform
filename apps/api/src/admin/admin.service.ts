@@ -145,9 +145,10 @@ export class AdminService {
       select: { id: true, status: true },
     });
     if (status === 'ACTIVE') {
-      // Approval is the ONLY path that grants the SELLER role (customers can no
-      // longer self-assign it on store creation). Invalidate the seller's tokens
-      // so the SELLER role is picked up on their next refresh.
+      // Activating a store grants/re-affirms the SELLER role. Self-service
+      // store creation already grants SELLER for ACTIVE stores; this path also
+      // covers legacy PENDING stores an admin approves. Invalidate the seller's
+      // tokens so the role is picked up on their next refresh.
       await this.rbac.assignRole(store.sellerId, 'SELLER');
       await this.tokens.bumpTokenVersion(store.sellerId);
     }
@@ -219,6 +220,26 @@ export class AdminService {
       select: { id: true, status: true },
     });
     return product;
+  }
+
+  /** Permanently remove a product from the marketplace (soft delete). */
+  async deleteProduct(productId: string, actorId: string) {
+    const product = await this.prisma.db.product.findUnique({ where: { id: productId } });
+    if (!product || product.deletedAt) throw new NotFoundException('Product not found');
+    await this.prisma.db.auditLog.create({
+      data: {
+        userId: actorId,
+        action: 'admin.product_delete',
+        entityType: 'product',
+        entityId: productId,
+        newValue: { name: product.name, status: product.status },
+      },
+    });
+    await this.prisma.db.product.update({
+      where: { id: productId },
+      data: { deletedAt: new Date(), status: 'ARCHIVED' },
+    });
+    return { message: 'Product removed', id: productId };
   }
 
   async toggleFeatured(productId: string) {
@@ -303,6 +324,7 @@ export class AdminService {
 
   async listCategories() {
     const rows = await this.prisma.db.category.findMany({
+      where: { deletedAt: null },
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
       include: { parent: { select: { id: true, name: true } }, _count: { select: { products: true } } },
     });

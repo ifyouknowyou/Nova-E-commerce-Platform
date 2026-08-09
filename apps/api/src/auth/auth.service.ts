@@ -14,6 +14,7 @@ import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { RbacService } from '../rbac/rbac.service';
 import { RedisService } from '../redis/redis.service';
+import { StoreService } from '../store/store.service';
 import { RegisterDto } from './dto/register.dto';
 import { TokensService } from './tokens.service';
 
@@ -46,6 +47,7 @@ export class AuthService {
     private readonly tokens: TokensService,
     private readonly rbac: RbacService,
     private readonly mail: MailService,
+    private readonly stores: StoreService,
   ) {}
 
   // ── Registration ──────────────────────────────────────────────────────────
@@ -65,7 +67,16 @@ export class AuthService {
         rememberMe: dto.rememberMe ?? false,
       },
     });
-    await this.rbac.assignRole(user.id, 'CUSTOMER');
+    if (dto.accountType === 'SELLER') {
+      if (!dto.storeName) {
+        throw new BadRequestException('A store name is required for seller accounts');
+      }
+      // Self-service seller signup: grant SELLER + create an active store in
+      // one step (createStore assigns the role for ACTIVE stores).
+      await this.stores.createStore(user.id, { name: dto.storeName }, { status: 'ACTIVE' });
+    } else {
+      await this.rbac.assignRole(user.id, 'CUSTOMER');
+    }
 
     const code = await this.setVerificationCode(user.id);
     await this.mail.sendVerificationEmail(user.email, code, user.name ?? '');

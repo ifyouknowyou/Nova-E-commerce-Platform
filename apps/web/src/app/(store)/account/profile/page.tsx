@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@/components/account/ui';
 import { ProfileHeader } from '@/components/account/profile-header';
+import { ProfileScene } from '@/components/account/profile-scene';
 import { ProfileTabs, ProfileTabsSkeleton } from '@/components/account/profile-tabs';
 import { useAuthenticated } from '@/hooks/use-auth';
 import { usersApi } from '@/lib/profile';
@@ -60,11 +61,11 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <ProfileScene>
       <ProfileHeader profile={profile} storeStatus={store?.status ?? null} />
       <Suspense fallback={<ProfileTabsSkeleton />}>
         <ProfileTabs profile={profile} />
       </Suspense>
-    </div>
+    </ProfileScene>
   );
 }

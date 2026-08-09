@@ -21,6 +21,7 @@ export default function AdminProductsPage() {
 
   // Admin actions render only when the existing backend permission data allows.
   const canModerate = ready && has('products:approve');
+  const canDelete = ready && has('products:delete');
 
   const moderate = useMutation({
     mutationFn: ({ id, status }: { id: string; status: 'APPROVED' | 'REJECTED' }) => adminApi.moderateProduct(id, status),
@@ -28,6 +29,15 @@ export default function AdminProductsPage() {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       queryClient.invalidateQueries({ queryKey: ['admin-overview'] });
       toast.success('Product moderated');
+    },
+  });
+
+  const removeProduct = useMutation({
+    mutationFn: (id: string) => adminApi.deleteProduct(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-overview'] });
+      toast.success('Product removed');
     },
   });
 
@@ -73,6 +83,20 @@ export default function AdminProductsPage() {
                   <Badge variant="outline" className="text-xs">
                     No moderation permission
                   </Badge>
+                )}
+                {canDelete && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-danger"
+                    onClick={() => {
+                      if (confirm(`Remove "${product.name}" from the marketplace? This cannot be undone.`)) {
+                        void removeProduct.mutate(product.id);
+                      }
+                    }}
+                  >
+                    Remove
+                  </Button>
                 )}
               </div>
             </SpatialPanel>

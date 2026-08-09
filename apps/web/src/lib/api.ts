@@ -8,6 +8,13 @@ export const API_URL =
     ? process.env.API_INTERNAL_URL
     : process.env.NEXT_PUBLIC_API_URL) ?? 'http://localhost:4000/api';
 
+/** Fired after a product is deleted/archived so open storefront tabs drop it from cached lists. */
+export const PRODUCTS_CHANGE_EVENT = 'nova:products-change';
+
+export function notifyProductsChange(): void {
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(PRODUCTS_CHANGE_EVENT));
+}
+
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string | undefined;

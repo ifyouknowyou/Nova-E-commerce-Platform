@@ -33,6 +33,7 @@ function HeroProductTile({
   className?: string;
   large?: boolean;
 }) {
+  if (product.status && product.status !== 'APPROVED') return null;
   const img = product.images[0];
   return (
     <Link href={`/products/${product.slug}`} className={cn('group block', className)}>

@@ -25,7 +25,7 @@ export function SellCta() {
   return (
     <>
       <Button asChild size="lg">
-        <Link href="/register">Create your store</Link>
+        <Link href="/register?type=seller">Create your store</Link>
       </Button>
       <Button asChild variant="outline" size="lg">
         <Link href="/login?redirect=/dashboard">Sign in to sell</Link>
