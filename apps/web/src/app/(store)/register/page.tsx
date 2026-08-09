@@ -19,7 +19,9 @@ const registerSchema = z
   .object({
     name: z.string().min(1).max(120).optional(),
     email: z.string().email('Enter a valid email'),
-    accountType: z.enum(['CUSTOMER', 'SELLER']).default('CUSTOMER'),
+    // Default is seeded via defaultValues below; using `.default()` here would
+    // split the schema's input/output types and break React Hook Form's Control.
+    accountType: z.enum(['CUSTOMER', 'SELLER']),
     storeName: z.string().optional(),
     password: z
       .string()
