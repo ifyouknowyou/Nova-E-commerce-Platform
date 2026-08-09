@@ -20,7 +20,9 @@ export class StoreController {
   @HttpCode(HttpStatus.CREATED)
   @ExcludeRoles('ADMIN')
   create(@CurrentUser() user: AuthenticatedUser, @Body() dto: CreateStoreDto): Promise<StoreResponse> {
-    return this.stores.createStore(user.id, dto);
+    // Self-service: a store created from the dashboard is active immediately
+    // (createStore grants the SELLER role for ACTIVE stores).
+    return this.stores.createStore(user.id, dto, { status: 'ACTIVE' });
   }
 
   @Patch('me')

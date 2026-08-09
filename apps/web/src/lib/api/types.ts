@@ -26,6 +26,8 @@ export interface PublicProduct {
   reviewCount: number;
   soldCount: number;
   isFeatured: boolean;
+  /** Listings should only ever render APPROVED products. */
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'ARCHIVED';
   /** Future ISO date marks the product as "coming soon" (not yet purchasable). */
   releaseDate: string | null;
   createdAt: string;

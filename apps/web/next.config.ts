@@ -1,5 +1,19 @@
 import type { NextConfig } from 'next';
 
+/** Base URL of the NOVA REST API (client bundle inlines NEXT_PUBLIC_API_URL). */
+const apiBase =
+  process.env.NEXT_PUBLIC_API_URL ?? process.env.API_INTERNAL_URL ?? 'http://localhost:4000/api';
+
+/** Origin (scheme://host:port) of the API, allowlisted in the CSP connect-src. */
+const apiOrigin = (() => {
+  try {
+    const u = new URL(apiBase);
+    return `${u.protocol}//${u.host}`;
+  } catch {
+    return 'http://localhost:4000';
+  }
+})();
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -31,7 +45,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: http://localhost:9000",
               "font-src 'self' data:",
-              "connect-src 'self' http://localhost:4000 http://localhost:9000 https://js.stripe.com https://api.stripe.com ws://localhost:3000 wss://localhost:3000",
+              `connect-src 'self' ${apiOrigin} http://localhost:9000 https://js.stripe.com https://api.stripe.com ws://localhost:3000 wss://localhost:3000`,
               "frame-src https://js.stripe.com",
               "object-src 'none'",
               "base-uri 'self'",

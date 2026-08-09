@@ -18,6 +18,9 @@ import { ComingSoonBadge } from './coming-soon-badge';
 import { QuickViewDialog } from './quick-view-dialog';
 
 export function ProductCard({ product }: { product: PublicProduct }) {
+  // Never render removed/archived (or unapproved) products, even if a stale
+  // cache still holds them. Missing status = pre-status API payload, show it.
+  if (product.status && product.status !== 'APPROVED') return null;
   const primary = product.images[0];
   const secondary = product.images[1];
   const { authed } = useAuthenticated();

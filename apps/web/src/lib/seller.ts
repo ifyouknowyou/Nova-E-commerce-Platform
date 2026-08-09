@@ -1,4 +1,4 @@
-import { apiFetch } from '@/lib/api';
+import { apiFetch, notifyProductsChange } from '@/lib/api';
 
 export interface StoreResponse {
   id: string;
@@ -38,8 +38,10 @@ export const sellerApi = {
   submitForReview(id: string): Promise<{ id: string; status: string }> {
     return apiFetch(`/seller/products/${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'PENDING' }) });
   },
-  deleteProduct(id: string): Promise<{ message: string }> {
-    return apiFetch(`/seller/products/${id}`, { method: 'DELETE' });
+  async deleteProduct(id: string): Promise<{ message: string }> {
+    const res = await apiFetch<{ message: string }>(`/seller/products/${id}`, { method: 'DELETE' });
+    notifyProductsChange();
+    return res;
   },
   updateInventory(id: string, stock: number, lowStockThreshold: number): Promise<{ stock: number }> {
     return apiFetch(`/seller/products/${id}/inventory`, {

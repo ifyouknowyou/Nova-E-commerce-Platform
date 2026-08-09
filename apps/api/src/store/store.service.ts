@@ -2,6 +2,7 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import type { Store } from '@prisma/client';
 import { mediaUrl } from '../common/media-url';
 import { PrismaService } from '../prisma/prisma.service';
+import { RbacService } from '../rbac/rbac.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 
@@ -37,7 +38,10 @@ function toResponse(store: Store): StoreResponse {
 
 @Injectable()
 export class StoreService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly rbac: RbacService,
+  ) {}
 
   /** The seller's most recent store, or null if they have not onboarded. */
   async getMyStore(userId: string): Promise<StoreResponse | null> {
@@ -49,11 +53,17 @@ export class StoreService {
   }
 
   /**
-   * Create a store — an *application* to become a seller. The store starts in
-   * PENDING and the user does NOT receive the SELLER role here; only an admin
-   * approving the store (admin.service setStoreStatus → ACTIVE) grants SELLER.
+   * Create a store. Default status is PENDING (an *application* to sell), with
+   * no role change. Self-service paths (seller signup, dashboard onboarding)
+   * pass `{ status: 'ACTIVE' }`: the store starts active and the seller is
+   * granted the SELLER role immediately.
    */
-  async createStore(userId: string, dto: CreateStoreDto): Promise<StoreResponse> {
+  async createStore(
+    userId: string,
+    dto: CreateStoreDto,
+    opts: { status?: 'PENDING' | 'ACTIVE' } = {},
+  ): Promise<StoreResponse> {
+    const status = opts.status ?? 'PENDING';
     const storeCount = await this.prisma.db.store.count({
       where: { sellerId: userId, deletedAt: null },
     });
@@ -70,9 +80,13 @@ export class StoreService {
         slug,
         bio: dto.bio,
         businessInfo: dto.description ? { description: dto.description } : undefined,
-        status: 'PENDING',
+        status,
       },
     });
+
+    if (status === 'ACTIVE') {
+      await this.rbac.assignRole(userId, 'SELLER');
+    }
 
     return toResponse(store);
   }

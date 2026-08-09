@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsBoolean, IsEmail, IsIn, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class RegisterDto {
   @IsEmail({}, { message: 'A valid email is required' })
@@ -25,4 +25,16 @@ export class RegisterDto {
   @IsOptional()
   @IsBoolean()
   rememberMe?: boolean;
+
+  /** Account kind to create. Defaults to CUSTOMER when omitted. */
+  @IsOptional()
+  @IsIn(['CUSTOMER', 'SELLER'])
+  accountType?: 'CUSTOMER' | 'SELLER';
+
+  /** Required when accountType is SELLER — becomes the store's name/slug. */
+  @IsOptional()
+  @IsString()
+  @MinLength(3)
+  @MaxLength(80)
+  storeName?: string;
 }

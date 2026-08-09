@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, ProductStatus } from '@prisma/client';
 import { MAX_PAGE_SIZE, type PaginatedResult } from '@nova/shared';
 import { mediaUrl } from '../common/media-url';
 import { PrismaService } from '../prisma/prisma.service';
@@ -19,6 +19,8 @@ export interface PublicProduct {
   reviewCount: number;
   soldCount: number;
   isFeatured: boolean;
+  /** Listings should only ever surface APPROVED products. */
+  status: ProductStatus;
   /** Future ISO date marks the product as "coming soon" (not yet purchasable). */
   releaseDate: string | null;
   createdAt: string;
@@ -41,6 +43,7 @@ const PUBLIC_SELECT = {
   reviewCount: true,
   soldCount: true,
   isFeatured: true,
+  status: true,
   releaseDate: true,
   createdAt: true,
   images: { orderBy: { sortOrder: 'asc' as const }, select: { id: true, key: true, alt: true, isPrimary: true } },
@@ -206,6 +209,7 @@ export class ProductsService {
       reviewCount: row.reviewCount,
       soldCount: row.soldCount,
       isFeatured: row.isFeatured,
+      status: row.status,
       releaseDate: row.releaseDate?.toISOString() ?? null,
       createdAt: row.createdAt.toISOString(),
       images: row.images.map((img) => ({
