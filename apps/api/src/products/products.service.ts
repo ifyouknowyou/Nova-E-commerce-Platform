@@ -19,6 +19,8 @@ export interface PublicProduct {
   reviewCount: number;
   soldCount: number;
   isFeatured: boolean;
+  /** Future ISO date marks the product as "coming soon" (not yet purchasable). */
+  releaseDate: string | null;
   createdAt: string;
   images: { id: string; url: string; alt: string | null; isPrimary: boolean }[];
   store: { name: string; slug: string };
@@ -39,6 +41,7 @@ const PUBLIC_SELECT = {
   reviewCount: true,
   soldCount: true,
   isFeatured: true,
+  releaseDate: true,
   createdAt: true,
   images: { orderBy: { sortOrder: 'asc' as const }, select: { id: true, key: true, alt: true, isPrimary: true } },
   store: { select: { name: true, slug: true } },
@@ -203,6 +206,7 @@ export class ProductsService {
       reviewCount: row.reviewCount,
       soldCount: row.soldCount,
       isFeatured: row.isFeatured,
+      releaseDate: row.releaseDate?.toISOString() ?? null,
       createdAt: row.createdAt.toISOString(),
       images: row.images.map((img) => ({
         id: img.id,

@@ -204,7 +204,7 @@ export class AdminService {
       orderBy: { createdAt: 'desc' },
       skip: (page - 1) * size,
       take: size,
-      select: { id: true, name: true, price: true, stock: true, status: true, isFeatured: true, createdAt: true, store: { select: { name: true } } },
+      select: { id: true, name: true, price: true, stock: true, status: true, isFeatured: true, releaseDate: true, createdAt: true, store: { select: { name: true } } },
     });
     return {
       items: rows.map((r) => ({ ...r, price: Number(r.price) })),

@@ -30,6 +30,11 @@ export class UpdateProductDto {
   @MaxLength(10000)
   description?: string;
 
+  /** ISO date when the product becomes available (null/'' clears it). */
+  @IsOptional()
+  @IsString()
+  releaseDate?: string;
+
   @IsOptional()
   @IsIn(['DRAFT', 'PENDING', 'APPROVED', 'ARCHIVED'])
   status?: string;

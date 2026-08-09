@@ -99,6 +99,7 @@ export interface SellerProduct {
   price: number;
   stock: number;
   status: string;
+  releaseDate: string | null;
   createdAt: string;
   images: { id: string; url: string; isPrimary: boolean }[];
 }
@@ -113,6 +114,8 @@ export interface SellerProductInput {
   brandId?: string;
   description?: string;
   lowStockThreshold?: number;
+  /** ISO release date ('' or null clears it — the product is available immediately). */
+  releaseDate?: string | null;
 }
 
 export interface SellerOrder {

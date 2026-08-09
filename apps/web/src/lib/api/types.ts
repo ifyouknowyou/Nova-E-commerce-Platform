@@ -26,6 +26,8 @@ export interface PublicProduct {
   reviewCount: number;
   soldCount: number;
   isFeatured: boolean;
+  /** Future ISO date marks the product as "coming soon" (not yet purchasable). */
+  releaseDate: string | null;
   createdAt: string;
   images: { id: string; url: string; alt: string | null; isPrimary: boolean }[];
   store: { name: string; slug: string };
