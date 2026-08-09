@@ -6,6 +6,7 @@ import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { RbacService } from '../rbac/rbac.service';
 import { RedisService } from '../redis/redis.service';
+import { StoreService } from '../store/store.service';
 import { AuthService } from './auth.service';
 import { TokensService } from './tokens.service';
 
@@ -70,6 +71,7 @@ describe('AuthService', () => {
         { provide: TokensService, useValue: tokens },
         { provide: RbacService, useValue: rbac },
         { provide: MailService, useValue: mail },
+        { provide: StoreService, useValue: { createStore: jest.fn().mockResolvedValue({ id: 's1', status: 'ACTIVE' }) } },
         { provide: CONFIG, useValue: config },
       ],
     }).compile();

@@ -25,7 +25,7 @@ export function ProfileScene({ children }: { children: ReactNode }) {
           label="Protected"
         />
         <FloatingChip
-          className="tz-20 bottom-24 right-12"
+          className="tz-24 bottom-24 right-12"
           delay="-4s"
           icon={<Star className="h-4 w-4 text-success" />}
           label="Trusted"
