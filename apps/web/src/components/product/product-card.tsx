@@ -12,7 +12,9 @@ import { formatCurrency } from '@/lib/utils';
 import type { PublicProduct } from '@/lib/api/types';
 import { useWishlist } from '@/lib/wishlist';
 import { cn } from '@/lib/utils';
+import { useCountdown } from '@/lib/use-countdown';
 import { AddToCartButton } from './add-to-cart-button';
+import { ComingSoonBadge } from './coming-soon-badge';
 import { QuickViewDialog } from './quick-view-dialog';
 
 export function ProductCard({ product }: { product: PublicProduct }) {
@@ -24,6 +26,8 @@ export function ProductCard({ product }: { product: PublicProduct }) {
 
   const isWishlisted = wishlist.isWishlisted(product.id);
   const outOfStock = product.stock <= 0;
+  const { released } = useCountdown(product.releaseDate);
+  const comingSoon = product.releaseDate != null && !released;
 
   async function toggleWishlist(): Promise<void> {
     if (!authed) {
@@ -83,6 +87,7 @@ export function ProductCard({ product }: { product: PublicProduct }) {
 
             {/* Badges */}
             <div className="absolute left-2 top-2 flex flex-col gap-1.5">
+              {comingSoon && <ComingSoonBadge releaseDate={product.releaseDate} />}
               {product.salePrice !== null && (
                 <Badge variant="destructive" className="text-xs shadow">
                   Sale
@@ -149,7 +154,19 @@ export function ProductCard({ product }: { product: PublicProduct }) {
             </div>
 
             <div className="mt-3 flex items-center justify-between gap-2">
-              <AddToCartButton productId={product.id} stock={product.stock} className="h-9 flex-1 rounded-full text-xs" />
+              {comingSoon ? (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  disabled
+                  className="h-9 flex-1 rounded-full text-xs"
+                  aria-label={`${product.name} is not available yet`}
+                >
+                  Coming soon
+                </Button>
+              ) : (
+                <AddToCartButton productId={product.id} stock={product.stock} className="h-9 flex-1 rounded-full text-xs" />
+              )}
               <Button
                 variant="outline"
                 size="sm"

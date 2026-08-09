@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Image as ImageIcon, Loader2, Package, Plus, Trash2, Upload } from 'lucide-react';
+import { Image as ImageIcon, Loader2, Package, Pencil, Plus, Trash2, Upload } from 'lucide-react';
 import { useRef, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
@@ -99,6 +99,7 @@ export default function SellerProductsPage() {
                     Submit for review
                   </Button>
                 )}
+                <EditProduct product={product} />
                 <ManageImages product={product} />
                 <EditInventory product={product} />
                 <Button
@@ -166,6 +167,111 @@ function CreateProductButton({ className }: { className?: string }) {
             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button disabled={!name.trim() || !sku.trim() || !price || create.isPending} onClick={() => void create.mutate()}>
               {create.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+function EditProduct({ product }: { product: SellerProduct }) {
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState(product.name);
+  const [price, setPrice] = useState(String(product.price));
+  const [releaseDate, setReleaseDate] = useState(
+    product.releaseDate ? product.releaseDate.slice(0, 10) : '',
+  );
+
+  const storedRelease = product.releaseDate ? product.releaseDate.slice(0, 10) : '';
+  const changed =
+    name.trim() !== product.name ||
+    Number(price) !== product.price ||
+    releaseDate.trim() !== storedRelease;
+
+  function close() {
+    setOpen(false);
+    setName(product.name);
+    setPrice(String(product.price));
+    setReleaseDate(storedRelease);
+  }
+
+  const update = useMutation({
+    mutationFn: () =>
+      sellerApi.updateProduct(product.id, {
+        ...(name.trim() !== product.name ? { name: name.trim() } : {}),
+        ...(Number(price) !== product.price ? { price: Number(price) } : {}),
+        ...(releaseDate.trim() !== storedRelease
+          ? { releaseDate: releaseDate.trim() ? new Date(releaseDate.trim()).toISOString() : null }
+          : {}),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['seller-products'] });
+      setOpen(false);
+      toast.success('Product updated');
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : 'Update failed'),
+  });
+
+  return (
+    <>
+      <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
+        <Pencil className="h-4 w-4" /> Edit
+      </Button>
+      <Dialog open={open} onOpenChange={(next) => (next ? setOpen(true) : close())}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Edit product</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <Field label="Name">
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={200}
+                placeholder="Product name"
+              />
+            </Field>
+            <Field label="SKU">
+              <Input value={product.sku} readOnly aria-readonly="true" className="bg-muted/50 text-muted-foreground" />
+            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Price ($)">
+                <Input type="number" value={price} onChange={(e) => setPrice(e.target.value)} min={0} />
+              </Field>
+              <Field label="Status">
+                <Input
+                  value={product.status}
+                  readOnly
+                  aria-readonly="true"
+                  className="bg-muted/50 text-muted-foreground capitalize"
+                />
+              </Field>
+            </div>
+            <Field label="Release date (optional)">
+              <Input
+                type="date"
+                value={releaseDate}
+                onChange={(e) => setReleaseDate(e.target.value)}
+                aria-label="Release date"
+              />
+            </Field>
+            <p className="text-xs text-muted-foreground">
+              Leave empty to make the product available immediately. A future date shows it as
+              &quot;Coming soon&quot; on the storefront until the date passes.
+            </p>
+            {product.status === 'APPROVED' && (
+              <p className="text-xs text-muted-foreground">
+                Editing an approved product&apos;s name or price sends it back for admin review.
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={close}>Cancel</Button>
+            <Button
+              disabled={!name.trim() || !price || Number(price) < 0 || !changed || update.isPending}
+              onClick={() => void update.mutate()}
+            >
+              {update.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Save
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -288,6 +288,7 @@ model Product {
   visibility      ProductVisibility @default(PUBLIC)
   isFeatured      Boolean           @default(false)
   seo             Json?
+  releaseDate     DateTime?
   ratingAvg       Decimal           @default(0) @db.Decimal(3, 2)
   reviewCount     Int               @default(0)
   soldCount       Int               @default(0)

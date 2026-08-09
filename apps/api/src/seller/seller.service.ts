@@ -64,6 +64,17 @@ export class SellerService {
     }
   }
 
+  /** Parse an optional absolute ISO release date. '' clears, garbage throws. */
+  private parseReleaseDate(value?: string): Date | null | undefined {
+    if (value === undefined) return undefined;
+    if (value === '') return null;
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      throw new BadRequestException('releaseDate must be a valid ISO date');
+    }
+    return parsed;
+  }
+
   // ── Products ─────────────────────────────────────────────────────────────
 
   async listProducts(
@@ -79,6 +90,7 @@ export class SellerService {
       price: number;
       stock: number;
       status: string;
+      releaseDate: string | null;
       images: { id: string; url: string; isPrimary: boolean }[];
     }>
   > {
@@ -98,6 +110,7 @@ export class SellerService {
         price: true,
         stock: true,
         status: true,
+        releaseDate: true,
         createdAt: true,
         images: { orderBy: { sortOrder: 'asc' }, select: { id: true, key: true, isPrimary: true } },
       },
@@ -111,6 +124,7 @@ export class SellerService {
         price: Number(row.price),
         stock: row.stock,
         status: row.status,
+        releaseDate: row.releaseDate?.toISOString() ?? null,
         createdAt: row.createdAt.toISOString(),
         images: row.images.map((image) => ({
           id: image.id,
@@ -146,6 +160,7 @@ export class SellerService {
         salePrice: dto.salePrice,
         stock: dto.stock,
         lowStockThreshold: dto.lowStockThreshold,
+        releaseDate: this.parseReleaseDate(dto.releaseDate),
         // New listings are submitted for review so they reach the admin
         // moderation queue. They go live only after admin approval.
         status: 'PENDING',
@@ -173,6 +188,7 @@ export class SellerService {
     if (dto.description !== undefined) data.description = dto.description;
     if (dto.categoryId !== undefined) data.category = { connect: { id: dto.categoryId } };
     if (dto.brandId !== undefined) data.brand = { connect: { id: dto.brandId } };
+    if (dto.releaseDate !== undefined) data.releaseDate = this.parseReleaseDate(dto.releaseDate);
     if (dto.status !== undefined) {
       // Sellers may never approve their own products — that is admin's job.
       if (dto.status === 'APPROVED') throw new ForbiddenException('Products require admin approval');

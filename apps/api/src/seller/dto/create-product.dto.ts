@@ -40,4 +40,9 @@ export class CreateProductDto {
   @IsInt()
   @Min(0)
   lowStockThreshold = 5;
+
+  /** ISO date when the product becomes available. Future dates show "coming soon". */
+  @IsOptional()
+  @IsString()
+  releaseDate?: string;
 }

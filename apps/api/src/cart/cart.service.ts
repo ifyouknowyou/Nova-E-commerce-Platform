@@ -68,6 +68,14 @@ export class CartService {
     });
     if (!product) throw new NotFoundException('Product not found');
 
+    // Not-yet-released products ("coming soon") cannot be added to the cart.
+    // Guarded server-side so the UI is not the only gate.
+    if (product.releaseDate && product.releaseDate > new Date()) {
+      throw new BadRequestException(
+        `This product is not yet available — releases ${product.releaseDate.toISOString()}`,
+      );
+    }
+
     // Resolve + validate the variant up front: it must exist, be active, and
     // belong to THIS product (otherwise a foreign variant would silently
     // mis-price the line or trigger an unhandled FK 500).
