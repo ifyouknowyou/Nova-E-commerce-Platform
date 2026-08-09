@@ -1,0 +1,19 @@
+Good news: everything you need is already committed. Your working tree is clean and git tracks 358 files — so there's no "which files list" to assemble; you push the whole repo as one unit. Here's what actually goes up:
+
+Push = the entire master branch (all 358 tracked files), which includes:
+
+apps/ — your two apps: web (Next.js storefront) and api
+packages/ — the three shared workspaces: db, shared, config
+package.json, package-lock.json, turbo.json — dependency lockfile + build config
+Docker stuff, CI (.github/), docs, config files
+What is not pushed (gitignored, regenerated on the destination):
+
+node_modules/ — rebuilt via npm ci
+.next/, dist/, build/ — build outputs, rebuilt- .env and Login Password.txt — secrets, never pushed. Only !env.example goes
+What you still need to do (the git remote is empty right now):
+
+
+# In /home/who/003 Web Project
+git remote add origin <your-repo-url>   # your GitHub/GitLab repo
+git push -u origin master
+⚠️ One thing to double-check before you push — committing Login Password.txt credentials is currently blocked only by a .gitignore line. Confirm that file stays ignored (it is), and make sure your .env secrets are not copied into env.example's real values. Let me know if this is your first push to a brand-new remote — I can walk you through gh repo create if you want to create the repo from here.
