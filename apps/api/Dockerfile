@@ -29,9 +29,16 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 ENV NODE_ENV=production
 COPY --from=builder /app/node_modules ./node_modules
+# Workspace packages (@nova/shared, @nova/db) are symlinked from node_modules,
+# but their compiled dist/ artifacts live in packages/ — they must travel to the
+# runner or runtime requires fail with MODULE_NOT_FOUND.
+COPY --from=builder /app/packages/shared ./packages/shared
+# @nestjs/swagger is installed nested under apps/api/node_modules (peer conflict),
+# so the root node_modules copy alone cannot satisfy its require at runtime.
+COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/apps/api/package.json ./apps/api/
-COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
+COPY --from=builder /app/packages/db ./packages/db
 # Run as a non-root user (node:alpine ships the `node` user).
 RUN chown -R node:node /app
 USER node
