@@ -113,9 +113,9 @@ export function ProductListing({ initial }: { initial: ListingInitial }) {
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[220px_1fr]">
         {/* Filter sidebar */}
-        <aside className="hidden space-y-6 lg:block" aria-label="Filters">
+        <aside className="hidden space-y-6 lg:block" aria-label="Filters" suppressHydrationWarning>
           <FilterSection title="Category">
-            <div className="max-h-64 space-y-1 overflow-y-auto">
+            <div className="max-h-64 space-y-1 overflow-y-auto" suppressHydrationWarning>
               <FilterOption
                 label="All categories"
                 active={!filters.categoryId}
@@ -133,7 +133,7 @@ export function ProductListing({ initial }: { initial: ListingInitial }) {
           </FilterSection>
 
           <FilterSection title="Brand">
-            <div className="max-h-64 space-y-1 overflow-y-auto">
+            <div className="max-h-64 space-y-1 overflow-y-auto" suppressHydrationWarning>
               {brands.data?.map((brand) => (
                 <FilterOption
                   key={brand.id}
@@ -251,6 +251,7 @@ function FilterOption({ label, active, onClick }: { label: string; active: boole
       className={`block w-full truncate rounded px-2 py-1 text-left text-sm transition-colors ${
         active ? 'bg-primary/10 font-medium text-primary' : 'text-muted-foreground hover:bg-accent'
       }`}
+      suppressHydrationWarning
     >
       {label}
     </button>

@@ -23,7 +23,15 @@ export class BrandsService {
         name: true,
         slug: true,
         logoKey: true,
-        _count: { select: { products: true } },
+        products: {
+          where: {
+            status: 'APPROVED',
+            visibility: 'PUBLIC',
+            deletedAt: null,
+            stock: { gt: 0 },
+          },
+          select: { id: true },
+        },
       },
     });
     return brands.map((brand) => ({
@@ -31,7 +39,7 @@ export class BrandsService {
       name: brand.name,
       slug: brand.slug,
       logoUrl: brand.logoKey ? mediaUrl(brand.logoKey) : null,
-      productCount: brand._count.products,
+      productCount: brand.products.length,
     }));
   }
 }

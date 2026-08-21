@@ -51,7 +51,7 @@ export function ProductCard({ product }: { product: PublicProduct }) {
   return (
     <>
       <HoverTiltCard maxTilt={5} className="h-full">
-        <div className="group relative flex h-full flex-col overflow-hidden rounded-xl border bg-card text-card-foreground transition-shadow duration-300 hover:shadow-[0_20px_50px_-20px_var(--shadow-color)]">
+        <div className="group relative flex h-full flex-col overflow-hidden rounded-xl border bg-card text-card-foreground transition-shadow duration-300 glow-ring hover:shadow-[0_20px_50px_-20px_var(--shadow-color)]">
           {/* Image */}
           <div
             className="spotlight relative aspect-square overflow-hidden bg-muted"
