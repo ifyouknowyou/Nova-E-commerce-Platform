@@ -5,7 +5,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import { ArrowRight, BadgeCheck, RefreshCcw, ShieldCheck, Sparkles, Star, Truck } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { LayeredCard, Magnetic, ParallaxSection, Reveal3D, SceneContainer } from '@/components/3d';
+import { DepthCard, LayeredCard, Magnetic, ParallaxSection, Reveal3D, SceneContainer } from '@/components/3d';
 import { HoverTiltCard } from '@/components/3d/hover-tilt-card';
 import { NewsletterCard } from '@/components/3d/newsletter-card';
 import { SectionHeading } from '@/components/3d/section-heading';
@@ -192,23 +192,43 @@ export function Homepage() {
       <SceneContainer grid aurora noise parallax={3} className="border-b bg-role-glow">
         <div className="page-container grid items-center gap-12 pb-20 pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:pb-24 lg:pt-20">
           <div className="relative z-10">
-            <p className="inline-flex items-center gap-2 rounded-full border bg-background/60 px-3 py-1 text-xs font-medium text-foreground/80 backdrop-blur-sm">
+            <motion.p
+              initial={reduce ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.6 }}
+              className="inline-flex items-center gap-2 rounded-full border bg-background/60 px-3 py-1 text-xs font-medium text-foreground/80 backdrop-blur-sm"
+            >
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               Trusted multi-vendor marketplace
-            </p>
-            <h1 className="mt-4 text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+            </motion.p>
+            <motion.h1
+              initial={reduce ? false : { opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.7 }}
+              className="mt-4 text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
+            >
               Discover products worth
-              <span className="bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
+              <span className="shimmer-text">
                 {' '}loving
               </span>
-            </h1>
-            <p className="mt-4 max-w-xl text-lg text-muted-foreground">
+            </motion.h1>
+            <motion.p
+              initial={reduce ? false : { opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.7 }}
+              className="mt-4 max-w-xl text-lg text-muted-foreground"
+            >
               A premium marketplace of independent sellers — backed by secure payments,
               fast delivery, and easy returns. New drops every week.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
+            </motion.p>
+            <motion.div
+              initial={reduce ? false : { opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.7 }}
+              className="mt-8 flex flex-wrap gap-4"
+            >
               <Magnetic strength={0.25}>
-                <Button asChild size="lg" className="rounded-full">
+                <Button asChild size="lg" className="rounded-full btn-mesh">
                   <Link href="/products">
                     Shop now <ArrowRight className="h-4 w-4" />
                   </Link>
@@ -217,16 +237,21 @@ export function Homepage() {
               <Button asChild size="lg" variant="outline" className="rounded-full">
                 <Link href="/deals">Today&apos;s deals</Link>
               </Button>
-            </div>
-            <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {TRUST.map((item) => (
-                <div key={item.title} className="rounded-xl border bg-card/70 p-3 depth-1">
+            </motion.div>
+            <motion.div
+              initial={reduce ? false : { opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.7 }}
+              className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4"
+            >
+              {TRUST.map((item, i) => (
+                <DepthCard key={item.title} className="rounded-xl border bg-card/70 p-3 depth-1" glow>
                   <item.icon className={`h-5 w-5 ${item.accent}`} />
                   <p className="mt-2 text-xs font-semibold">{item.title}</p>
                   <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">{item.text}</p>
-                </div>
+                </DepthCard>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* 3D product constellation — recedes & lifts on scroll */}
@@ -237,7 +262,19 @@ export function Homepage() {
               ...(reduce ? {} : { y: sceneY, scale: sceneScale, rotateX: sceneRotateX }),
             }}
           >
-            <div aria-hidden className="absolute left-1/2 top-1/2 h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 blur-3xl" />
+            {/* Volumetric light rays */}
+            <div aria-hidden className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className="h-[32rem] w-[32rem] rounded-full bg-primary/5 blur-[80px]" />
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+                style={{
+                  background: 'conic-gradient(from 0deg, transparent 0%, var(--primary) 10%, transparent 20%, transparent 80%, var(--primary) 90%, transparent 100%)',
+                  opacity: 0.06,
+                }}
+              />
+            </div>
             <div aria-hidden className="animate-spin-slow absolute left-1/2 top-1/2 h-[31rem] w-[31rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-primary/15" />
 
             {heroProduct ? (

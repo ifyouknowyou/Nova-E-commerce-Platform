@@ -43,7 +43,7 @@ export function SpatialPanel({
     <div
       ref={ref}
       className={cn(
-        'rounded-2xl border bg-card text-card-foreground',
+        'rounded-2xl border bg-card text-card-foreground glow-ring',
         DEPTH[depth],
         glass && 'glass-strong',
         spotlight && 'spotlight',
