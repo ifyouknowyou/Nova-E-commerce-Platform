@@ -1,12 +1,23 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
 import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -16,12 +27,17 @@ import { formatCurrency } from '@/lib/utils';
 export default function AdminProductsPage() {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('PENDING');
+  const [assignOpen, setAssignOpen] = useState(false);
+  const [assignTarget, setAssignTarget] = useState<{ id: string; name: string } | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedBrand, setSelectedBrand] = useState<string>('');
+
   const { data, isLoading } = useQuery({ queryKey: ['admin-products', tab], queryFn: () => adminApi.products(tab) });
   const { has, ready } = usePermissions();
 
-  // Admin actions render only when the existing backend permission data allows.
   const canModerate = ready && has('products:approve');
   const canDelete = ready && has('products:delete');
+  const canAssign = ready && has('products:update');
 
   const moderate = useMutation({
     mutationFn: ({ id, status }: { id: string; status: 'APPROVED' | 'REJECTED' }) => adminApi.moderateProduct(id, status),
@@ -41,9 +57,43 @@ export default function AdminProductsPage() {
     },
   });
 
+  const assignProduct = useMutation({
+    mutationFn: ({ id, categoryId, brandId }: { id: string; categoryId?: string; brandId?: string }) =>
+      adminApi.assignProduct(id, { categoryId, brandId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      toast.success('Product category/brand updated');
+      setAssignOpen(false);
+      setSelectedCategory('');
+      setSelectedBrand('');
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+
+  // Open assign dialog for a product
+  function openAssign(product: { id: string; name: string; category?: { id: string; name: string } | null; brand?: { id: string; name: string } | null }) {
+    setAssignTarget(product);
+    setSelectedCategory(product.category?.id ?? '');
+    setSelectedBrand(product.brand?.id ?? '');
+    setAssignOpen(true);
+  }
+
+  const categories = useQuery({ queryKey: ['admin-categories'], queryFn: () => adminApi.categories() });
+  const brands = useQuery({ queryKey: ['admin-brands'], queryFn: () => adminApi.brands() });
+
+  function handleSubmitAssign(e: React.FormEvent) {
+    e.preventDefault();
+    if (!assignTarget) return;
+    assignProduct.mutate({
+      id: assignTarget.id,
+      ...(selectedCategory ? { categoryId: selectedCategory } : {}),
+      ...(selectedBrand ? { brandId: selectedBrand } : {}),
+    });
+  }
+
   return (
     <div className="space-y-6">
-      <PageHeader title="Product moderation" subtitle="Approve or reject seller submissions" />
+      <PageHeader title="Product moderation" subtitle="Approve, reject, or assign category & brand to seller submissions" />
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="glass">
@@ -66,6 +116,10 @@ export default function AdminProductsPage() {
                 <p className="text-xs text-muted-foreground">
                   {product.store.name} · {formatCurrency(product.price)} · {product.stock} in stock
                 </p>
+                <p className="text-xs text-muted-foreground">
+                  Category: <span className="font-medium">{product.category?.name ?? <span className="text-warning">Unassigned</span>}</span>
+                  {' · '}Brand: <span className="font-medium">{product.brand?.name ?? <span className="text-warning">Unassigned</span>}</span>
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="secondary" className="capitalize">{product.status.toLowerCase()}</Badge>
@@ -84,6 +138,15 @@ export default function AdminProductsPage() {
                     No moderation permission
                   </Badge>
                 )}
+                {canAssign && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openAssign(product)}
+                  >
+                    Assign
+                  </Button>
+                )}
                 {canDelete && (
                   <Button
                     size="sm"
@@ -100,9 +163,77 @@ export default function AdminProductsPage() {
                 )}
               </div>
             </SpatialPanel>
-        ))}
+          ))}
         </div>
       )}
+
+      {/* Assign Category/Brand Dialog */}
+      <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Assign Category & Brand</DialogTitle>
+            <DialogDescription>
+              Set the product category and brand for &ldquo;{assignTarget?.name}&rdquo;.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmitAssign}>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="assign-category">Category</Label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger id="assign-category">
+                    <SelectValue placeholder="Select category…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.isLoading ? (
+                      <SelectItem value="_loading" disabled>Loading…</SelectItem>
+                    ) : (
+                      <>
+                        <SelectItem value="">— None —</SelectItem>
+                        {categories.data?.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="assign-brand">Brand</Label>
+                <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                  <SelectTrigger id="assign-brand">
+                    <SelectValue placeholder="Select brand…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {brands.isLoading ? (
+                      <SelectItem value="_loading" disabled>Loading…</SelectItem>
+                    ) : (
+                      <>
+                        <SelectItem value="">— None —</SelectItem>
+                        {brands.data?.map((brand) => (
+                          <SelectItem key={brand.id} value={brand.id}>
+                            {brand.name}
+                          </SelectItem>
+                        ))}
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter className="mt-6">
+              <Button type="button" variant="outline" onClick={() => setAssignOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={assignProduct.isPending}>
+                {assignProduct.isPending ? 'Saving…' : 'Save'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
