@@ -7,6 +7,7 @@ import type { AuthenticatedUser } from '../rbac/rbac.types';
 import { AdminService } from './admin.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { AssignProductDto } from './dto/assign-product.dto';
 import { ModerateProductDto } from './dto/moderate-product.dto';
 import { ModerateReviewDto } from './dto/moderate-review.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
@@ -88,6 +89,13 @@ export class AdminController {
   @Permissions('products:delete')
   deleteProduct(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     return this.admin.deleteProduct(id, user.id);
+  }
+
+  @Patch('products/:id/assign')
+  @HttpCode(HttpStatus.OK)
+  @Permissions('products:update')
+  assignProduct(@Param('id') id: string, @Body() dto: AssignProductDto) {
+    return this.admin.assignProduct(id, dto);
   }
 
   @Get('orders')

@@ -52,6 +52,8 @@ export interface AdminProduct {
   isFeatured: boolean;
   createdAt: string;
   store: { name: string };
+  category: { id: string; name: string } | null;
+  brand: { id: string; name: string } | null;
 }
 
 export interface AdminOrder {
@@ -109,6 +111,9 @@ export const adminApi = {
     const res = await apiFetch<{ message: string }>(`/admin/products/${id}`, { method: 'DELETE' });
     notifyProductsChange();
     return res;
+  },
+  assignProduct(id: string, data: { categoryId?: string; brandId?: string }): Promise<{ message: string }> {
+    return apiFetch(`/admin/products/${id}/assign`, { method: 'PATCH', body: JSON.stringify(data) });
   },
   orders(page = 1): Promise<PaginatedResult<AdminOrder>> {
     return apiFetch(`/admin/orders?page=${page}`);

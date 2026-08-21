@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RbacService } from '../rbac/rbac.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { AssignProductDto } from './dto/assign-product.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
@@ -205,7 +206,19 @@ export class AdminService {
       orderBy: { createdAt: 'desc' },
       skip: (page - 1) * size,
       take: size,
-      select: { id: true, name: true, price: true, stock: true, status: true, isFeatured: true, releaseDate: true, createdAt: true, store: { select: { name: true } } },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        stock: true,
+        status: true,
+        isFeatured: true,
+        releaseDate: true,
+        createdAt: true,
+        store: { select: { name: true } },
+        category: { select: { id: true, name: true } },
+        brand: { select: { id: true, name: true } },
+      },
     });
     return {
       items: rows.map((r) => ({ ...r, price: Number(r.price) })),
@@ -220,6 +233,26 @@ export class AdminService {
       select: { id: true, status: true },
     });
     return product;
+  }
+
+  /** Assign a category and/or brand to a product. */
+  async assignProduct(productId: string, dto: AssignProductDto) {
+    const product = await this.prisma.db.product.findUnique({ where: { id: productId } });
+    if (!product || product.deletedAt) throw new NotFoundException('Product not found');
+    const data: Record<string, unknown> = {};
+    if (dto.categoryId !== undefined) {
+      const cat = await this.prisma.db.category.findUnique({ where: { id: dto.categoryId, deletedAt: null } });
+      if (!cat) throw new NotFoundException('Category not found');
+      data.categoryId = dto.categoryId;
+    }
+    if (dto.brandId !== undefined) {
+      const brand = await this.prisma.db.brand.findUnique({ where: { id: dto.brandId, isActive: true } });
+      if (!brand) throw new NotFoundException('Brand not found');
+      data.brandId = dto.brandId;
+    }
+    if (Object.keys(data).length === 0) return { message: 'No changes provided' };
+    await this.prisma.db.product.update({ where: { id: productId }, data });
+    return { message: 'Product updated', id: productId };
   }
 
   /** Permanently remove a product from the marketplace (soft delete). */
@@ -326,7 +359,18 @@ export class AdminService {
     const rows = await this.prisma.db.category.findMany({
       where: { deletedAt: null },
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
-      include: { parent: { select: { id: true, name: true } }, _count: { select: { products: true } } },
+      include: {
+        parent: { select: { id: true, name: true } },
+        products: {
+          where: {
+            status: 'APPROVED',
+            visibility: 'PUBLIC',
+            deletedAt: null,
+            stock: { gt: 0 },
+          },
+          select: { id: true },
+        },
+      },
     });
     return rows.map((category) => ({
       id: category.id,
@@ -336,7 +380,7 @@ export class AdminService {
       sortOrder: category.sortOrder,
       isActive: category.isActive,
       deletedAt: category.deletedAt,
-      productCount: category._count.products,
+      productCount: category.products.length,
     }));
   }
 
@@ -385,7 +429,22 @@ export class AdminService {
   async listBrands() {
     const rows = await this.prisma.db.brand.findMany({
       orderBy: { name: 'asc' },
-      include: { _count: { select: { products: true } } },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        isActive: true,
+        products: {
+          where: {
+            status: 'APPROVED',
+            visibility: 'PUBLIC',
+            deletedAt: null,
+            stock: { gt: 0 },
+          },
+          select: { id: true },
+        },
+      },
     });
     return rows.map((brand) => ({
       id: brand.id,
@@ -393,7 +452,7 @@ export class AdminService {
       slug: brand.slug,
       description: brand.description,
       isActive: brand.isActive,
-      productCount: brand._count.products,
+      productCount: brand.products.length,
     }));
   }
 
