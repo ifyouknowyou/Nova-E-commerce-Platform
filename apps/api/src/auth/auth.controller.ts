@@ -70,7 +70,8 @@ export class AuthController {
   @Post('login')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  // 10 requests per minute — enough for register → verify → login flow
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const result = await this.auth.login(dto.email, dto.password, dto.rememberMe ?? false);
     setAuthCookies(res, this.config, result.accessToken, result.refreshToken, result.rememberMe);
