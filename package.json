@@ -16,12 +16,12 @@
     "format": "prettier --write .",
     "db:generate": "npm run generate -w @nova/db",
     "db:migrate": "npm run migrate -w @nova/db",
-    "db:seed": "npm run seed -w @nova/db"
+    "build:shared": "npm run build -w @nova/shared",
+    "build:web": "npm run build -w @nova/web"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
-    "turbo": "^2.5.4",
-    "typescript": "^5.8.3"
+    "turbo": "^2.5.4"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -33,12 +33,10 @@
     "esbuild@0.28.1": true,
     "prisma@6.19.3": true,
     "sharp@0.34.5": true,
-    "unrs-resolver@1.12.2": true,
-    "argon2@0.45.1": true
+    "unrs-resolver@1.12.2": true
   },
   "dependencies": {
     "next": "^16.2.12",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react": "^19.2.8"
   }
 }

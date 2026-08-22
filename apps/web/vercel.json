@@ -3,8 +3,5 @@
   "outputDirectory": ".next",
   "installCommand": "npm install",
   "regions": ["iad1"],
-  "framework": "nextjs",
-  "github": {
-    "enabled": true
-  }
+  "framework": "nextjs"
 }
