@@ -4,6 +4,6 @@
   "installCommand": "npm install",
   "regions": ["iad1"],
   "github": {
-    "autoDeploy": false
+    "enabled": true
   }
 }
