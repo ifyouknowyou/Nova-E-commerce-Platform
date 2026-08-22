@@ -1,7 +1,10 @@
 {
-  "buildCommand": "cd ../.. && npm install && npm run build -w @nova/shared && npm run build -w @nova/web",
-  "outputDirectory": "apps/web/.next",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
   "installCommand": "npm install",
   "regions": ["iad1"],
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "github": {
+    "enabled": true
+  }
 }
