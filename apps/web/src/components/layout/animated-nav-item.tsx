@@ -30,8 +30,8 @@ export function AnimatedNavItem({
   const rotateX = useTransform(y, [-40, 40], [6, -6]);
   const rotateY = useTransform(x, [-40, 40], [-6, 6]);
 
-  function handleMove(e: React.PointerEvent<HTMLAnchorElement>) {
-    const rect = (e.currentTarget as HTMLAnchorElement).getBoundingClientRect();
+  function handleMove(e: React.PointerEvent<HTMLDivElement>) {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     x.set(e.clientX - rect.left - rect.width / 2);
     y.set(e.clientY - rect.top - rect.height / 2);
   }
@@ -46,12 +46,7 @@ export function AnimatedNavItem({
       className="relative"
     >
       <motion.div
-        style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-        animate={{
-          x: active ? sx : 0,
-          y: active ? sy : 0,
-        }}
-        transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+        style={{ rotateX, rotateY, transformStyle: 'preserve-3d', x: active ? sx : 0, y: active ? sy : 0 }}
         onPointerMove={handleMove}
         onPointerLeave={handleLeave}
       >

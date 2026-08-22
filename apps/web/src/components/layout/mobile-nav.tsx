@@ -29,7 +29,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="top-0 right-0 h-full w-[280px] translate-x-0 border-l bg-background/95 backdrop-blur-xl sm:max-w-sm"
-        modal={false}
+        // modal={false}
       >
         <div className="flex flex-col gap-1 p-4 pt-12">
           <DialogTitle className="pb-4 text-lg font-bold tracking-tight">
