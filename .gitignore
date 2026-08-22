@@ -46,3 +46,4 @@ Thumbs.db
 playwright-report/
 test-results/
 .claude/
+.vercel
