@@ -42,7 +42,15 @@ export interface CategoryNode {
   name: string;
   slug: string;
   imageUrl: string | null;
+  parent?: CategoryNode | null;
   children: CategoryNode[];
+  productCount?: number;
+  isActive?: boolean;
+  deletedAt?: string | null;
+  sortOrder?: number;
+  _count?: {
+    products?: number;
+  };
 }
 
 export interface PublicBrand {
