@@ -1,18 +1,29 @@
 import type { NextConfig } from 'next';
 
-/** Base URL of the NOVA REST API (client bundle inlines NEXT_PUBLIC_API_URL). */
+/**
+ * Base URL of the NOVA REST API.
+ * — Browser bundle: NEXT_PUBLIC_API_URL (set to "/api" for single-domain deploy)
+ * — Server (RSC):   API_INTERNAL_URL  (set to "http://nova-api:4000" on Render)
+ */
 const apiBase =
   process.env.NEXT_PUBLIC_API_URL ?? process.env.API_INTERNAL_URL ?? 'http://localhost:4000/api';
 
-/** Origin (scheme://host:port) of the API, allowlisted in the CSP connect-src. */
+/**
+ * Origin (scheme://host) used in the CSP connect-src directive.
+ * For single-domain Render deploy this resolves to "https://yourdomain.com".
+ */
 const apiOrigin = (() => {
   try {
     const u = new URL(apiBase);
     return `${u.protocol}//${u.host}`;
   } catch {
-    return 'http://localhost:4000';
+    // Relative path ("/api") or missing value — allow self for same-origin proxy.
+    return 'self';
   }
 })();
+
+/** Internal API base for server-side Next.js rewrites. */
+const apiInternalBase = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -20,12 +31,30 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   transpilePackages: ['@nova/shared'],
   images: {
-    // MinIO (local) — S3/CDN hostnames added per environment in prod.
     remotePatterns: [
+      // Local MinIO (dev)
       { protocol: 'http', hostname: 'localhost', port: '9000' },
       { protocol: 'http', hostname: '127.0.0.1', port: '9000' },
+      // Production S3 — add your bucket hostname here or via env if needed.
+      // Example for AWS S3: { protocol: 'https', hostname: 'your-bucket.s3.amazonaws.com' }
+      // Example for Render Spaces / DigitalOcean: { protocol: 'https', hostname: 'nova-media.nyc3.digitaloceanspaces.com' }
     ],
   },
+
+  /**
+   * Proxy all /api/* requests to the internal NestJS service.
+   * On Render the browser calls https://yourdomain.com/api/... and Next.js
+   * transparently forwards them to http://nova-api:4000/api/...
+   */
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${apiInternalBase}/api/:path*`,
+      },
+    ];
+  },
+
   // Baseline security headers (the API already applies helmet; the webapp adds
   // these response headers for hardened browser posture).
   async headers() {
@@ -43,9 +72,9 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: http://localhost:9000",
+              "img-src 'self' data: blob:",
               "font-src 'self' data:",
-              `connect-src 'self' ${apiOrigin} http://localhost:9000 https://js.stripe.com https://api.stripe.com ws://localhost:3000 wss://localhost:3000`,
+              `connect-src 'self' ${apiOrigin} https://js.stripe.com https://api.stripe.com`,
               "frame-src https://js.stripe.com",
               "object-src 'none'",
               "base-uri 'self'",

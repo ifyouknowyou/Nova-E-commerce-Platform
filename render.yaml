@@ -1,19 +1,132 @@
-# Exported from Render on 2026-08-22T20:16:34Z
-version: "1"
+# Render deployment config — single project, single domain.
+# Deploy: push to GitHub → Render auto-deploys (autoDeployTrigger).
+# Or import this file manually in the Render dashboard.
+#
+# Architecture:
+#   nova-db      — managed PostgreSQL (free tier)
+#   nova-api     — NestJS REST API (internal, no public URL)
+#   nova-web     — Next.js storefront + dashboards (public, single domain)
+#
+# The web service proxies /api/* → nova-api internally via Next.js rewrites,
+# so the entire app is reachable from one domain (e.g. https://nova-commerce.example.com).
+
 services:
-- type: web
-  name: nova-api
-  runtime: node
-  repo: https://github.com/ifyouknowyou/nova-commerce-platform
-  plan: free
-  envVars:
-  - key: PORT
-    sync: false
-  - key: NODE_ENV
-    sync: false
-  region: oregon
-  buildCommand: npm ci && npm run build -w @nova/shared && npm run build -w @nova/db
-    && npm run build -w @nova/api
-  startCommand: node apps/api/dist/main.js
-  healthCheckPath: /api/health
-  autoDeployTrigger: commit
+  # ── Database ──────────────────────────────────────────────────────────────
+  - type: postgres
+    name: nova-db
+    plan: free
+    region: oregon
+    databaseName: nova_commerce
+    user: nova
+    postgresMajorVersion: "16"
+    # Migrations run inside the API build step (prisma migrate deploy).
+    # No separate seed service needed — seed is triggered manually post-deploy.
+
+  # ── API (NestJS) ──────────────────────────────────────────────────────────
+  - type: web
+    name: nova-api
+    env: node
+    plan: free
+    region: oregon
+    repo: https://github.com/ifyouknowyou/nova-commerce-platform
+    buildCommand: >-
+      npm ci &&
+      npm run build -w @nova/shared &&
+      npm run build -w @nova/db &&
+      DATABASE_URL="$DATABASE_URL" npx prisma migrate deploy --schema packages/db/prisma/schema.prisma &&
+      npm run build -w @nova/api
+    startCommand: node apps/api/dist/main.js
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nova-db
+          property: connectionString
+      # Redis is optional — the app falls back gracefully when unavailable.
+      # Uncomment the block below and add a Redis service if you need caching/sessions.
+      # - key: REDIS_URL
+      #   fromService:
+      #     type: redis
+      #     name: nova-redis
+      #     property: connectionString
+      - key: CORS_ORIGIN
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: JWT_ACCESS_TTL
+        sync: false
+      - key: JWT_REFRESH_TTL
+        sync: false
+      - key: JWT_SESSION_TTL
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: WEB_URL
+        sync: false
+      - key: API_URL
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CALLBACK_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
+      - key: S3_FORCE_PATH_STYLE
+        sync: false
+
+  # ── Web (Next.js) ─────────────────────────────────────────────────────────
+  - type: web
+    name: nova-web
+    env: node
+    plan: free
+    region: oregon
+    repo: https://github.com/ifyouknowyou/nova-commerce-platform
+    buildCommand: >-
+      npm ci &&
+      npm run build -w @nova/shared &&
+      npm run build -w @nova/web
+    startCommand: >-
+      cd .next/standalone &&
+      cp -r ../.next/static ./apps/web/.next/static &&
+      node apps/web/server.js
+    healthCheckPath: /
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Single-domain setup:
+      #   Browser calls /api/* → Next.js rewrites → internal API service.
+      #   Server-side RSC calls use the internal Render DNS name directly.
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
+      - key: NEXT_PUBLIC_API_URL
+        value: /api
+      - key: API_INTERNAL_URL
+        value: http://nova-api:4000
+      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        sync: false
