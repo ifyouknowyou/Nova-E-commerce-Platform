@@ -3,5 +3,9 @@
   "outputDirectory": "apps/web/.next",
   "installCommand": "npm install",
   "regions": ["iad1"],
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "github": {
+    "enabled": true,
+    "autoDeploy": false
+  }
 }
