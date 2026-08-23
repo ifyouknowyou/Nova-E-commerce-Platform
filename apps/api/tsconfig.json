@@ -11,9 +11,14 @@
     "strictPropertyInitialization": false,
     "declaration": false,
     "sourceMap": true,
-    "incremental": false,
-    "types": ["node", "jest"]
+    "incremental": false
   },
-  "include": ["src/**/*", "test/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
