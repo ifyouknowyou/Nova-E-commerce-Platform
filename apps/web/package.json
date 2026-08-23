@@ -2,7 +2,7 @@
   "name": "@nova/web",
   "version": "1.0.0",
   "private": true,
-  "description": "NOVA COMMERCE — customer storefront + seller & admin dashboards (Next.js)",
+  "description": "NOVA COMMERCE \u2014 customer storefront + seller & admin dashboards (Next.js)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -40,18 +40,18 @@
     "react-hook-form": "^7.84.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "@tailwindcss/postcss": "^4.3.3",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.6",
     "@nova/config": "*",
-    "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^24.0.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "eslint": "^9.26.0",
     "eslint-config-next": "^15.4.2",
-    "tailwindcss": "^4.1.11",
     "typescript": "^5.8.3"
   },
   "engines": {
