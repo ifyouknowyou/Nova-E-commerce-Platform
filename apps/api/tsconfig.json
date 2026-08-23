@@ -11,12 +11,7 @@
     "strictPropertyInitialization": false,
     "declaration": false,
     "sourceMap": true,
-    "incremental": false,
-    "types": [
-      "node",
-      "express",
-      "jest"
-    ]
+    "incremental": false
   },
   "include": [
     "src/**/*",
