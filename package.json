@@ -20,9 +20,7 @@
     "build:web": "npm run build -w @nova/web"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
     "prettier": "^3.6.2",
-    "tailwindcss": "^4.3.3",
     "turbo": "^2.5.4"
   },
   "engines": {
@@ -39,6 +37,8 @@
   },
   "dependencies": {
     "next": "^16.2.12",
-    "react": "^19.2.8"
+    "react": "^19.2.8",
+    "@tailwindcss/postcss": "^4.3.3",
+    "tailwindcss": "^4.3.3"
   }
 }
