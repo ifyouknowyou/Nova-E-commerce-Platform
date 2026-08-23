@@ -45,7 +45,7 @@
     "@nestjs/testing": "^11.1.4",
     "@nova/config": "*",
     "@types/express": "^5.0.1",
-    "@types/jest": "^30.0.0",
+    "@types/jest": "^29.5.12",
     "@types/multer": "^2.2.0",
     "@types/node": "^24.0.0",
     "@types/passport-google-oauth20": "^2.0.0",

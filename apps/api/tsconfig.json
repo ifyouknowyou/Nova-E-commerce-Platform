@@ -11,11 +11,7 @@
     "strictPropertyInitialization": false,
     "declaration": false,
     "sourceMap": true,
-    "incremental": false,
-    "typeRoots": [
-      "../node_modules/@types",
-      "./node_modules/@types"
-    ]
+    "incremental": false
   },
   "include": [
     "src/**/*",
