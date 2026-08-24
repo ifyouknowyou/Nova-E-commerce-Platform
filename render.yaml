@@ -78,6 +78,11 @@ services:
 
       - key: CORS_ORIGIN
         sync: false
+      # ──────────────────────────────────────────────────────────────────────
+      # Database seeding (manual)
+      # ──────────────────────────────────────────────────────────────────────
+      - key: ADMIN_PASSWORD
+        sync: false
 
       - key: WEB_URL
         sync: false
