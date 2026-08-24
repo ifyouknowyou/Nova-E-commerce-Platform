@@ -51,18 +51,26 @@ export class SeedController {
 
       // Permissions
       const permissions = [
-        'products:read', 'products:create', 'products:update', 'products:delete',
-        'cart:manage', 'checkout:manage', 'orders:read', 'orders:update',
-        'store:manage', 'analytics:read', 'settings:manage',
+        { code: 'products:read', module: 'products' },
+        { code: 'products:create', module: 'products' },
+        { code: 'products:update', module: 'products' },
+        { code: 'products:delete', module: 'products' },
+        { code: 'cart:manage', module: 'cart' },
+        { code: 'checkout:manage', module: 'checkout' },
+        { code: 'orders:read', module: 'orders' },
+        { code: 'orders:update', module: 'orders' },
+        { code: 'store:manage', module: 'store' },
+        { code: 'analytics:read', module: 'analytics' },
+        { code: 'settings:manage', module: 'settings' },
       ];
-      for (const code of permissions) {
-        await prisma.permission.upsert({ where: { code }, create: { code, name: code }, update: {} });
+      for (const perm of permissions) {
+        await prisma.permission.upsert({ where: { code: perm.code }, create: perm, update: {} });
       }
 
       // Admin role permissions
       const adminRole = await prisma.role.findUnique({ where: { code: 'ADMIN' } });
       if (adminRole) {
-        const permList = await prisma.permission.findMany({ where: { code: { in: permissions } } });
+        const permList = await prisma.permission.findMany({ where: { code: { in: permissions.map(p => p.code) } } });
         for (const perm of permList) {
           await prisma.rolePermission.upsert({
             where: { roleId_permissionId: { roleId: adminRole.id, permissionId: perm.id } },
@@ -75,17 +83,26 @@ export class SeedController {
       // Users
       const adminHash = await argon2.hash(expectedToken);
       const sellerHash = await argon2.hash('SellerPassw0rd!');
-      await prisma.user.create({
-        data: { email: 'admin@nova.test', password: adminHash, role: 'ADMIN', status: 'ACTIVE', emailVerifiedAt: new Date() },
+      const adminUser = await prisma.user.create({
+        data: { email: 'admin@nova.test', passwordHash: adminHash, status: 'ACTIVE', emailVerifiedAt: new Date() },
       });
-      await prisma.user.create({
-        data: { email: 'seller@nova.test', password: sellerHash, role: 'SELLER', status: 'ACTIVE', emailVerifiedAt: new Date() },
+      const sellerUser = await prisma.user.create({
+        data: { email: 'seller@nova.test', passwordHash: sellerHash, status: 'ACTIVE', emailVerifiedAt: new Date() },
       });
 
+      // Assign roles
+      const adminRole2 = await prisma.role.findUnique({ where: { code: 'ADMIN' } });
+      const sellerRole = await prisma.role.findUnique({ where: { code: 'SELLER' } });
+      if (adminRole2) {
+        await prisma.userRole.create({ data: { userId: adminUser.id, roleId: adminRole2.id } });
+      }
+      if (sellerRole) {
+        await prisma.userRole.create({ data: { userId: sellerUser.id, roleId: sellerRole.id } });
+      }
+
       // Store
-      const seller = await prisma.user.findFirst({ where: { role: 'SELLER' } });
       const store = await prisma.store.create({
-        data: { name: 'NOVA Demo Store', slug: 'nova-demo', ownerId: seller?.id, status: 'ACTIVE' },
+        data: { name: 'NOVA Demo Store', slug: 'nova-demo', sellerId: sellerUser.id, status: 'ACTIVE' },
       });
 
       // Categories
@@ -107,9 +124,9 @@ export class SeedController {
 
       // Products
       const products = [
-        { name: 'Aurora Wireless Headphones', slug: 'aurora-wireless-headphones', sku: 'AUR-HP-001', price: 19900, salePrice: 14900, stock: 42, categorySlug: 'headphones', brand: 'Aurora', description: 'Noise-cancelling over-ear headphones', status: 'APPROVED', featured: true },
-        { name: 'Vertex Smart Watch', slug: 'vertex-smart-watch', sku: 'VRT-WT-001', price: 12900, salePrice: 9900, stock: 25, categorySlug: 'wearables', brand: 'Vertex', description: 'Fitness tracking smartwatch', status: 'APPROVED', featured: true },
-        { name: 'Zenith Running Shoes', slug: 'zenith-running-shoes', sku: 'ZNT-SH-001', price: 11000, salePrice: null, stock: 18, categorySlug: 'sports-outdoors', brand: 'Zenith', description: 'Lightweight running shoes', status: 'APPROVED', featured: true },
+        { name: 'Aurora Wireless Headphones', slug: 'aurora-wireless-headphones', sku: 'AUR-HP-001', price: 199.00, salePrice: 149.00, stock: 42, categorySlug: 'headphones', brand: 'Aurora', description: 'Noise-cancelling over-ear headphones', status: 'APPROVED', isFeatured: true },
+        { name: 'Vertex Smart Watch', slug: 'vertex-smart-watch', sku: 'VRT-WT-001', price: 129.00, salePrice: 99.00, stock: 25, categorySlug: 'wearables', brand: 'Vertex', description: 'Fitness tracking smartwatch', status: 'APPROVED', isFeatured: true },
+        { name: 'Zenith Running Shoes', slug: 'zenith-running-shoes', sku: 'ZNT-SH-001', price: 110.00, salePrice: null, stock: 18, categorySlug: 'sports-outdoors', brand: 'Zenith', description: 'Lightweight running shoes', status: 'APPROVED', isFeatured: true },
       ];
       for (const product of products) {
         const category = await prisma.category.findUnique({ where: { slug: product.categorySlug } });
