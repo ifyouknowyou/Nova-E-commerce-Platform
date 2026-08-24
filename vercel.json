@@ -1,7 +1,1 @@
-{
-  "framework": "nextjs",
-  "buildCommand": "cd apps/web && npm run build",
-  "outputDirectory": "apps/web/.next",
-  "installCommand": "npm install --ignore-scripts",
-  "regions": ["iad1"]
-}
+{"framework":"nextjs","buildCommand":"cd apps/web && npm run build","outputDirectory":"apps/web/.next","installCommand":"npm install --ignore-scripts","regions":["iad1"],"rewrites":[{"source":"/api/(.*)","destination":"https://nova-api-4k4c.onrender.com/api/$1"}]}

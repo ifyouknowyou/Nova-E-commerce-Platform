@@ -41,7 +41,7 @@ services:
         sync: false
       # CORS — single domain: browser + API share the same host
       - key: CORS_ORIGIN
-        value: "https://nova-api-bcb1.onrender.com,https://nova-web-jr4b.onrender.com"
+        sync: false
       # JWT — generate with: openssl rand -hex 64
       - key: JWT_ACCESS_SECRET
         sync: false
@@ -77,7 +77,7 @@ services:
         value: "NOVA Commerce <no-reply@nova.local>"
       # Object storage (S3-compatible)
       - key: S3_ENDPOINT
-        value: "http://localhost:9000"
+        sync: false
       - key: S3_REGION
         value: us-east-1
       - key: S3_BUCKET
