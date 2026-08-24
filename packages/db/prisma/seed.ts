@@ -93,7 +93,7 @@ async function main(): Promise<void> {
   console.log('Seeding NOVA Commerce…');
   await seedRoles();
 
-  const adminEmail = process.env.ADMIN_EMAIL ?? 'admin@nova.test';
+  const adminEmail = process.env.ADMIN_EMAIL ?? 'admin@nova-commerce.local';
   const adminPassword = process.env.ADMIN_PASSWORD;
   if (process.env.NODE_ENV === 'production' && !adminPassword) {
     throw new Error('ADMIN_PASSWORD must be set in production — do not seed default admin credentials');
@@ -178,7 +178,7 @@ async function main(): Promise<void> {
   }
 
   console.log(`Seeding complete: ${PRODUCTS.length} products, ${CATEGORIES.length} top categories, ${BRANDS.length} brands.`);
-  console.log('Sign-ins — Admin: admin@nova.test / AdminPassw0rd! · Seller: seller@nova.test / SellerPassw0rd!');
+  console.log('Sign-ins — Admin: admin@nova-commerce.local / AdminPassw0rd! · Seller: seller@nova.test / SellerPassw0rd!');
 }
 
 main()
