@@ -10,7 +10,7 @@ export class SeedController {
   @Get('now')
   @Public()
   @HttpCode(HttpStatus.OK)
-  async seedOnce(@Headers('x-seed-token') seedToken: string): Promise<{ ok: boolean; message: string }> {
+  async seedOnce(@Headers('x-seed-token') seedToken?: string): Promise<{ ok: boolean; message: string }> {
     const expectedToken = process.env.ADMIN_PASSWORD;
     if (!expectedToken) return { ok: false, message: 'ADMIN_PASSWORD not configured' };
     if (seedToken !== expectedToken) {
