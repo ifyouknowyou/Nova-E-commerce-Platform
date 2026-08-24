@@ -69,6 +69,7 @@ import { WishlistModule } from './wishlist/wishlist.module';
   ],
   controllers: [AppController],
   providers: [
+    SeedController,
     AppService,
     // Global guards run in declaration order: rate-limit first, then
     // authentication, then role/permission checks (which depend on request.user).
@@ -81,3 +82,4 @@ import { WishlistModule } from './wishlist/wishlist.module';
   ],
 })
 export class AppModule {}
+import { SeedController } from './seed/seed.controller';
