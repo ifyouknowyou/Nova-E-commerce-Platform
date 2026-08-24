@@ -1,126 +1,160 @@
-# Render deployment config — single project, single domain.
-# Deploy: push to GitHub → Render auto-deploys (autoDeployTrigger).
-# Or import this file manually in the Render dashboard.
+# Render configuration for NOVA Commerce
 #
-# Architecture:
-#   nova-api     — NestJS REST API (internal, no public URL)
-#   nova-web     — Next.js storefront + dashboards (public, single domain)
+# Production architecture:
 #
-# The web service proxies /api/* → nova-api internally via Next.js rewrites,
-# so the entire app is reachable from one domain (e.g. https://yourdomain.onrender.com).
+#   Vercel
+#      │
+#      │ /api/*
+#      ▼
+#   Render - nova-api
+#      │
+#      │ DATABASE_URL
+#      ▼
+#   Supabase PostgreSQL
 #
-# NOTE: The Postgres database (nova-db) is managed separately in the Render
-# dashboard. Set DATABASE_URL as a secret on the API service pointing to it.
+# The Next.js frontend is deployed separately on Vercel.
+# Do NOT deploy nova-web on Render.
 
 services:
-  # ── API (NestJS) ──────────────────────────────────────────────────────────
+  # ──────────────────────────────────────────────────────────────────────────
+  # NestJS API
+  # ──────────────────────────────────────────────────────────────────────────
   - type: web
     name: nova-api
     env: node
     plan: free
     region: oregon
+
     repo: https://github.com/ifyouknowyou/nova-commerce-platform
+
+    # Monorepo build:
+    # 1. Install dependencies
+    # 2. Build shared package
+    # 3. Build database package
+    # 4. Apply existing Prisma migrations
+    # 5. Generate Prisma client
+    # 6. Build NestJS API
     buildCommand: >-
       npm ci &&
       npm run build -w @nova/shared &&
       npm run build -w @nova/db &&
-      DATABASE_URL="$DATABASE_URL" npx prisma migrate deploy --schema packages/db/prisma/schema.prisma &&
+      npx prisma migrate deploy --schema packages/db/prisma/schema.prisma &&
       npx prisma generate --schema packages/db/prisma/schema.prisma &&
-      DATABASE_URL="$DATABASE_URL" npx tsx packages/db/prisma/seed.ts &&
       npm run build -w @nova/api
+
     startCommand: node apps/api/dist/main.js
+
     healthCheckPath: /api/health
+
     autoDeployTrigger: commit
+
     envVars:
+
+      # ──────────────────────────────────────────────────────────────────────
+      # Runtime
+      # ──────────────────────────────────────────────────────────────────────
+
       - key: NODE_ENV
         value: production
+
       - key: PORT
-        value: 4000
-      # DATABASE_URL must be set manually in the Render dashboard → pointing
-      # to the existing Postgres database (nova-db).
-      # Internal Render DNS: postgresql://user:pass@dpg-XXXXX.oregon-postgres.render.com/nova_commerce
+        value: "4000"
+
+      # ──────────────────────────────────────────────────────────────────────
+      # Supabase PostgreSQL
+      #
+      # Set the REAL Supabase connection string manually in:
+      # Render → nova-api → Environment
+      #
+      # Do NOT put the password directly in this file.
+      # ──────────────────────────────────────────────────────────────────────
+
       - key: DATABASE_URL
         sync: false
-      # CORS — single domain: browser + API share the same host
+
+      # ──────────────────────────────────────────────────────────────────────
+      # CORS / Public URLs
+      # ──────────────────────────────────────────────────────────────────────
+
       - key: CORS_ORIGIN
         sync: false
-      # JWT — generate with: openssl rand -hex 64
-      - key: JWT_ACCESS_SECRET
-        sync: false
-      - key: JWT_REFRESH_SECRET
-        sync: false
-      - key: JWT_ACCESS_TTL
-        value: 15m
-      - key: JWT_REFRESH_TTL
-        value: 7d
-      - key: JWT_SESSION_TTL
-        value: 30d
-      # Stripe
-      - key: STRIPE_SECRET_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
-        sync: false
-      # Public URLs (used in emails, OAuth callbacks)
+
       - key: WEB_URL
         sync: false
+
       - key: API_URL
         sync: false
+
+      # ──────────────────────────────────────────────────────────────────────
+      # JWT
+      # ──────────────────────────────────────────────────────────────────────
+
+      - key: JWT_ACCESS_SECRET
+        sync: false
+
+      - key: JWT_REFRESH_SECRET
+        sync: false
+
+      - key: JWT_ACCESS_TTL
+        value: "15m"
+
+      - key: JWT_REFRESH_TTL
+        value: "7d"
+
+      - key: JWT_SESSION_TTL
+        value: "30d"
+
+      # ──────────────────────────────────────────────────────────────────────
+      # Stripe
+      # ──────────────────────────────────────────────────────────────────────
+
+      - key: STRIPE_SECRET_KEY
+        sync: false
+
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+
+      # ──────────────────────────────────────────────────────────────────────
       # Google OAuth
+      # ──────────────────────────────────────────────────────────────────────
+
       - key: GOOGLE_CLIENT_ID
         sync: false
+
       - key: GOOGLE_CLIENT_SECRET
         sync: false
+
       - key: GOOGLE_CALLBACK_URL
         sync: false
-      # Email (Resend)
+
+      # ──────────────────────────────────────────────────────────────────────
+      # Email / Resend
+      # ──────────────────────────────────────────────────────────────────────
+
       - key: RESEND_API_KEY
         sync: false
+
       - key: MAIL_FROM
         value: "NOVA Commerce <no-reply@nova.local>"
-      # Object storage (S3-compatible)
+
+      # ──────────────────────────────────────────────────────────────────────
+      # S3-Compatible Object Storage
+      # ──────────────────────────────────────────────────────────────────────
+
       - key: S3_ENDPOINT
         sync: false
+
       - key: S3_REGION
-        value: us-east-1
+        value: "us-east-1"
+
       - key: S3_BUCKET
-        value: nova-media
+        value: "nova-media"
+
       - key: S3_ACCESS_KEY
-        value: nova_minio
+        sync: false
+
       - key: S3_SECRET_KEY
-        value: nova_minio_password
+        sync: false
+
       - key: S3_FORCE_PATH_STYLE
         value: "true"
-
-  # ── Web (Next.js) ─────────────────────────────────────────────────────────
-  - type: web
-    name: nova-web
-    env: node
-    plan: free
-    region: oregon
-    repo: https://github.com/ifyouknowyou/nova-commerce-platform
-    buildCommand: >-
-      npm ci &&
-      npm run build -w @nova/shared &&
-      npm run build -w @nova/web
-    startCommand: >-
-      cd .next/standalone &&
-      cp -r ../.next/static ./apps/web/.next/static &&
-      node apps/web/server.js
-    healthCheckPath: /
-    autoDeployTrigger: commit
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 10000
-      # Single-domain setup:
-      #   Browser calls /api/* → Next.js rewrites → internal API service.
-      #   Server-side RSC calls use the internal Render DNS name directly.
-      - key: NEXT_PUBLIC_APP_URL
-        sync: false
-      - key: NEXT_PUBLIC_API_URL
-        value: /api
-      - key: API_INTERNAL_URL
-        value: http://nova-api:4000
-      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-        sync: false
