@@ -18,7 +18,6 @@ import { CategoriesModule } from './categories/categories.module';
 import { CouponsModule } from './coupons/coupons.module';
 import { HealthModule } from './health/health.module';
 import { MailModule } from './mail/mail.module';
-import { SeedController } from './seed/seed.controller';
 import { NotificationsModule } from './notifications/notifications.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { OrdersModule } from './orders/orders.module';
@@ -70,7 +69,6 @@ import { WishlistModule } from './wishlist/wishlist.module';
   ],
   controllers: [AppController],
   providers: [
-    SeedController,
     AppService,
     // Global guards run in declaration order: rate-limit first, then
     // authentication, then role/permission checks (which depend on request.user).
