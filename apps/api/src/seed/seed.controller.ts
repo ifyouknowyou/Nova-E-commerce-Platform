@@ -34,7 +34,7 @@ export class SeedController {
       // Permissions
       const permCodes = ['products:read', 'products:create', 'products:update', 'products:delete', 'cart:manage', 'checkout:manage', 'orders:read', 'orders:update', 'store:manage', 'analytics:read', 'settings:manage'];
       for (const code of permCodes) {
-        await prisma.permission.upsert({ where: { code }, create: { code, module: code.split(':')[0] }, update: {} });
+        await prisma.permission.upsert({ where: { code }, create: { code, module: code.split(':')[0] as string }, update: {} });
       }
 
       // Admin role permissions
