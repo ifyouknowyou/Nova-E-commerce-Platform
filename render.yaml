@@ -25,7 +25,7 @@ services:
       npm run build -w @nova/shared &&
       npm run build -w @nova/db &&
       DATABASE_URL="$DATABASE_URL" npx prisma migrate deploy --schema packages/db/prisma/schema.prisma &&
-      npm run seed -w @nova/db &&
+      DATABASE_URL="$DATABASE_URL" npx tsx packages/db/prisma/seed.ts &&
       npm run build -w @nova/api
     startCommand: node apps/api/dist/main.js
     healthCheckPath: /api/health
