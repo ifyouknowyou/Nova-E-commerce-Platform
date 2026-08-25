@@ -98,7 +98,7 @@ async function main(): Promise<void> {
   if (process.env.NODE_ENV === 'production' && !adminPassword) {
     throw new Error('ADMIN_PASSWORD must be set in production — do not seed default admin credentials');
   }
-  const adminId = await upsertUser(adminEmail, 'NOVA Admin', adminPassword ?? 'AdminPassw0rd!', 'ADMIN');
+  const adminId = await upsertUser(adminEmail, 'NOVA Admin', adminPassword ?? 'iBq8t49OJCRIY/et7Kpbg1X+wAz9JsKXgp6EfZZWiB8=', 'ADMIN');
   const sellerId = await upsertUser('seller@nova.test', 'Aurora Store', 'SellerPassw0rd!', 'SELLER');
   console.log(`  admin: ${adminId} / seller: ${sellerId}`);
 
@@ -178,7 +178,7 @@ async function main(): Promise<void> {
   }
 
   console.log(`Seeding complete: ${PRODUCTS.length} products, ${CATEGORIES.length} top categories, ${BRANDS.length} brands.`);
-  console.log('Sign-ins — Admin: admin@nova-commerce.local / AdminPassw0rd! · Seller: seller@nova.test / SellerPassw0rd!');
+  console.log('Sign-ins — Admin: admin@nova-commerce.local / iBq8t49OJCRIY/et7Kpbg1X+wAz9JsKXgp6EfZZWiB8= · Seller: seller@nova.test / SellerPassw0rd!');
 }
 
 main()
