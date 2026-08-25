@@ -163,7 +163,7 @@ services:
         value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzYmhqaWtpb2ZjZnhobXVwYXVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzNjMwODAsImV4cCI6MjA3MTkzOTA4MH0.xYz123"
 
       - key: S3_SECRET_KEY
-        sync: false
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzYmhqaWtpb2ZjZnhobXVwYXVpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjM2MzA4MCwiZXhwIjoyMDcxOTM5MDgwfQ.abc123"
 
       - key: S3_FORCE_PATH_STYLE
         value: "true"
