@@ -97,6 +97,14 @@ export class UploadsService implements OnModuleInit {
 
   /** Validate + upload an image buffer. Type is derived from bytes, key is bound to the uploader. */
   async uploadImage(userId: string, buffer: Buffer, _clientMimeType: string): Promise<UploadResult> {
+    const isConfigured = this.config.s3Endpoint &&
+      !this.config.s3Endpoint.includes('localhost') &&
+      this.config.s3Bucket &&
+      this.config.s3AccessKey &&
+      this.config.s3SecretKey;
+    if (!isConfigured) {
+      throw new BadRequestException('Image storage not configured — set S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY, S3_SECRET_KEY in Render environment');
+    }
     if (buffer.byteLength === 0) throw new BadRequestException('Empty file');
     if (buffer.byteLength > MAX_SIZE) throw new BadRequestException('Image exceeds the 5 MB limit');
 
