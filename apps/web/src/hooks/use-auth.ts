@@ -23,7 +23,7 @@ export function useAuthenticated(): AuthState {
     async function sync(): Promise<void> {
       try {
         const user = await apiFetch('/auth/me');
-        setAuthed(user !== null);
+        setAuthed(!!user && Object.keys(user).length > 0);
       } catch {
         setAuthed(false);
       }
