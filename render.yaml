@@ -163,3 +163,7 @@ services:
 
       - key: S3_FORCE_PATH_STYLE
         value: "true"
+      # Supabase Storage (S3-compatible)
+      - key: S3_STORAGE_ENDPOINT
+        value: "https://fsbhjukiofcfxhmupaui.supabase.co/storage/v1/s3"
+        sync: false
