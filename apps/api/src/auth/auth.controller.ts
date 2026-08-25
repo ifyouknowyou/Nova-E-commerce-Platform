@@ -42,6 +42,13 @@ export class AuthController {
     @Inject(CONFIG) private readonly config: AppConfig,
   ) {}
 
+  @Get('me')
+  @Public()
+  me(@CurrentUser() user?: AuthenticatedUser) {
+    if (!user) return null;
+    return { id: user.sub, email: user.email, roles: user.roleCodes };
+  }
+
   @Post('register')
   @Public()
   @HttpCode(HttpStatus.CREATED)
