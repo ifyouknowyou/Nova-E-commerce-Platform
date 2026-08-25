@@ -77,7 +77,7 @@ services:
       # ──────────────────────────────────────────────────────────────────────
 
       - key: CORS_ORIGIN
-        sync: false
+        value: "https://nova-commerce-seven.vercel.app,https://nova-commerce-henna.vercel.app"
       # ──────────────────────────────────────────────────────────────────────
       # Database seeding (manual)
       # ──────────────────────────────────────────────────────────────────────
