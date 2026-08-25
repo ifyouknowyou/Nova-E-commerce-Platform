@@ -46,7 +46,7 @@ export class AuthController {
   @Public()
   me(@CurrentUser() user?: AuthenticatedUser) {
     if (!user) return null;
-    return { id: user.sub, email: user.email, roles: user.roleCodes };
+    return { id: user.id, email: user.email, roles: user.roleCodes };
   }
 
   @Post('register')
