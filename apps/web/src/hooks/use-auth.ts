@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getCookie } from '@/lib/api';
+import { apiFetch } from '@/lib/api';
 
 export interface AuthState {
   /** Whether the user has a stored access token. */
@@ -11,20 +11,22 @@ export interface AuthState {
 }
 
 /**
- * Reads authentication state only after hydration, and re-reads it whenever
- * the auth cookie changes (login/logout) via the `nova:auth-change` event.
- *
- * Auth now lives in httpOnly cookies. The server sets a non-httpOnly
- * `nova_authed` marker cookie that this hook reads; the marker only exists in
- * the browser, so both renders agree until mount (hydration-safe).
+ * Reads authentication state via the /api/auth/me endpoint.
+ * This works across domains (Vercel frontend → Render API) because it
+ * uses the API's CORS-enabled endpoint instead of reading cookies directly.
  */
 export function useAuthenticated(): AuthState {
   const [authed, setAuthed] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    function sync(): void {
-      setAuthed(getCookie('nova_authed') === '1');
+    async function sync(): Promise<void> {
+      try {
+        const user = await apiFetch('/auth/me');
+        setAuthed(user !== null);
+      } catch {
+        setAuthed(false);
+      }
       setReady(true);
     }
 
