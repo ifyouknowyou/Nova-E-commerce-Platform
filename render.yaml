@@ -143,11 +143,15 @@ services:
         value: "NOVA Commerce <no-reply@nova.local>"
 
       # ──────────────────────────────────────────────────────────────────────
-      # S3-Compatible Object Storage
+      # S3-Compatible Object Storage (Supabase)
       # ──────────────────────────────────────────────────────────────────────
+      # Prerequisites:
+      #   1. Create bucket "nova-media" in Supabase Dashboard → Storage
+      #   2. Set public access on the bucket
+      #   3. Copy keys from Supabase Dashboard → Settings → API
 
       - key: S3_ENDPOINT
-        sync: false
+        value: "https://fsbhjukiofcfxhmupaui.supabase.co/storage/v1/s3"
 
       - key: S3_REGION
         value: "us-east-1"
@@ -156,14 +160,10 @@ services:
         value: "nova-media"
 
       - key: S3_ACCESS_KEY
-        sync: false
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzYmhqaWtpb2ZjZnhobXVwYXVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzNjMwODAsImV4cCI6MjA3MTkzOTA4MH0.xYz123"
 
       - key: S3_SECRET_KEY
         sync: false
 
       - key: S3_FORCE_PATH_STYLE
-        value: "true"
-      # Supabase Storage (S3-compatible)
-      - key: S3_STORAGE_ENDPOINT
-        value: "https://fsbhjukiofcfxhmupaui.supabase.co/storage/v1/s3"
-        sync: false
+        value: "false"
