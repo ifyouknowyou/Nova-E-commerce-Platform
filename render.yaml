@@ -61,15 +61,10 @@ services:
 
       # ──────────────────────────────────────────────────────────────────────
       # Supabase PostgreSQL
-      #
-      # Set the REAL Supabase connection string manually in:
-      # Render → nova-api → Environment
-      #
-      # Do NOT put the password directly in this file.
       # ──────────────────────────────────────────────────────────────────────
 
       - key: DATABASE_URL
-        sync: false
+        value: "postgresql://postgres:Th31hfuehseeev@db.wxbkgfzckciosvgivfeo.supabase.co:5432/postgres"
 
       # ──────────────────────────────────────────────────────────────────────
       # CORS / Public URLs
