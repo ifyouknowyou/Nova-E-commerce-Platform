@@ -42,7 +42,7 @@ services:
 
     # Run migrations on every start (Render restarts on failure, so this is idempotent).
     # If migrations are already up-to-date, prisma migrate deploy is a no-op.
-    startCommand: npm run -w @nova/db deploy -- --schema packages/db/prisma/schema.prisma && node apps/api/dist/main.js
+    startCommand: npx prisma migrate deploy --schema packages/db/prisma/schema.prisma && node apps/api/dist/main.js
 
     healthCheckPath: /api/health
 
