@@ -65,7 +65,7 @@ services:
       # ──────────────────────────────────────────────────────────────────────
 
       - key: REDIS_URL
-        value: "Ae891jghtkvr6w85ngkz2z4hrvaqgx7nd5x5vatyls7staxfo3"
+        value: "redis://default:gQAAAAAAAsIsAAIgcDIwZDg4MWU5YTA4NzQ0MDUwODFiM2Y3NmZmYzZlNGU4Zg@learning-hyena-180780.upstash.io:6379"
 
       # ──────────────────────────────────────────────────────────────────────
       # Render PostgreSQL
