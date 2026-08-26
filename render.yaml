@@ -30,18 +30,19 @@ services:
     # Monorepo build:
     # 1. Install dependencies
     # 2. Build shared package
-    # 3. Build database package (generate client only, no migrate)
-    # 4. Build NestJS API
+    # 3. Build database package
+    # 4. Apply existing Prisma migrations
+    # 5. Generate Prisma client
+    # 6. Build NestJS API
     buildCommand: >-
       npm ci &&
       npm run build -w @nova/shared &&
-      npx prisma generate --schema packages/db/prisma/schema.prisma &&
       npm run build -w @nova/db &&
+      npx prisma migrate deploy --schema packages/db/prisma/schema.prisma &&
+      npx prisma generate --schema packages/db/prisma/schema.prisma &&
       npm run build -w @nova/api
 
-    # Run migrations on every start (Render restarts on failure, so this is idempotent).
-    # If migrations are already up-to-date, prisma migrate deploy is a no-op.
-    startCommand: npm run -w @nova/db deploy -- --schema packages/db/prisma/schema.prisma && node apps/api/dist/main.js
+    startCommand: node apps/api/dist/main.js
 
     healthCheckPath: /api/health
 
@@ -61,10 +62,15 @@ services:
 
       # ──────────────────────────────────────────────────────────────────────
       # Supabase PostgreSQL
+      #
+      # Set the REAL Supabase connection string manually in:
+      # Render → nova-api → Environment
+      #
+      # Do NOT put the password directly in this file.
       # ──────────────────────────────────────────────────────────────────────
 
       - key: DATABASE_URL
-        value: "postgresql://postgres:Th31hfuehseeev@db.wxbkgfzckciosvgivfeo.supabase.co:5432/postgres"
+        sync: false
 
       # ──────────────────────────────────────────────────────────────────────
       # CORS / Public URLs
@@ -154,10 +160,11 @@ services:
         value: "nova-media"
 
       # Supabase Storage S3-compatible credentials
+      # NOTE: These must be set as Render secrets, not plaintext values.
       - key: S3_ACCESS_KEY
-        value: "e4f3971728f970eeca5f2972ab2cfb1b"
+        value: ${RENDER_SECRET_S3_ACCESS_KEY}
       - key: S3_SECRET_KEY
-        value: "448263fcb48efbc5b720521ba38e75b83e1f42904b8c419486e2b32f3c4ec582"
+        value: ${RENDER_SECRET_S3_SECRET_KEY}
 
       - key: S3_FORCE_PATH_STYLE
         value: "true"
