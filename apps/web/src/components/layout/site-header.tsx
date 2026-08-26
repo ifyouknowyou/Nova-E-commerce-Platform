@@ -307,6 +307,14 @@ export function SiteHeader() {
 
             <AnimatedCartButton />
 
+            {!authed && ready && (
+              <Link href="/login">
+                <Button variant="default" size="sm" className="h-8 rounded-full px-4 text-sm font-medium">
+                  Sign in
+                </Button>
+              </Link>
+            )}
+
             <DropdownMenu open={accountOpen} onOpenChange={setAccountOpen}>
               <DropdownMenuTrigger asChild>
                 <motion.div
