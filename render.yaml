@@ -164,9 +164,9 @@ services:
       # Supabase Storage S3-compatible credentials
       # NOTE: These must be set as Render secrets, not plaintext values.
       - key: S3_ACCESS_KEY
-        value: "e4f3971728f970eeca5f2972ab2cfb1b"
+        value: "cd59a847af8afafa4c402d1dee374cc1"
       - key: S3_SECRET_KEY
-        value: "448263fcb48efbc5b720521ba38e75b83e1f42904b8c419486e2b32f3c4ec582"
+        value: "c17764edb862f626a26ee6f6f999a963d63af16a1388d34e740c4d9c08062a3e"
 
       - key: S3_FORCE_PATH_STYLE
         value: "true"
