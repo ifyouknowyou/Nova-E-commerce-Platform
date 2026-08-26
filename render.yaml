@@ -61,16 +61,11 @@ services:
         value: "4000"
 
       # ──────────────────────────────────────────────────────────────────────
-      # Supabase PostgreSQL
-      #
-      # Set the REAL Supabase connection string manually in:
-      # Render → nova-api → Environment
-      #
-      # Do NOT put the password directly in this file.
+      # Render PostgreSQL
       # ──────────────────────────────────────────────────────────────────────
 
       - key: DATABASE_URL
-        sync: false
+        value: "postgresql://nova_commerce_user:XyR4FKEuQ6r2HneKVJwzLsC99Ht7GX7q@dpg-da4v423m8hqs73atiiag-a/nova_commerce"
 
       # ──────────────────────────────────────────────────────────────────────
       # CORS / Public URLs
