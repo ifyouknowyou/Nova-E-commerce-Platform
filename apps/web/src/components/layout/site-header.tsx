@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
-import { Heart, LogOut, Search, ShoppingCart, UserCircle } from 'lucide-react';
+import { Heart, LogOut, Search, UserCircle } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -279,7 +279,7 @@ export function SiteHeader() {
                             className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
                           >
                             <Search className="h-4 w-4" />
-                            See all results for "{query.trim()}"
+                            See all results for {query.trim()}
                           </button>
                         </li>
                       </ul>
