@@ -30,19 +30,19 @@ services:
     # Monorepo build:
     # 1. Install dependencies
     # 2. Build shared package
-    # 3. Build database package
-    # 4. Apply existing Prisma migrations
-    # 5. Generate Prisma client
-    # 6. Build NestJS API
+    # 3. Generate Prisma client
+    # 4. Build database package
+    # 5. Build NestJS API
     buildCommand: >-
       npm ci &&
       npm run build -w @nova/shared &&
-      npm run build -w @nova/db &&
-      npx prisma migrate deploy --schema packages/db/prisma/schema.prisma &&
       npx prisma generate --schema packages/db/prisma/schema.prisma &&
+      npm run build -w @nova/db &&
       npm run build -w @nova/api
 
-    startCommand: node apps/api/dist/main.js
+    # Run migrations on every start (Render restarts on failure, so this is idempotent).
+    # If migrations are already up-to-date, prisma migrate deploy is a no-op.
+    startCommand: npm run -w @nova/db deploy -- --schema packages/db/prisma/schema.prisma && node apps/api/dist/main.js
 
     healthCheckPath: /api/health
 
