@@ -10,7 +10,9 @@ import type { AuthenticatedUser } from '../../rbac/rbac.types';
 
 export interface JwtAccessPayload {
   sub: string;
-  email: string;
+  /** Email was intentionally removed from the JWT payload to reduce information leakage.
+   *  The validate() method fetches email from the database using `sub` instead. */
+  email?: string;
   roleCodes: RoleCode[];
   /** User.tokenVersion at issuance — bumped to revoke access on security events. */
   tokenVersion: number;

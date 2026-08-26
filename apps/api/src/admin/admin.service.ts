@@ -164,6 +164,12 @@ export class AdminService {
       where: { id: storeId },
       data: { deletedAt: new Date(), status: 'SUSPENDED' },
     });
+    // Revoke the seller's sessions so they cannot continue acting as a seller
+    // after their store has been removed from the marketplace.
+    if (store.sellerId) {
+      await this.tokens.revokeAllForUser(store.sellerId);
+      await this.tokens.bumpTokenVersion(store.sellerId);
+    }
     await this.prisma.db.auditLog.create({
       data: { userId: actorId, action: 'admin.store_delete', entityType: 'store', entityId: storeId },
     });

@@ -47,7 +47,9 @@ export class TokensService {
     roleCodes: RoleCode[],
     tokenVersion: number,
   ): Promise<string> {
-    const payload: JwtAccessPayload = { sub: userId, email, roleCodes, tokenVersion, jti: randomUUID() };
+    // Email is intentionally excluded from the JWT payload to reduce information
+    // leakage. The `sub` (userId) is sufficient for server-side lookups.
+    const payload: JwtAccessPayload = { sub: userId, roleCodes, tokenVersion, jti: randomUUID() };
     // Enforce an expiry so a leaked access token is not valid forever. The TTL is
     // a validated string like "15m"; jsonwebtoken expects a StringValue-templated
     // type, so it is cast here.

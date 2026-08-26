@@ -31,8 +31,11 @@ export function verifyStripeSignature(
     throw new BadRequestException('Malformed Stripe signature');
   }
 
-  const signedPayload = `${parts.timestamp}.${rawBody.toString('utf8')}`;
-  const expected = createHmac('sha256', secret).update(signedPayload).digest();
+  // Stripe signs `${timestamp}.${rawBody}` where rawBody is the exact byte
+  // sequence from the request. Use `binary` so non-ASCII bytes are preserved
+  // verbatim (utf8 would re-encode multi-byte characters and break the HMAC).
+  const signedPayload = `${parts.timestamp}.${rawBody.toString('binary')}`;
+  const expected = createHmac('sha256', secret).update(signedPayload, 'binary').digest();
   const provided = Buffer.from(parts.signature, 'hex');
   if (provided.length !== expected.length || !timingSafeEqual(provided, expected)) {
     throw new BadRequestException('Invalid Stripe signature');
