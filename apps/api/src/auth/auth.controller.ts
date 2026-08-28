@@ -43,7 +43,6 @@ export class AuthController {
   ) {}
 
   @Get('me')
-  @Public()
   me(@CurrentUser() user?: AuthenticatedUser) {
     if (!user) return {};
     return { id: user.id, email: user.email, roles: user.roleCodes };

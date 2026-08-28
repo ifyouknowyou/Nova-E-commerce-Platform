@@ -1,5 +1,6 @@
 import {
   ArrowLeft,
+  ArrowRight,
   BadgeCheck,
   Mail,
   PackageCheck,
@@ -10,6 +11,9 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
+import { DepthCard } from '@/components/3d/depth-card';
+import { PageHeader } from '@/components/3d/page-header';
+import { Reveal3D } from '@/components/3d/reveal-3d';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const metadata = {
@@ -68,91 +72,105 @@ const SECTIONS: PolicySection[] = [
 
 export default function SellerPoliciesPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <Link
-        href="/help"
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to help center
-      </Link>
-
-      <div className="mt-6">
-        <h1 className="text-3xl font-bold tracking-tight">Seller policies &amp; fees</h1>
-        <p className="mt-2 text-muted-foreground">
-          How selling on NOVA works — fees, listing rules, and the standards we hold every store to.
-        </p>
-      </div>
+    <div className="page-container py-8">
+      <Reveal3D>
+        <div className="flex items-center gap-2 text-sm">
+          <Link
+            href="/help"
+            className="inline-flex items-center gap-1.5 font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to help center
+          </Link>
+        </div>
+        <PageHeader
+          title="Seller policies &amp; fees"
+          subtitle="How selling on NOVA works — fees, listing rules, and the standards we hold every store to"
+        />
+      </Reveal3D>
 
       {/* Fees */}
-      <Card className="mt-8">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-2">
-            <Percent className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold">Fees</h2>
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-lg border p-4">
-              <p className="text-2xl font-bold tracking-tight text-primary">5%</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Flat commission per sale. Deducted when an order is completed.
-              </p>
+      <Reveal3D delay={0.1}>
+        <DepthCard level={2} glow className="mt-6 overflow-hidden">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-warning/10">
+                <Percent className="h-4 w-4 text-warning" />
+              </div>
+              <h2 className="text-base font-bold tracking-tight">Fees</h2>
             </div>
-            <div className="rounded-lg border p-4">
-              <p className="text-2xl font-bold tracking-tight text-primary">$0</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Monthly subscription and setup fee. No cost to create or run your store.
-              </p>
+            <div className="mt-5 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-xl border border-primary/10 bg-primary/5 p-4 text-center">
+                <p className="text-3xl font-bold tracking-tight text-primary">5%</p>
+                <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                  Flat commission per sale. Deducted when an order is completed.
+                </p>
+              </div>
+              <div className="rounded-xl border border-success/10 bg-success/5 p-4 text-center">
+                <p className="text-3xl font-bold tracking-tight text-success">$0</p>
+                <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                  Monthly subscription and setup fee. No cost to create or run your store.
+                </p>
+              </div>
+              <div className="rounded-xl border border-muted p-4 text-center">
+                <p className="text-3xl font-bold tracking-tight">No</p>
+                <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                  Hidden fees. What you see in the dashboard is what you keep.
+                </p>
+              </div>
             </div>
-            <div className="rounded-lg border p-4">
-              <p className="text-2xl font-bold tracking-tight text-primary">No</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Hidden fees. What you see in the dashboard is what you keep.
-              </p>
-            </div>
-          </div>
-          <p className="mt-4 text-xs text-muted-foreground">
-            Your store’s commission rate is shown in the seller dashboard. Fees may be adjusted per
-            store for enterprise or promotional programs.
-          </p>
-        </CardContent>
-      </Card>
+            <p className="mt-4 text-xs text-muted-foreground">
+              Your store’s commission rate is shown in the seller dashboard. Fees may be adjusted per
+              store for enterprise or promotional programs.
+            </p>
+          </CardContent>
+        </DepthCard>
+      </Reveal3D>
 
       {/* Policy sections */}
-      <div className="mt-6 grid gap-6 sm:grid-cols-2">
-        {SECTIONS.map((section) => (
-          <Card key={section.title}>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2">
-                <section.icon className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold">{section.title}</h2>
-              </div>
-              <ul className="mt-4 space-y-3">
-                {section.items.map((item) => (
-                  <li key={item} className="flex gap-2 text-sm text-muted-foreground">
-                    <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        {SECTIONS.map((section, index) => (
+          <Reveal3D key={section.title} delay={0.05 * index}>
+            <DepthCard level={2} glow className="h-full overflow-hidden">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                    <section.icon className="h-4 w-4 text-primary" />
+                  </div>
+                  <h2 className="text-sm font-bold tracking-tight">{section.title}</h2>
+                </div>
+                <ul className="mt-4 space-y-2.5">
+                  {section.items.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary/70" />
+                      <span className="leading-relaxed">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </DepthCard>
+          </Reveal3D>
         ))}
       </div>
 
       {/* CTA */}
-      <Card className="mt-8">
-        <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
-          <Mail className="h-6 w-6 text-primary" />
-          <h2 className="text-lg font-semibold">Questions about selling?</h2>
-          <p className="max-w-md text-sm text-muted-foreground">
-            Start your store in minutes or reach our seller support team at sellers@nova.test.
-          </p>
-          <Link href="/sell" className="text-sm font-medium text-primary hover:underline">
-            Become a seller →
-          </Link>
-        </CardContent>
-      </Card>
+      <Reveal3D delay={0.3}>
+        <DepthCard level={2} glow className="mt-6 overflow-hidden bg-role-soft">
+          <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <Mail className="h-6 w-6 text-primary" />
+            </span>
+            <h2 className="text-lg font-bold tracking-tight">Questions about selling?</h2>
+            <p className="max-w-md text-sm text-muted-foreground leading-relaxed">
+              Start your store in minutes or reach our seller support team at sellers@nova.test.
+            </p>
+            <Link href="/sell" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+              Become a seller
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </CardContent>
+        </DepthCard>
+      </Reveal3D>
     </div>
   );
 }

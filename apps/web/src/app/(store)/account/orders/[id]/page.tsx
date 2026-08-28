@@ -7,6 +7,8 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/3d/page-header';
+import { DepthCard } from '@/components/3d/depth-card';
+import { Reveal3D } from '@/components/3d/reveal-3d';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -43,66 +45,74 @@ export default function OrderDetailPage() {
   const cancellable = CANCELLABLE.has(order.status);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-      <PageHeader
-        title={`Order ${order.invoiceNumber ?? order.id}`}
-        subtitle={`Placed ${formatDate(order.placedAt)}`}
-        actions={
-          <>
-            <Badge variant="secondary" className="capitalize">{order.status.toLowerCase()}</Badge>
-            {order.paymentStatus === 'PENDING' && (
-              <Button size="sm" onClick={() => setPayOpen(true)}>
-                Pay now
-              </Button>
-            )}
-            {cancellable && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-danger"
-                disabled={cancel.isPending}
-                onClick={() => void cancel.mutate()}
-              >
-                {cancel.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Cancel order
-              </Button>
-            )}
-          </>
-        }
-      />
+    <div className="page-container py-8">
+      <Reveal3D>
+        <PageHeader
+          title={`Order ${order.invoiceNumber ?? order.id}`}
+          subtitle={`Placed ${formatDate(order.placedAt)}`}
+          actions={
+            <>
+              <Badge variant="secondary" className="capitalize">{order.status.toLowerCase()}</Badge>
+              {order.paymentStatus === 'PENDING' && (
+                <Button size="sm" onClick={() => setPayOpen(true)}>
+                  Pay now
+                </Button>
+              )}
+              {cancellable && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-danger"
+                  disabled={cancel.isPending}
+                  onClick={() => void cancel.mutate()}
+                >
+                  {cancel.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Cancel order
+                </Button>
+              )}
+            </>
+          }
+        />
+      </Reveal3D>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
-          <Card>
-            <CardContent className="divide-y p-0">
-              {order.items.map((item) => (
-                <div key={item.id} className="flex items-center justify-between p-4">
-                  <div className="min-w-0">
-                    <Link href={`/products/${item.productId}`} className="line-clamp-1 text-sm font-medium hover:text-primary">
-                      {item.name}
-                    </Link>
-                    <p className="text-xs text-muted-foreground">{formatCurrency(item.unitPrice)} × {item.quantity}</p>
+          <Reveal3D delay={0.1}>
+            <DepthCard level={2} glow>
+              <CardContent className="divide-y p-0">
+                {order.items.map((item, i) => (
+                  <div key={item.id} className="flex items-center justify-between p-4">
+                    <div className="min-w-0">
+                      <Link href={`/products/${item.productId}`} className="line-clamp-1 text-sm font-medium hover:text-primary">
+                        {item.name}
+                      </Link>
+                      <p className="text-xs text-muted-foreground">{formatCurrency(item.unitPrice)} × {item.quantity}</p>
+                    </div>
+                    <span className="font-semibold text-primary">{formatCurrency(item.total)}</span>
                   </div>
-                  <span className="font-medium">{formatCurrency(item.total)}</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+                ))}
+              </CardContent>
+            </DepthCard>
+          </Reveal3D>
 
-          <Timeline items={order.timeline} />
+          <Reveal3D delay={0.2}>
+            <Timeline items={order.timeline} />
+          </Reveal3D>
         </div>
 
         <div>
-          <Card>
-            <CardContent className="space-y-3 p-5">
-              <h2 className="font-semibold">Summary</h2>
-              <Row label="Subtotal" value={formatCurrency(order.subtotal)} />
-              {order.discount > 0 && <Row label="Discount" value={`−${formatCurrency(order.discount)}`} />}
-              <Row label="Shipping" value={order.shippingCost === 0 ? 'Free' : formatCurrency(order.shippingCost)} />
-              <Separator />
-              <Row label="Total" value={formatCurrency(order.total)} strong />
-              <p className="pt-2 text-xs text-muted-foreground">Payment: {order.paymentStatus.toLowerCase()}</p>
-            </CardContent>
-          </Card>
+          <Reveal3D delay={0.15}>
+            <DepthCard level={2} glow>
+              <CardContent className="space-y-3 p-5">
+                <h2 className="font-bold tracking-tight">Summary</h2>
+                <Row label="Subtotal" value={formatCurrency(order.subtotal)} />
+                {order.discount > 0 && <Row label="Discount" value={`−${formatCurrency(order.discount)}`} />}
+                <Row label="Shipping" value={order.shippingCost === 0 ? 'Free' : formatCurrency(order.shippingCost)} />
+                <Separator />
+                <Row label="Total" value={formatCurrency(order.total)} strong />
+                <p className="pt-2 text-xs text-muted-foreground">Payment: {order.paymentStatus.toLowerCase()}</p>
+              </CardContent>
+            </DepthCard>
+          </Reveal3D>
         </div>
       </div>
 
@@ -140,9 +150,9 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
 
 function Timeline({ items }: { items: { id: string; status: string; note: string | null; createdAt: string }[] }) {
   return (
-    <Card>
+    <DepthCard level={2} glow>
       <CardContent className="p-5">
-        <h2 className="mb-4 font-semibold">Timeline</h2>
+        <h2 className="mb-4 font-bold tracking-tight">Timeline</h2>
         <ol className="space-y-4">
           {items.map((entry, i) => (
             <li key={entry.id} className="flex gap-3">
@@ -154,7 +164,7 @@ function Timeline({ items }: { items: { id: string; status: string; note: string
                 )}
               </span>
               <div>
-                <p className="text-sm font-medium capitalize">{entry.status.toLowerCase()}</p>
+                <p className="text-sm font-semibold capitalize text-foreground">{entry.status.toLowerCase()}</p>
                 {entry.note && <p className="text-xs text-muted-foreground">{entry.note}</p>}
                 <p className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</p>
               </div>
@@ -162,6 +172,6 @@ function Timeline({ items }: { items: { id: string; status: string; note: string
           ))}
         </ol>
       </CardContent>
-    </Card>
+    </DepthCard>
   );
 }

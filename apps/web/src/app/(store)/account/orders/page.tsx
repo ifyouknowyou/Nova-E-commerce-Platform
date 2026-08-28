@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Package, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import { PageHeader } from '@/components/3d/page-header';
+import { DepthCard } from '@/components/3d/depth-card';
+import { Reveal3D } from '@/components/3d/reveal-3d';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -34,16 +36,18 @@ export default function MyOrdersPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-      <PageHeader
-        title="My orders"
-        subtitle="Everything you've purchased"
-        actions={
-          <Button asChild size="sm" variant="outline">
-            <Link href="/account/track">Track orders</Link>
-          </Button>
-        }
-      />
+    <div className="page-container py-8">
+      <Reveal3D>
+        <PageHeader
+          title="My orders"
+          subtitle="Everything you've purchased"
+          actions={
+            <Button asChild size="sm" variant="outline">
+              <Link href="/account/track">Track orders</Link>
+            </Button>
+          }
+        />
+      </Reveal3D>
 
       {isLoading ? (
         <div className="mt-6 space-y-4">
@@ -53,40 +57,49 @@ export default function MyOrdersPage() {
         </div>
       ) : orders && orders.length > 0 ? (
         <div className="mt-6 space-y-4">
-          {orders.map((order) => (
-            <Card key={order.id} className="overflow-hidden transition-shadow hover:depth-2">
-              <CardContent className="p-5">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <Package className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">{order.invoiceNumber ?? order.id}</p>
-                      <p className="text-xs text-muted-foreground">{formatDate(order.placedAt)}</p>
+          {orders.map((order, index) => (
+            <Reveal3D key={order.id} delay={0.05 * index}>
+              <DepthCard level={2} glow className="overflow-hidden">
+                <CardContent className="p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                        <Package className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold tracking-tight">{order.invoiceNumber ?? order.id}</p>
+                        <p className="text-xs text-muted-foreground">{formatDate(order.placedAt)}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge variant="secondary" className="capitalize">{order.status.toLowerCase()}</Badge>
+                      <span className="text-sm font-bold text-primary">{formatCurrency(order.total)}</span>
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={`/account/orders/${order.id}`}>View</Link>
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Badge variant="secondary" className="capitalize">{order.status.toLowerCase()}</Badge>
-                    <span className="font-semibold">{formatCurrency(order.total)}</span>
-                    <Button asChild size="sm" variant="outline">
-                      <Link href={`/account/orders/${order.id}`}>View</Link>
-                    </Button>
-                  </div>
-                </div>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  {order.items.map((item) => item.name).join(' · ')}
-                </p>
-              </CardContent>
-            </Card>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    {order.items.map((item) => item.name).join(' · ')}
+                  </p>
+                </CardContent>
+              </DepthCard>
+            </Reveal3D>
           ))}
         </div>
       ) : (
-        <div className="mt-6 flex flex-col items-center rounded-xl border py-16 text-center">
-          <ShoppingBag className="h-10 w-10 text-muted-foreground" />
-          <p className="mt-3 text-sm text-muted-foreground">No orders yet.</p>
-          <Button asChild className="mt-4">
-            <Link href="/products">Start shopping</Link>
-          </Button>
-        </div>
+        <Reveal3D delay={0.2}>
+          <div className="mt-6 flex flex-col items-center rounded-xl border py-16 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <ShoppingBag className="h-7 w-7 text-primary" />
+            </div>
+            <p className="mt-4 text-base font-semibold">No orders yet</p>
+            <p className="mt-1 text-sm text-muted-foreground">Start shopping to see your orders here</p>
+            <Button asChild className="mt-5">
+              <Link href="/products">Start shopping</Link>
+            </Button>
+          </div>
+        </Reveal3D>
       )}
     </div>
   );

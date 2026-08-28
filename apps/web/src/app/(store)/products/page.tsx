@@ -1,5 +1,7 @@
 import { Suspense } from 'react';
 import { ProductListing } from '@/components/product/product-listing';
+import { PageHeader } from '@/components/3d/page-header';
+import { Reveal3D } from '@/components/3d/reveal-3d';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const metadata = {
@@ -26,9 +28,17 @@ export default async function ProductsPage({ searchParams }: Props) {
   };
 
   return (
-    <Suspense fallback={<ListingSkeleton />}>
-      <ProductListing initial={initial} />
-    </Suspense>
+    <div className="page-container py-8">
+      <Reveal3D>
+        <PageHeader
+          title="All Products"
+          subtitle="Browse and filter thousands of products from verified sellers on NOVA Commerce."
+        />
+      </Reveal3D>
+      <Suspense fallback={<ListingSkeleton />}>
+        <ProductListing initial={initial} />
+      </Suspense>
+    </div>
   );
 }
 
