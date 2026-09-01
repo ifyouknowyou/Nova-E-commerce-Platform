@@ -120,6 +120,8 @@ model User {
   roles            UserRole[]
   addresses        Address[]
   stores           Store[]
+  ownedOrganizations Organization[]
+  memberships     OrganizationMembership[]
   cart             Cart?
   wishlist         WishlistItem[]
   orders           Order[]
@@ -208,28 +210,89 @@ model Address {
 // ---------------------------------------------------------------------------
 
 model Store {
-  id             String      @id @default(uuid())
-  sellerId       String
-  name           String
-  slug           String      @unique
-  logoKey        String?
-  bannerKey      String?
-  bio            String?
-  businessInfo   Json?
-  status         StoreStatus @default(PENDING)
-  commissionRate Decimal     @default(0.1) @db.Decimal(5, 4)
-  settings       Json?
-  deletedAt      DateTime?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  id              String      @id @default(uuid())
+  sellerId        String
+  organizationId  String?
+  name            String
+  slug            String      @unique
+  logoKey         String?
+  bannerKey       String?
+  bio             String?
+  businessInfo    Json?
+  status          StoreStatus @default(PENDING)
+  commissionRate  Decimal     @default(0.1) @db.Decimal(5, 4)
+  settings        Json?
+  deletedAt       DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
-  seller     User          @relation(fields: [sellerId], references: [id])
-  products   Product[]
-  orderItems OrderItem[]
-  coupons    Coupon[]
+  seller       User          @relation(fields: [sellerId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  products     Product[]
+  orderItems   OrderItem[]
+  coupons      Coupon[]
 
   @@index([sellerId, deletedAt])
+  @@index([organizationId])
   @@index([status])
+}
+
+/// A business/tenant. Every existing store is migrated into a default
+/// organization owned by its seller, so Store.organizationId is nullable
+/// only during the transitional backfill window.
+model Organization {
+  id        String           @id @default(uuid())
+  ownerId   String
+  name      String
+  slug      String           @unique
+  logoKey   String?
+  status    OrganizationStatus @default(ACTIVE)
+  plan      String           @default("starter")
+  settings  Json?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  owner         User                     @relation(fields: [ownerId], references: [id])
+  stores        Store[]
+  memberships   OrganizationMembership[]
+
+  @@index([ownerId])
+  @@index([status])
+}
+
+enum OrganizationStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+/// A user's relationship to an organization, including the org-scoped role
+/// codes that drive Control Center permissions (distinct from the global
+/// UserRole used for marketplace admins/sellers).
+model OrganizationMembership {
+  id             String             @id @default(uuid())
+  organizationId String
+  userId         String
+  roleCodes      String[]
+  status         MembershipStatus  @default(ACTIVE)
+  invitedBy     String?
+  joinedAt       DateTime           @default(now())
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId, status])
+  @@index([organizationId, status])
+}
+
+enum MembershipStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  REVOKED
 }
 
 model Category {

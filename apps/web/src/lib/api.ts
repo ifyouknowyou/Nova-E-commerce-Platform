@@ -5,7 +5,7 @@
  */
 export const API_URL =
   (typeof window === 'undefined'
-    ? process.env.API_INTERNAL_URL
+    ? `${process.env.API_INTERNAL_URL ?? 'http://localhost:4000'}/api`
     : process.env.NEXT_PUBLIC_API_URL) ?? 'http://localhost:4000/api';
 
 /** Fired after a product is deleted/archived so open storefront tabs drop it from cached lists. */
@@ -85,7 +85,12 @@ const AUTH_REFRESH_EXCLUDED = [
   '/auth/oauth/exchange',
 ];
 
-async function request(path: string, init?: RequestInit): Promise<Response> {
+type ApiRequestInit = RequestInit & {
+  // Next.js fetch-cache controls (only honored in RSC/server contexts).
+  next?: { revalidate?: number; tags?: string[] };
+};
+
+async function request(path: string, init?: ApiRequestInit): Promise<Response> {
   const token = typeof window !== 'undefined' ? getAccessToken() : '';
   const isFormData = typeof FormData !== 'undefined' && init?.body instanceof FormData;
   return fetch(`${API_URL}${path}`, {
@@ -115,7 +120,7 @@ async function parseResponse<T>(res: Response): Promise<T> {
 }
 
 /** Shared fetch wrapper: JSON in/out, consistent error shape, auth via httpOnly cookie. */
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+export async function apiFetch<T>(path: string, init?: ApiRequestInit): Promise<T> {
   let res = await request(path, init);
   // Access cookie expired? Rotate the refresh cookie once and retry, so an
   // expired token self-heals without a manual re-login.

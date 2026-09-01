@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion';
 import { Star, Truck, ShieldCheck, RefreshCw, Package } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import type { Metadata } from 'next';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { PurchasePanel } from '@/components/product/purchase-panel';
 import { ReviewsSection } from '@/components/product/reviews-section';
@@ -9,6 +10,7 @@ import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Reveal3D } from '@/components/3d/reveal-3d';
 import { HoverTiltCard } from '@/components/3d/hover-tilt-card';
 import { Breadcrumbs } from '@/components/layout/breadcrumbs';
+import { JsonLd } from '@/components/seo/json-ld';
 import { Separator } from '@/components/ui/separator';
 import { apiFetch } from '@/lib/api';
 import type { PublicProduct } from '@/lib/api/types';
@@ -16,21 +18,59 @@ import { cn } from '@/lib/utils';
 import { notFound } from 'next/navigation';
 import { RecentlyViewedTracker } from '@/components/product/recently-viewed-tracker';
 
+// Public, infrequently-changing content — incremental static regeneration keeps
+// TTFB low while staying within ~60s of price/stock changes.
+export const revalidate = 60;
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 async function getProduct(slug: string): Promise<PublicProduct> {
-  const result = await apiFetch<{ items: PublicProduct[]; meta: unknown }>('/products?slug=' + encodeURIComponent(slug));
-  if (!result.items || result.items.length === 0) throw new Error('Not found');
-  return result.items[0];
+  const product = await apiFetch<PublicProduct>('/products/' + encodeURIComponent(slug));
+  if (!product) throw new Error('Not found');
+  return product;
 }
 
 async function getRelatedProducts(categoryId: string, productId: string): Promise<PublicProduct[]> {
   const result = await apiFetch<{ items: PublicProduct[] }>(
-    `/products?categoryId=${encodeURIComponent(categoryId)}&limit=8`,
+    `/products?categoryId=${encodeURIComponent(categoryId)}&pageSize=8`,
   );
   return (result.items ?? []).filter((p) => p.id !== productId);
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  let product: PublicProduct;
+  try {
+    product = await getProduct(slug);
+  } catch {
+    return { title: 'Product not found' };
+  }
+
+  const primaryImage = product.images.find((i) => i.isPrimary)?.url ?? product.images[0]?.url;
+  const description =
+    product.description?.slice(0, 160) ??
+    `Shop ${product.name} from ${product.store.name} on NOVA Commerce.`;
+
+  return {
+    title: product.name,
+    description,
+    alternates: { canonical: `/products/${product.slug}` },
+    openGraph: {
+      type: 'website',
+      title: product.name,
+      description,
+      url: `/products/${product.slug}`,
+      images: primaryImage ? [{ url: primaryImage, alt: product.name }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: product.name,
+      description,
+      images: primaryImage ? [primaryImage] : undefined,
+    },
+  };
 }
 
 export default async function ProductPage({ params }: Props) {
@@ -45,8 +85,60 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  const primaryImage = product.images.find((i) => i.isPrimary)?.url ?? product.images[0]?.url;
+  const breadcrumbItems = [
+    { name: 'Home', url: `${siteUrl}/` },
+    { name: 'Products', url: `${siteUrl}/products` },
+    ...(product.category
+      ? [{ name: product.category.name, url: `${siteUrl}/products?categoryId=${product.category.id}` }]
+      : []),
+    { name: product.name, url: `${siteUrl}/products/${product.slug}` },
+  ];
+
+  const productLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description ?? undefined,
+    sku: product.sku,
+    image: product.images.map((i) => i.url).filter(Boolean),
+    url: `${siteUrl}/products/${product.slug}`,
+    brand: product.brand ? { '@type': 'Brand', name: product.brand.name } : undefined,
+    offers: {
+      '@type': 'Offer',
+      price: product.effectivePrice,
+      priceCurrency: 'USD',
+      availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url: `${siteUrl}/products/${product.slug}`,
+      seller: { '@type': 'Organization', name: product.store.name },
+    },
+    ...(product.reviewCount > 0
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: product.ratingAvg,
+            reviewCount: product.reviewCount,
+          },
+        }
+      : {}),
+  };
+
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbItems.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+
   return (
     <>
+      <JsonLd data={productLd} />
+      <JsonLd data={breadcrumbLd} />
       <RecentlyViewedTracker product={product} />
       <div className="page-container py-8">
       <Reveal3D>
@@ -150,24 +242,18 @@ export default async function ProductPage({ params }: Props) {
             <Section3D title="Related Products" subtitle="You might also like">
               <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
                 {related.map((item, i) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.05 }}
-                  >
+                  <Reveal3D key={item.id} delay={i * 0.05}>
                     <Link href={`/products/${item.slug}`}>
                       <HoverTiltCard maxTilt={5}>
                         <div className="overflow-hidden rounded-xl border bg-card">
-                          <div className="aspect-square overflow-hidden bg-role-soft/20">
+                          <div className="relative aspect-square overflow-hidden bg-role-soft/20">
                             {item.images[0]?.url ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
+                              <Image
                                 src={item.images[0].url}
                                 alt={item.name}
-                                className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
-                                loading="lazy"
+                                fill
+                                sizes="(max-width: 768px) 50vw, 25vw"
+                                className="object-cover transition-transform duration-500 hover:scale-110"
                               />
                             ) : (
                               <div className="flex h-full w-full items-center justify-center">
@@ -193,7 +279,7 @@ export default async function ProductPage({ params }: Props) {
                         </div>
                       </HoverTiltCard>
                     </Link>
-                  </motion.div>
+                  </Reveal3D>
                 ))}
               </div>
             </Section3D>

@@ -32,12 +32,43 @@ export const PERMISSIONS = {
   roles: { manage: 'roles:manage' },
 } as const;
 
+/**
+ * Control Center (organization-scoped) permissions. These are distinct from the
+ * global marketplace `PERMISSIONS` above: they gate actions inside a tenant org
+ * (store, products, orders, team, billing, integrations, …) and are attached to
+ * an OrganizationMembership's `roleCodes` rather than the user's global roles.
+ */
+export const CONTROL_CENTER_PERMISSIONS = {
+  organization: { read: 'organization:read', update: 'organization:update', manage: 'organization:manage' },
+  store: { read: 'store:read', update: 'store:update', manage: 'store:manage' },
+  products: { read: 'products:read', create: 'products:create', update: 'products:update', delete: 'products:delete' },
+  categories: { read: 'categories:read', manage: 'categories:manage' },
+  brands: { read: 'brands:read', manage: 'brands:manage' },
+  inventory: { read: 'inventory:read', update: 'inventory:update' },
+  orders: { read: 'orders:read', update: 'orders:update', refund: 'orders:refund' },
+  customers: { read: 'customers:read', update: 'customers:update' },
+  coupons: { read: 'coupons:read', manage: 'coupons:manage' },
+  marketing: { read: 'marketing:read', manage: 'marketing:manage' },
+  finance: { read: 'finance:read', manage: 'finance:manage' },
+  analytics: { read: 'analytics:read' },
+  reports: { read: 'reports:read' },
+  team: { read: 'team:read', invite: 'team:invite', manage: 'team:manage' },
+  roles: { read: 'roles:read', manage: 'roles:manage' },
+  integrations: { read: 'integrations:read', manage: 'integrations:manage' },
+  domains: { read: 'domains:read', manage: 'domains:manage' },
+  webhooks: { read: 'webhooks:read', manage: 'webhooks:manage' },
+  security: { read: 'security:read', manage: 'security:manage' },
+  billing: { read: 'billing:read', manage: 'billing:manage' },
+  notifications: { read: 'notifications:read', manage: 'notifications:manage' },
+  settings: { read: 'settings:read', manage: 'settings:manage' },
+} as const;
+
 /** Recursively flattens the nested PERMISSIONS object into the union of all codes. */
 type FlattenValues<T> = {
   [K in keyof T]: T[K] extends Record<string, string> ? FlattenValues<T[K]> : T[K];
 }[keyof T];
 
-export type Permission = FlattenValues<typeof PERMISSIONS>;
+export type Permission = FlattenValues<typeof PERMISSIONS> | FlattenValues<typeof CONTROL_CENTER_PERMISSIONS>;
 
 // ---------------------------------------------------------------------------
 // Catalog enums

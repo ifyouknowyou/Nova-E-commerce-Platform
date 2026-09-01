@@ -1,6 +1,7 @@
 'use client';
 
 import { Star } from 'lucide-react';
+import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -30,11 +31,12 @@ export function QuickViewDialog({
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="relative aspect-square overflow-hidden rounded-xl bg-muted">
             {product.images[0] ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={product.images[0].url}
                 alt={product.images[0].alt ?? product.name}
-                className="h-full w-full object-cover"
+                fill
+                sizes="(max-width: 640px) 100vw, 256px"
+                className="object-cover"
               />
             ) : (
               <div className="flex h-full items-center justify-center text-sm text-muted-foreground">

@@ -1,29 +1,14 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
-import { Heart, LogOut, Search, UserCircle } from 'lucide-react';
+import { Heart, Search, Settings } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { AccountBar } from '@/components/3d/account-bar';
 import { SpatialPanel } from '@/components/3d/spatial-panel';
-import { ADMIN_NAV, SELLER_NAV, buildAccountNav, type NavLinkItem } from '@/lib/nav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuthenticated } from '@/hooks/use-auth';
-import { authApi } from '@/lib/auth';
-import { usersApi } from '@/lib/profile';
 import { searchApi, type SearchSuggestion } from '@/lib/search';
 import { formatCurrency } from '@/lib/utils';
 import { AnimatedCartButton } from './animated-cart-button';
@@ -45,10 +30,8 @@ export function SiteHeader() {
   const [navOpen, setNavOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
   const [open, setOpen] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
 
   // Scroll-aware: shrink header on scroll
   const { scrollY } = useScroll();
@@ -61,23 +44,7 @@ export function SiteHeader() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const { authed, ready } = useAuthenticated();
-  const { data: profile } = useQuery({
-    queryKey: ['profile'],
-    queryFn: usersApi.me,
-    enabled: ready && authed,
-  });
-
-  const roles = profile?.roles ?? [];
-
-  async function handleLogout(): Promise<void> {
-    setAccountOpen(false);
-    try {
-      await authApi.logout();
-    } finally {
-      window.location.assign('/');
-    }
-  }
+  const { authed, ready, roles } = useAuthenticated();
 
   // Autocomplete with a short debounce.
   useEffect(() => {
@@ -109,15 +76,6 @@ export function SiteHeader() {
     setOpen(false);
     if (trimmed) window.location.assign(`/products?q=${encodeURIComponent(trimmed)}`);
   }
-
-  // Grouped dropdown nav
-  const isAdmin = roles.includes('ADMIN');
-  const sections: { title: string; items: NavLinkItem[] }[] = [];
-  if (!pathname.startsWith('/account')) sections.push({ title: 'Account', items: buildAccountNav(roles) });
-  if (!isAdmin && roles.includes('SELLER') && !pathname.startsWith('/dashboard')) sections.push({ title: 'Seller', items: SELLER_NAV });
-  if (isAdmin && !pathname.startsWith('/admin')) sections.push({ title: 'Admin', items: ADMIN_NAV });
-
-  const initials = (profile?.name ?? profile?.email ?? '?').slice(0, 2).toUpperCase();
 
   return (
     <>
@@ -315,67 +273,26 @@ export function SiteHeader() {
               </Link>
             )}
 
-            <DropdownMenu open={accountOpen} onOpenChange={setAccountOpen}>
-              <DropdownMenuTrigger asChild>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button variant="ghost" size="icon" aria-label="Account" className="relative">
-                    {authed && profile ? (
-                      <Avatar className="h-8 w-8 ring-2 ring-primary/20">
-                        {profile.avatarUrl ? (
-                          <AvatarImage src={profile.avatarUrl} alt={profile.name ?? profile.email} />
-                        ) : null}
-                        <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
-                          {initials}
-                        </AvatarFallback>
-                      </Avatar>
-                    ) : (
-                      <UserCircle className="h-5 w-5" />
-                    )}
-                  </Button>
-                </motion.div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-72 p-3">
-                {authed ? (
-                  profile ? (
-                    <>
-                      <AccountBar
-                        name={profile.name}
-                        email={profile.email}
-                        avatarUrl={profile.avatarUrl}
-                        status={profile.status}
-                        roles={roles}
-                        sections={sections}
-                        footer={
-                          <DropdownMenuItem onSelect={() => void handleLogout()} className="mt-1 flex items-center gap-2 text-danger">
-                            <LogOut className="h-4 w-4" />
-                            Logout
-                          </DropdownMenuItem>
-                        }
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <DropdownMenuLabel>Account</DropdownMenuLabel>
-                      <DropdownMenuItem disabled>Loading your account…</DropdownMenuItem>
-                    </>
-                  )
-                ) : (
-                  <>
-                    <DropdownMenuLabel>Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/login">Sign in</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/register">Create account</Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button variant="ghost" size="icon" asChild aria-label="Settings">
+              <Link href="/control-center/settings">
+                <Settings className="h-5 w-5 text-foreground/70" />
+              </Link>
+            </Button>
+
+            {roles.includes('ADMIN') && (
+              <Link href="/admin">
+                <Button variant="default" size="sm" className="h-8 rounded-full px-4 text-sm font-medium">
+                  Admin
+                </Button>
+              </Link>
+            )}
+            {roles.includes('SELLER') && !roles.includes('ADMIN') && (
+              <Link href="/dashboard">
+                <Button variant="default" size="sm" className="h-8 rounded-full px-4 text-sm font-medium">
+                  Seller
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </motion.header>

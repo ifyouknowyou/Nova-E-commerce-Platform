@@ -1,6 +1,7 @@
 'use client';
 
 import { Eye, Heart, Star } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -65,21 +66,23 @@ export function ProductCard({ product }: { product: PublicProduct }) {
             <Link href={`/products/${product.slug}`} className="block h-full w-full" aria-label={product.name}>
               {primary ? (
                 <>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={primary.url}
                     alt={primary.alt ?? product.name}
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
                     className={cn(
-                      'h-full w-full object-cover transition-all duration-500 ease-out',
+                      'object-cover transition-all duration-500 ease-out',
                       secondary && 'group-hover:scale-105 group-hover:opacity-0',
                     )}
                   />
                   {secondary && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={secondary.url}
                       alt={secondary.alt ?? `${product.name} alternate view`}
-                      className="absolute inset-0 h-full w-full scale-105 object-cover opacity-0 transition-all duration-500 ease-out group-hover:opacity-100"
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                      className="absolute inset-0 scale-105 object-cover opacity-0 transition-all duration-500 ease-out group-hover:opacity-100"
                     />
                   )}
                 </>

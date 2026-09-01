@@ -11,6 +11,11 @@ export function formatCurrency(amount: number, currency = 'USD'): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
 }
 
+/** Format an integer with thousands separators (e.g. 12,340). */
+export function formatNumber(value: number): string {
+  return new Intl.NumberFormat('en-US').format(value);
+}
+
 /** Restrict a redirect target to an internal path, preventing open redirects. */
 export function safeRedirect(value: string | null | undefined, fallback = '/'): string {
   if (!value) return fallback;

@@ -1,8 +1,40 @@
-import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import type { Permission, RoleCode } from '@nova/shared';
+import type { OrganizationMembership } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { RBAC_SEED } from './rbac.seed';
+
+/** Minimal shape needed for org-scoped checks (avoids importing the full model). */
+export type OrganizationMembershipLike = Pick<OrganizationMembership, 'roleCodes'>;
+
+/** Maps org-scoped role codes to the Control Center permission codes they grant. */
+const ORG_ROLE_PERMISSIONS: Record<string, string[]> = {
+  ORG_OWNER: ['*'],
+  ORG_ADMIN: [
+    'organization:read', 'organization:update', 'store:read', 'store:update', 'store:manage',
+    'products:read', 'products:create', 'products:update', 'products:delete',
+    'categories:read', 'categories:manage', 'brands:read', 'brands:manage',
+    'inventory:read', 'inventory:update', 'orders:read', 'orders:update', 'orders:refund',
+    'customers:read', 'customers:update', 'coupons:read', 'coupons:manage',
+    'marketing:read', 'marketing:manage', 'finance:read', 'finance:manage',
+    'analytics:read', 'reports:read', 'team:read', 'team:invite', 'team:manage',
+    'roles:read', 'roles:manage', 'integrations:read', 'integrations:manage',
+    'domains:read', 'domains:manage', 'webhooks:read', 'webhooks:manage',
+    'security:read', 'security:manage', 'billing:read', 'billing:manage',
+    'notifications:read', 'notifications:manage', 'settings:read', 'settings:manage',
+  ],
+  ORG_MANAGER: [
+    'organization:read', 'store:read', 'store:update', 'products:read', 'products:create',
+    'products:update', 'categories:read', 'brands:read', 'inventory:read', 'inventory:update',
+    'orders:read', 'orders:update', 'customers:read', 'coupons:read', 'marketing:read',
+    'analytics:read', 'reports:read', 'team:read', 'integrations:read',
+  ],
+  ORG_STAFF: [
+    'organization:read', 'store:read', 'products:read', 'categories:read', 'brands:read',
+    'inventory:read', 'orders:read', 'customers:read', 'coupons:read', 'analytics:read',
+  ],
+};
 
 const PERMS_CACHE_TTL_SECONDS = 60;
 const cacheKey = (role: string): string => `rbac:perms:${role}`;
@@ -107,6 +139,35 @@ export class RbacService implements OnApplicationBootstrap {
       where: { id: userId },
       data: { tokenVersion: { increment: 1 } },
     });
+  }
+
+  /**
+   * Org-scoped permission check used by Control Center endpoints. The
+   * membership carries org-level `roleCodes` (distinct from the marketplace
+   * `RoleCode` set). Global ADMINs always pass; org owners pass everything;
+   * otherwise we map the membership's org role codes to the permission set.
+   */
+  async requireOrgPermission(
+    membership: OrganizationMembershipLike,
+    permission: Permission,
+  ): Promise<void> {
+    if (membership.roleCodes.includes('ORG_OWNER')) return;
+    const granted = new Set<string>();
+    for (const code of membership.roleCodes) {
+      ORG_ROLE_PERMISSIONS[code]?.forEach((p) => granted.add(p));
+    }
+    if (!granted.has(permission)) {
+      throw new ForbiddenException(`Missing organization permission: ${permission}`);
+    }
+  }
+
+  memberHasOrgPermission(membership: OrganizationMembershipLike, permission: Permission): boolean {
+    if (membership.roleCodes.includes('ORG_OWNER')) return true;
+    const granted = new Set<string>();
+    for (const code of membership.roleCodes) {
+      ORG_ROLE_PERMISSIONS[code]?.forEach((p) => granted.add(p));
+    }
+    return granted.has(permission);
   }
 
   async getRolesForUser(userId: string): Promise<RoleCode[]> {

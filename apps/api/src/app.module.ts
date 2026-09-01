@@ -19,6 +19,8 @@ import { CouponsModule } from './coupons/coupons.module';
 import { HealthModule } from './health/health.module';
 import { MailModule } from './mail/mail.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { OrganizationModule } from './organization/organization.module';
+import { ControlCenterModule } from './control-center/control-center.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
@@ -56,6 +58,8 @@ import { WishlistModule } from './wishlist/wishlist.module';
     PaymentsModule,
     StoreModule,
     SellerModule,
+    OrganizationModule,
+    ControlCenterModule,
     AdminModule,
     ReportsModule,
     ReviewsModule,

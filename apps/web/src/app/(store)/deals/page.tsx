@@ -18,7 +18,7 @@ import type { PublicProduct } from '@/lib/api/types';
 export default function DealsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['deals'],
-    queryFn: () => apiFetch<{ items: PublicProduct[]; meta: { totalItems: number } }>('/products?sale=true&limit=20'),
+    queryFn: () => apiFetch<{ items: PublicProduct[]; meta: { totalItems: number } }>('/products?sale=true&pageSize=20'),
   });
 
   return (

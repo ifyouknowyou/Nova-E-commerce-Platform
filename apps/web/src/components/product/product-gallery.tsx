@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import type { PublicProduct } from '@/lib/api/types';
@@ -68,12 +69,14 @@ export function ProductGallery({ product }: { product: PublicProduct }) {
             className="absolute inset-0"
           >
             {image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={image.url}
                 alt={image.alt ?? product.name}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 600px"
                 onClick={() => setZoomed((z) => !z)}
-                className="h-full w-full cursor-zoom-in object-cover transition-transform duration-300"
+                className="cursor-zoom-in object-cover transition-transform duration-300"
                 style={
                   zoomed
                     ? {
@@ -132,14 +135,13 @@ export function ProductGallery({ product }: { product: PublicProduct }) {
               aria-label={`View image ${i + 1}`}
               onClick={() => setActive(i)}
               className={cn(
-                'h-16 w-16 shrink-0 overflow-hidden rounded-lg border object-cover transition-all duration-300',
+                'relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border transition-all duration-300',
                 i === active
                   ? 'ring-2 ring-primary -translate-y-0.5 shadow-lg'
                   : 'opacity-70 hover:-translate-y-0.5 hover:opacity-100',
               )}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.url} alt="" className="h-full w-full object-cover" />
+              <Image src={img.url} alt="" fill sizes="64px" className="object-cover" />
             </button>
           ))}
         </div>
