@@ -160,6 +160,20 @@ export function Homepage() {
   // No personalization endpoint exists; "Recommended" degrades to top-rated.
   const recommended = useProducts(productsQuery('rating', undefined, 4), 'recommended');
 
+  const bestSellers = useQuery({
+    queryKey: ['home-best-sellers'],
+    queryFn: () => apiFetch<PublicProduct[]>('/products/best-sellers'),
+  });
+
+  // Recently viewed — persisted in localStorage
+  const [recentlyViewed, setRecentlyViewed] = useState<PublicProduct[]>([]);
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('nova_recently_viewed');
+      if (stored) setRecentlyViewed(JSON.parse(stored));
+    } catch { /* ignore */ }
+  }, []);
+
   const featuredItems = featured.data?.items ?? [];
   const heroProduct = featuredItems.length > 0 ? featuredItems[0] : null;
 
@@ -244,7 +258,7 @@ export function Homepage() {
               transition={{ delay: 0.5, duration: 0.7 }}
               className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4"
             >
-              {TRUST.map((item, i) => (
+              {TRUST.map((item) => (
                 <DepthCard key={item.title} className="rounded-xl border bg-card/70 p-3 depth-1" glow>
                   <item.icon className={`h-5 w-5 ${item.accent}`} />
                   <p className="mt-2 text-xs font-semibold">{item.title}</p>
@@ -500,6 +514,47 @@ export function Homepage() {
         </div>
       </section>
       </Reveal3D>
+
+      {/* ========================= BEST SELLERS ========================= */}
+      {(bestSellers.data?.length ?? 0) > 0 && (
+        <Reveal3D delay={0.1}>
+          <section className="page-container py-8">
+            <SectionHeading
+              kicker="Top sellers"
+              title="Best Sellers"
+              description="Our most popular products based on sales volume."
+              action={
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/products?sort=popular">See all</Link>
+                </Button>
+              }
+            />
+            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+              {bestSellers.data!.slice(0, 4).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        </Reveal3D>
+      )}
+
+      {/* ========================= RECENTLY VIEWED ========================= */}
+      {recentlyViewed.length > 0 && (
+        <Reveal3D delay={0.1}>
+          <section className="page-container py-8">
+            <SectionHeading
+              kicker="Your history"
+              title="Recently Viewed"
+              description="Products you've looked at recently."
+            />
+            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+              {recentlyViewed.slice(0, 4).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        </Reveal3D>
+      )}
 
       {/* ========================= NEWSLETTER ========================= */}
       <Reveal3D delay={0.1}>

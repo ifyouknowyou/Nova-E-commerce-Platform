@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowRight, Clock, Percent, Sparkles, TrendingDown } from 'lucide-react';
 import Link from 'next/link';
 import { PageHeader } from '@/components/3d/page-header';

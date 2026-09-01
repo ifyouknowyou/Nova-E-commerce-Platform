@@ -1,7 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
 const DEPTH_LEVELS = { 1: 'depth-1', 2: 'depth-2', 3: 'depth-3' } as const;

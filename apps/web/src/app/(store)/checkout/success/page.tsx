@@ -4,10 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { CheckCircle2, Package, Truck, CreditCard, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { SpatialPanel } from '@/components/3d/spatial-panel';
-import { DepthCard } from '@/components/3d/depth-card';
 import { Reveal3D } from '@/components/3d/reveal-3d';
 import { Button } from '@/components/ui/button';
 import { ordersApi } from '@/lib/orders';
@@ -33,8 +32,6 @@ function Body() {
   });
 
   const order = query.data;
-  const awaiting = order?.paymentStatus === 'PENDING';
-
   return (
     <div className="relative min-h-screen overflow-hidden bg-role-soft">
       {/* Ambient background */}
@@ -96,8 +93,8 @@ function Body() {
                     { label: 'Processing', icon: Sparkles, done: false },
                     { label: 'Shipped', icon: Truck, done: false },
                     { label: 'Delivered', icon: CheckCircle2, done: false },
-                  ].map((step, i) => (
-                    <div key={i} className="flex items-center gap-3">
+                  ].map((step) => (
+                    <div key={step.label} className="flex items-center gap-3">
                       <div className={cn(
                         'flex h-8 w-8 items-center justify-center rounded-full border-2',
                         step.done
@@ -141,11 +138,3 @@ function Body() {
   );
 }
 
-function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
-  return (
-    <div className={`flex justify-between ${strong ? 'text-base font-semibold' : 'text-sm'}`}>
-      <span className={strong ? '' : 'text-muted-foreground'}>{label}</span>
-      <span>{value}</span>
-    </div>
-  );
-}

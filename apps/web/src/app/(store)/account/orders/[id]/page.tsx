@@ -11,7 +11,7 @@ import { DepthCard } from '@/components/3d/depth-card';
 import { Reveal3D } from '@/components/3d/reveal-3d';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { CardPaymentForm } from '@/components/payment/card-payment-form';
@@ -79,7 +79,7 @@ export default function OrderDetailPage() {
           <Reveal3D delay={0.1}>
             <DepthCard level={2} glow>
               <CardContent className="divide-y p-0">
-                {order.items.map((item, i) => (
+                {order.items.map((item) => (
                   <div key={item.id} className="flex items-center justify-between p-4">
                     <div className="min-w-0">
                       <Link href={`/products/${item.productId}`} className="line-clamp-1 text-sm font-medium hover:text-primary">

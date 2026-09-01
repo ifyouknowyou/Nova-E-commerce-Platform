@@ -1,10 +1,9 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useMemo } from 'react';
 import { ArrowRight, Boxes } from 'lucide-react';
 import Link from 'next/link';
-import { useCallback, useMemo } from 'react';
 import { HoverTiltCard } from '@/components/3d/hover-tilt-card';
 import { PageHeader } from '@/components/3d/page-header';
 import { Reveal3D } from '@/components/3d/reveal-3d';
@@ -14,7 +13,6 @@ import type { CategoryNode } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
 
 export function CollectionsListing() {
-  const reduce = useReducedMotion();
   const { data: categories, isLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: () => apiFetch<CategoryNode[]>('/categories'),

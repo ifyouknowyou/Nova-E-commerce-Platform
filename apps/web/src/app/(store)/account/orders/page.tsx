@@ -8,7 +8,7 @@ import { DepthCard } from '@/components/3d/depth-card';
 import { Reveal3D } from '@/components/3d/reveal-3d';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthenticated } from '@/hooks/use-auth';
 import { ordersApi } from '@/lib/orders';

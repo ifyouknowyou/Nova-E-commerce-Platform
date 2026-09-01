@@ -10,7 +10,7 @@ import { PageHeader } from '@/components/3d/page-header';
 import { DepthCard } from '@/components/3d/depth-card';
 import { Reveal3D } from '@/components/3d/reveal-3d';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatCurrency } from '@/lib/utils';
 
@@ -50,7 +50,7 @@ export default function WishlistPage() {
               <Heart className="h-7 w-7 text-primary" />
             </div>
             <p className="mt-4 text-base font-semibold">Your wishlist is empty</p>
-            <p className="mt-1 text-sm text-muted-foreground">Save items you love and they'll appear here</p>
+            <p className="mt-1 text-sm text-muted-foreground">Save items you love and they&apos;ll appear here</p>
             <Button asChild className="mt-5">
               <Link href="/products">Browse products</Link>
             </Button>

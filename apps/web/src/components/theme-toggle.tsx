@@ -10,10 +10,7 @@ export function ThemeToggle() {
   // Start with 'light' on both server and client to match SSR output.
   // The actual theme is read from the DOM after mount via useEffect.
   const [theme, setThemeState] = useState<'light' | 'dark'>('light');
-  const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
-    setMounted(true);
     // Sync with next-themes after hydration completes.
     const sync = () => {
       const isDark = document.documentElement.classList.contains('dark');

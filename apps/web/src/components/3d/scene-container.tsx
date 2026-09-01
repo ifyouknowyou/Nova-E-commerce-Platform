@@ -2,7 +2,7 @@
 
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 import type { HTMLAttributes, PointerEvent, ReactNode } from 'react';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 export interface SceneContainerProps extends HTMLAttributes<HTMLDivElement> {
@@ -49,11 +49,6 @@ export function SceneContainer({
   const containerRef = useRef<HTMLDivElement>(null);
   const glowX = useMotionValue(50);
   const glowY = useMotionValue(50);
-  const glowTransform = useTransform(
-    [glowX, glowY],
-    (values: number[]) => `translate(${(values[0] - 50) * 0.15}px, ${(values[1] - 50) * 0.15}px)`
-  );
-
   function handleMove(e: PointerEvent<HTMLDivElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
     mx.set((e.clientX - rect.left) / rect.width);

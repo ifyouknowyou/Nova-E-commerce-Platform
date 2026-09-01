@@ -39,6 +39,7 @@ export interface NavGroup {
  * roles grant that profile tab (see tabsForRoles).
  */
 export const ACCOUNT_NAV: NavLinkItem[] = [
+  { label: 'Dashboard', href: '/account/dash', icon: LayoutDashboard },
   { label: 'Profile', href: '/account/profile', icon: UserCircle },
   { label: 'Orders', href: '/account/orders', icon: ShoppingBag },
   { label: 'Wishlist', href: '/wishlist', icon: Heart },

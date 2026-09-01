@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { DepthCard } from '@/components/3d/depth-card';
 import { PageHeader } from '@/components/3d/page-header';
 import { Reveal3D } from '@/components/3d/reveal-3d';
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 
 export const metadata = {
   title: 'Seller policies & fees — NOVA Commerce',

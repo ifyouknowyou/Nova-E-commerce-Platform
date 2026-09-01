@@ -3,7 +3,6 @@ import { Lock, Eye, Globe, Shield } from 'lucide-react';
 import { DepthCard } from '@/components/3d/depth-card';
 import { PageHeader } from '@/components/3d/page-header';
 import { Reveal3D } from '@/components/3d/reveal-3d';
-import { SectionHeading } from '@/components/3d/section-heading';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',

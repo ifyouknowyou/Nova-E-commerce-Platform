@@ -1,23 +1,20 @@
-'use client';
-
-import { motion, useReducedMotion } from 'framer-motion';
-import { Star, Heart, Truck, ShieldCheck, RefreshCw, Package } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Star, Truck, ShieldCheck, RefreshCw, Package } from 'lucide-react';
 import Link from 'next/link';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { PurchasePanel } from '@/components/product/purchase-panel';
 import { ReviewsSection } from '@/components/product/reviews-section';
-import { PageHeader } from '@/components/3d/page-header';
 import { DepthCard } from '@/components/3d/depth-card';
 import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Reveal3D } from '@/components/3d/reveal-3d';
-import { ParallaxSection } from '@/components/3d/parallax-section';
 import { HoverTiltCard } from '@/components/3d/hover-tilt-card';
 import { Breadcrumbs } from '@/components/layout/breadcrumbs';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { apiFetch } from '@/lib/api';
 import type { PublicProduct } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
+import { notFound } from 'next/navigation';
+import { RecentlyViewedTracker } from '@/components/product/recently-viewed-tracker';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -45,18 +42,20 @@ export default async function ProductPage({ params }: Props) {
     product = await getProduct(slug);
     related = await getRelatedProducts(product.category.id, product.id);
   } catch {
-    return { notFound: true };
+    notFound();
   }
 
   return (
-    <div className="page-container py-8">
+    <>
+      <RecentlyViewedTracker product={product} />
+      <div className="page-container py-8">
       <Reveal3D>
         <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
             { label: 'Products', href: '/products' },
             ...(product.category ? [{ label: product.category.name, href: `/products?categoryId=${product.category.id}` }] : []),
-            { label: product.name },
+            { label: product.name, href: `/products/${product.slug}` },
           ]}
         />
       </Reveal3D>
@@ -201,7 +200,8 @@ export default async function ProductPage({ params }: Props) {
           </section>
         </Reveal3D>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 
