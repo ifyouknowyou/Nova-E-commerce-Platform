@@ -86,7 +86,6 @@ export default async function ProductPage({ params }: Props) {
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
-  const primaryImage = product.images.find((i) => i.isPrimary)?.url ?? product.images[0]?.url;
   const breadcrumbItems = [
     { name: 'Home', url: `${siteUrl}/` },
     { name: 'Products', url: `${siteUrl}/products` },

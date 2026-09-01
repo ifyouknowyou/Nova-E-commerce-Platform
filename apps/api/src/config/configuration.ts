@@ -31,13 +31,6 @@ export interface AppConfig {
 
   stripeSecretKey?: string;
   stripeWebhookSecret?: string;
-
-  s3Endpoint: string;
-  s3Region: string;
-  s3Bucket: string;
-  s3AccessKey: string;
-  s3SecretKey: string;
-  s3ForcePathStyle: boolean;
 }
 
 function required(name: string, value: string | undefined): string {
@@ -122,13 +115,6 @@ export function loadConfig(): AppConfig {
 
     stripeSecretKey,
     stripeWebhookSecret,
-
-    s3Endpoint: envOr('S3_ENDPOINT', 'http://localhost:9000'),
-    s3Region: envOr('S3_REGION', 'us-east-1'),
-    s3Bucket: envOr('S3_BUCKET', 'nova-media'),
-    s3AccessKey: envOr('S3_ACCESS_KEY', 'nova_minio'),
-    s3SecretKey: envOr('S3_SECRET_KEY', 'nova_minio_password'),
-    s3ForcePathStyle: envOr('S3_FORCE_PATH_STYLE', 'true') === 'true',
   };
 }
 

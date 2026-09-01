@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
-import { Heart, Search, Settings } from 'lucide-react';
+import { Heart, LogOut, Search, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { SpatialPanel } from '@/components/3d/spatial-panel';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuthenticated } from '@/hooks/use-auth';
+import { authApi } from '@/lib/auth';
 import { searchApi, type SearchSuggestion } from '@/lib/search';
 import { formatCurrency } from '@/lib/utils';
 import { AnimatedCartButton } from './animated-cart-button';
@@ -273,11 +274,34 @@ export function SiteHeader() {
               </Link>
             )}
 
-            <Button variant="ghost" size="icon" asChild aria-label="Settings">
-              <Link href="/control-center/settings">
-                <Settings className="h-5 w-5 text-foreground/70" />
-              </Link>
-            </Button>
+            {authed && ready && (
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={async () => {
+                    await authApi.logout();
+                  }}
+                  aria-label="Sign out"
+                >
+                  <LogOut className="h-5 w-5 text-foreground/70" />
+                </Button>
+
+                <Button variant="ghost" size="icon" asChild aria-label="Settings">
+                  <Link href="/control-center/settings">
+                    <Settings className="h-5 w-5 text-foreground/70" />
+                  </Link>
+                </Button>
+              </div>
+            )}
+
+            {!authed || !ready ? (
+              <Button variant="ghost" size="icon" asChild aria-label="Settings">
+                <Link href="/control-center/settings">
+                  <Settings className="h-5 w-5 text-foreground/70" />
+                </Link>
+              </Button>
+            ) : null}
 
             {roles.includes('ADMIN') && (
               <Link href="/admin">

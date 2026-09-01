@@ -1,14 +1,7 @@
-import { BadRequestException, Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import {
-  S3Client,
-  PutObjectCommand,
-  CreateBucketCommand,
-  HeadBucketCommand,
-  PutBucketPolicyCommand,
-  DeleteObjectCommand,
-} from '@aws-sdk/client-s3';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { CONFIG, type AppConfig } from '../config/configuration';
+import { existsSync, mkdirSync, writeFileSync, unlinkSync } from 'node:fs';
+import { join } from 'node:path';
 
 export const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -29,82 +22,41 @@ function sniffImageType(buf: Buffer): { mime: string; ext: string } | null {
   if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) {
     return { mime: 'image/jpeg', ext: 'jpeg' };
   }
-  // PNG: 89 50 4E 47 0D 0A 1A 0A
+  // PNG: 89 50 4E 47
   if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) {
     return { mime: 'image/png', ext: 'png' };
   }
-  // GIF87a / GIF89a
-  const head = buf.toString('ascii', 0, 6);
-  if (head === 'GIF87a' || head === 'GIF89a') {
+  // GIF: 47 49 46 38
+  if (buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x38) {
     return { mime: 'image/gif', ext: 'gif' };
   }
-  // WebP: "RIFF" ... "WEBP"
-  if (buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') {
+  // WebP: 52 49 46 46 ... 57 45 42 50
+  if (buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46 && buf[8] === 0x57 && buf[9] === 0x45 && buf[10] === 0x42 && buf[11] === 0x50) {
     return { mime: 'image/webp', ext: 'webp' };
   }
   return null;
 }
 
 @Injectable()
-export class UploadsService implements OnModuleInit {
+export class UploadsService {
   private readonly logger = new Logger(UploadsService.name);
-  private client: S3Client;
+  private readonly uploadDir: string;
 
-  constructor(@Inject(CONFIG) private readonly config: AppConfig) {
-    this.client = new S3Client({
-      region: config.s3Region,
-      endpoint: config.s3Endpoint,
-      credentials: { accessKeyId: config.s3AccessKey, secretAccessKey: config.s3SecretKey },
-      forcePathStyle: config.s3ForcePathStyle,
-    });
+  constructor() {
+    // Use /tmp for uploads in production, ./uploads for local dev
+    this.uploadDir = process.env.NODE_ENV === 'production' ? '/tmp/nova-uploads' : join(process.cwd(), 'uploads');
+    this.ensureUploadDir();
   }
 
-  async onModuleInit(): Promise<void> {
-    const bucket = this.config.s3Bucket;
-    try {
-      await this.client.send(new HeadBucketCommand({ Bucket: bucket }));
-    } catch {
-      try {
-        await this.client.send(new CreateBucketCommand({ Bucket: bucket }));
-        this.logger.log(`Created S3 bucket "${bucket}"`);
-      } catch (err) {
-        this.logger.warn(`Could not ensure bucket: ${(err as Error).message}`);
-      }
-    }
-
-    // Product images are public by design — grant public read so <img> URLs work.
-    try {
-      await this.client.send(
-        new PutBucketPolicyCommand({
-          Bucket: bucket,
-          Policy: JSON.stringify({
-            Version: '2012-10-17',
-            Statement: [
-              {
-                Effect: 'Allow',
-                Principal: '*',
-                Action: ['s3:GetObject'],
-                Resource: [`arn:aws:s3:::${bucket}/*`],
-              },
-            ],
-          }),
-        }),
-      );
-    } catch (err) {
-      this.logger.warn(`Could not set public-read policy: ${(err as Error).message}`);
+  private ensureUploadDir(): void {
+    if (!existsSync(this.uploadDir)) {
+      mkdirSync(this.uploadDir, { recursive: true });
+      this.logger.log(`Created upload directory: ${this.uploadDir}`);
     }
   }
 
-  /** Validate + upload an image buffer. Type is derived from bytes, key is bound to the uploader. */
+  /** Validate + upload an image buffer. Type is derived from bytes. */
   async uploadImage(userId: string, buffer: Buffer, _clientMimeType: string): Promise<UploadResult> {
-    const isConfigured = this.config.s3Endpoint &&
-      !this.config.s3Endpoint.includes('localhost') &&
-      this.config.s3Bucket &&
-      this.config.s3AccessKey &&
-      this.config.s3SecretKey;
-    if (!isConfigured) {
-      throw new BadRequestException('Image storage not configured — set S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY, S3_SECRET_KEY in Render environment');
-    }
     if (buffer.byteLength === 0) throw new BadRequestException('Empty file');
     if (buffer.byteLength > MAX_SIZE) throw new BadRequestException('Image exceeds the 5 MB limit');
 
@@ -114,31 +66,40 @@ export class UploadsService implements OnModuleInit {
     }
 
     const key = `images/${userId}/${randomUUID()}.${sniffed.ext}`;
-    await this.client.send(
-      new PutObjectCommand({
-        Bucket: this.config.s3Bucket,
-        Key: key,
-        Body: buffer,
-        ContentType: sniffed.mime,
-        // Browsers will not sniff the object as anything other than its image type.
-        CacheControl: 'public, max-age=31536000, immutable',
-      }),
-    );
+    const filePath = join(this.uploadDir, key);
+
+    // Ensure directory exists
+    const dir = join(this.uploadDir, `images/${userId}`);
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
+    }
+
+    // Write file
+    writeFileSync(filePath, buffer);
+
+    // Return URL - in production use /uploads path, locally use relative path
+    const baseUrl = process.env.UPLOADS_BASE_URL ?? '/uploads';
+    const url = `${baseUrl.replace(/\/$/, '')}/${key}`;
+
+    this.logger.debug(`Uploaded image: ${key}`);
 
     return {
       key,
-      url: `${this.config.s3Endpoint.replace(/\/$/, '')}/${this.config.s3Bucket}/${key}`,
+      url,
       contentType: sniffed.mime,
     };
   }
 
-  /** Delete an object (best-effort) — used when a product image row is removed. */
+  /** Delete an image file - best-effort */
   async deleteImage(key: string): Promise<void> {
     try {
-      await this.client.send(new DeleteObjectCommand({ Bucket: this.config.s3Bucket, Key: key }));
+      const filePath = join(this.uploadDir, key);
+      if (existsSync(filePath)) {
+        unlinkSync(filePath);
+        this.logger.debug(`Deleted image: ${key}`);
+      }
     } catch (err) {
-      this.logger.warn(`Could not delete S3 object ${key}: ${(err as Error).message}`);
+      this.logger.warn(`Could not delete image ${key}: ${(err as Error).message}`);
     }
   }
 }
-

@@ -1,0 +1,136 @@
+NOVA Control Center Phase 3 — Frontend Build & Service Error Fix Summary
+
+=== CURRENT STATE ===
+- Phase 1: Backend service methods added (18 service methods in control-center.service.ts)
+- Phase 2: Controller endpoints added (14 @Get() endpoints in control-center.controller.ts)
+- Phase 3: Frontend pages need building (20+ pages across control-center sub-routes)
+- Build currently FAILS with 13 unused import compilation errors in service file
+
+=== SERVICE FILE COMPILATION ERRORS ===
+File: apps/api/src/control-center/control-center.service.ts
+
+13 unused import errors reported by linter. Types imported from control-center.types.ts
+but not directly referenced in method signatures or implementations:
+
+UNUSED imports (remove these):
+- CustomerSummary (used in getCustomers — verify actual usage)
+- InventoryRow (used in getInventory signature — verify)
+- OrderSummary (used in getOrders — verify)
+- ProductSummary (used in getProducts — verify)
+- CustomerDirectoryRow (used in getCustomers — verify)
+- ProductDirectoryRow (used in getProducts — verify)
+- BrandDirectoryRow (used in getBrands — verify)
+- CategoryDirectoryRow (used in getCategories — verify)
+- CouponRow (used in getCoupons — verify)
+- TransactionRow (used in getFinanceData — verify)
+- PayoutRow (used in getFinanceData — verify)
+- FinancialSummary (used in getFinanceData — verify)
+- AuditLogRow (NOT used anywhere in service)
+- RoleRow (NOT used anywhere in service)
+- UserRow (NOT used anywhere in service)
+- PermissionRow (NOT used anywhere in service)
+- SecurityEvent (NOT used anywhere in service)
+- SiteSetting (NOT used anywhere in service)
+- TeamMember (NOT used anywhere in service)
+- Integration (NOT used anywhere in service)
+- WebhookConfig (NOT used anywhere in service)
+- ReportData (NOT used anywhere in service)
+- NotificationRow (NOT used anywhere in service)
+- DomainRow (NOT used anywhere in service)
+
+REMOVE imports for types not referenced in method bodies:
+- AuditLogRow
+- RoleRow
+- UserRow
+- PermissionRow
+- SecurityEvent
+- SiteSetting
+- TeamMember
+- Integration
+- WebhookConfig
+- ReportData
+- NotificationRow
+- DomainRow
+
+=== TYPES FILE (control-center.types.ts) — ALREADY CORRECT ===
+All 25+ type definitions present and properly structured. Frontend client
+in apps/web/src/lib/control-center.ts already uses typed interfaces:
+- BrandDirectoryRow, CategoryDirectoryRow, CouponRow, TransactionRow,
+  PayoutRow, FinancialSummary — all properly typed, replacing former `any` types.
+
+=== FRONTEND API CLIENT (control-center.ts) ===
+Already enhanced with typed fetch methods using @tanstack/react-query:
+- orders(params?), products(params?), brands(), categories(),
+- coupons(status), financeRevenue(days), financeTransactions(params),
+- financePayouts(), financeSummary(), myOrganizations(id),
+- organization(id), members(id) — all with proper generic types.
+
+=== PHASE 3: FRONTEND PAGES TO BUILD (20+) ===
+Each page needs: useQuery from @tanstack/react-query, loading/error states,
+3D components (KPI3DCard, PageHeader, Reveal3D), real API data:
+
+1. /control-center — Overview (already exists, enhance)
+2. /control-center/orders — Order management table
+3. /control-center/products — Product management with search/filter
+4. /control-center/brands — Brand directory management
+5. /control-center/categories — Category tree management
+6. /control-center/coupons — Coupon listing & status management
+7. /control-center/customers — Customer directory with pagination
+8. /control-center/domains — Domain verification management
+9. /control-center/finance — Revenue chart, transactions, payouts
+10. /control-center/insights — Analytics insights dashboard
+11. /control-center/inventory — Low stock alerts, stock management
+12. /control-center/marketing — Campaigns & promotions management
+13. /control-center/notifications — Notification center with read/unread
+14. /control-center/integrations — Integration settings & configs
+15. /control-center/reports — Report generation & export
+16. /control-center/roles — Role management with permission assignation
+17. /control-center/security — Security logs, sessions, events
+18. /control-center/store — Store configuration details
+19. /control-center/team — Team member management, invitations
+20. /control-center/webhooks — Webhook URLs, event subscriptions
+21. /control-center/activity — Activity logs & audit trail
+
+Each page pattern:
+- export default function Page() {
+- const { data, isLoading, isError } = useQuery(
+    ['control-center', 'routeName'],
+    () => apiFetch<T>('/control-center/routeName', withOrg())
+  );
+- Return skeleton during isLoading, error boundary on isError
+- Display data.grid or data.data with KPI3DCard, PageHeader, Reveal3D
+- Include retry/cancel refetch logic
+}
+
+=== AFTER FIXES NEEDED ===
+1. Remove 13 unused imports from control-center.service.ts
+2. Verify npm run build passes (TypeScript compilation)
+3. Run npm run lint — should have 0 errors
+4. Test API endpoints via curl or Postman
+5. Build frontend pages (Phase 3) using typed apiFetch methods
+6. Enhance overview page with additional KPI cards and 3D components
+7. Security review of all endpoints
+8. Final build and testing
+
+=== VERIFICATION COMMANDS ===
+- cd /home/who/003 Web Project && npm run build  ← must pass after fixes
+- cd /home/who/003 Web Project/apps/web && npm run lint  ← must pass
+- curl http://localhost:4000/api/control-center/overview  ← return real data
+- curl http://localhost:4000/api/control-center/orders?page=1  ← return paginated data
+- Verify all 20+ frontend routes render without hydration errors
+
+=== ARCHITECTURAL PATTERNS ESTABLISHED ===
+- Backend: NestJS + Prisma + OrganizationGuard (org-scoped queries)
+- Frontend: @tanstack/react-query + apiFetch wrapper + withOrg() header
+- 3D components: KPI3DCard, PageHeader, Reveal3D (from apps/web/src/components/3d/)
+- Pagination: parsePage() + parsePageSize() → { data, meta }
+- RBAC: @Roles('ADMIN'), @Permissions('x:manage') guards
+- Media: mediaUrl(key) from ../common/media-url for public URLs
+
+=== NEXT STEPS (when tools available) ===
+1. Edit control-center.service.ts to remove 13 unused type imports
+2. Run build to verify compilation passes
+3. Proceed with Phase 3 frontend page construction
+4. Each page uses: useQuery from @tanstack/react-query with typed apiFetch
+5. Enhance overview page last
+6. Final verification: npm run build && npm run lint

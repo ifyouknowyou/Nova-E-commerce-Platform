@@ -1,6 +1,7 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { OrganizationMembership } from '@prisma/client';
+import type { OrganizationMembership, Prisma } from '@prisma/client';
+import { parsePage, parsePageSize } from '../common/pagination';
 import type {
   ControlCenterOverview,
   CustomerDirectoryRow,
@@ -8,6 +9,16 @@ import type {
   InventoryRow,
   OrderSummary,
   ProductSummary,
+  BrandDirectoryRow,
+  CategoryDirectoryRow,
+  CouponRow,
+  TransactionRow,
+  PayoutRow,
+  FinancialSummary,
+  NotificationRow,
+  DomainRow,
+  ActivityLogRow,
+  PaginatedResult,
 } from './control-center.types';
 
 @Injectable()
