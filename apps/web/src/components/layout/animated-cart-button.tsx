@@ -4,12 +4,14 @@ import { motion } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/hooks/use-cart';
+import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 
 /**
  * AnimatedCartButton — cart icon with pulse badge and magnetic hover.
  */
 export function AnimatedCartButton() {
   const { itemCount } = useCart();
+  if (STATIC_CATALOG_MODE) return null;
   const hasItems = itemCount > 0;
 
   return (

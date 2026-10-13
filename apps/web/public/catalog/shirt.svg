@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720">
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#f6e0da"/><stop offset="1" stop-color="#e1e8fb"/></linearGradient>
+    <linearGradient id="fabric" x2="1" y2="1"><stop stop-color="#e8f0fb"/><stop offset="1" stop-color="#b6c8e2"/></linearGradient>
+    <filter id="s" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dy="22" stdDeviation="20" flood-color="#626f8a" flood-opacity=".2"/></filter>
+  </defs>
+  <rect width="720" height="720" rx="54" fill="url(#bg)"/><circle cx="552" cy="151" r="100" fill="#fff" opacity=".4"/>
+  <g filter="url(#s)">
+    <path d="M279 160l81 51 81-51 114 58-55 117-49-24v239H269V311l-49 24-55-117z" fill="url(#fabric)" stroke="#9aacc7" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M279 160c8 49 36 77 81 83 45-6 73-34 81-83M360 244v303" fill="none" stroke="#91a6c5" stroke-width="7"/>
+    <path d="M333 230l27 29 27-29" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="372" cy="317" r="4" fill="#7185a4"/><circle cx="372" cy="355" r="4" fill="#7185a4"/><circle cx="372" cy="393" r="4" fill="#7185a4"/>
+  </g>
+</svg>

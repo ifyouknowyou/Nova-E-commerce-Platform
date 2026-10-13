@@ -24,6 +24,7 @@ const apiOrigin = (() => {
 
 /** Internal API base for server-side Next.js rewrites. */
 const apiInternalBase = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
+const staticCatalogMode = process.env.NEXT_PUBLIC_CATALOG_MODE === 'static';
 
 /**
  * Media host(s) for product/store imagery. Product images are served from an
@@ -77,12 +78,14 @@ const nextConfig: NextConfig = {
    * transparently forwards them to http://nova-api:4000/api/...
    */
   async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${apiInternalBase}/api/:path*`,
-      },
-    ];
+    return staticCatalogMode
+      ? []
+      : [
+          {
+            source: '/api/:path*',
+            destination: `${apiInternalBase}/api/:path*`,
+          },
+        ];
   },
 
   // Baseline security headers (the API already applies helmet; the webapp adds

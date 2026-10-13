@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { CartResponse } from '@/lib/api/types';
 import { cartApi } from '@/lib/cart';
+import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 
 const CART_KEY = ['cart'] as const;
 
@@ -13,6 +14,7 @@ export function useCart() {
   const { data: cart, isLoading, isError } = useQuery({
     queryKey: CART_KEY,
     queryFn: cartApi.get,
+    enabled: !STATIC_CATALOG_MODE,
   });
 
   const setCart = (next: CartResponse) => queryClient.setQueryData(CART_KEY, next);

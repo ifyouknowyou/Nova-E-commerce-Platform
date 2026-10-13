@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 
 interface MobileNavProps {
   open: boolean;
@@ -37,7 +38,11 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
           </DialogTitle>
 
           <AnimatePresence initial={false}>
-            {LINKS.map((link, i) => (
+            {LINKS.filter(
+              (link) =>
+                !STATIC_CATALOG_MODE ||
+                !['/wishlist', '/cart', '/login', '/register', '/sell'].includes(link.href),
+            ).map((link, i) => (
               <motion.div
                 key={link.href}
                 initial={{ opacity: 0, x: -20 }}

@@ -10,6 +10,7 @@ import { AddToCartButton } from './add-to-cart-button';
 import { ComingSoonBadge } from './coming-soon-badge';
 import { formatCurrency } from '@/lib/utils';
 import type { PublicProduct } from '@/lib/api/types';
+import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 
 /** Lightweight quick-view dialog shown from a product card. */
 export function QuickViewDialog({
@@ -65,7 +66,11 @@ export function QuickViewDialog({
               )}
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              {comingSoon ? (
+              {STATIC_CATALOG_MODE ? (
+                <Button className="w-full" variant="outline" disabled>
+                  Catalog preview
+                </Button>
+              ) : comingSoon ? (
                 <ComingSoonBadge releaseDate={product.releaseDate} />
               ) : product.stock > 0 ? (
                 `${product.stock} in stock`

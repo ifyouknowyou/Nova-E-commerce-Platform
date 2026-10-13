@@ -91,6 +91,7 @@ export interface ProductQuery {
   pageSize?: number;
   q?: string;
   categoryId?: string;
+  categoryIds?: string[];
   brandId?: string;
   minPrice?: number;
   maxPrice?: number;

@@ -8,6 +8,7 @@ import { useState, useRef, useCallback } from 'react';
 import { apiFetch } from '@/lib/api';
 import type { CategoryNode } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
+import { STATIC_CATALOG_MODE, STATIC_CATEGORIES } from '@/lib/static-catalog';
 
 /**
  * AnimatedMegaMenu — 3D perspective mega menu with staggered category entrances.
@@ -20,7 +21,7 @@ export function AnimatedMegaMenu() {
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ['categories-full'],
-    queryFn: () => apiFetch<CategoryNode[]>('/categories'),
+    queryFn: () => (STATIC_CATALOG_MODE ? STATIC_CATEGORIES : apiFetch<CategoryNode[]>('/categories')),
   });
 
   const rootCategories = categories.filter((c) => !c.parent);

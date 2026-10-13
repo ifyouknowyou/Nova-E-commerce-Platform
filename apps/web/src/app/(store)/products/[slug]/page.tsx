@@ -17,6 +17,12 @@ import type { PublicProduct } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
 import { notFound } from 'next/navigation';
 import { RecentlyViewedTracker } from '@/components/product/recently-viewed-tracker';
+import {
+  getStaticProduct,
+  getStaticRelatedProducts,
+  STATIC_CATALOG_MODE,
+  STATIC_PRODUCTS,
+} from '@/lib/static-catalog';
 
 // Public, infrequently-changing content — incremental static regeneration keeps
 // TTFB low while staying within ~60s of price/stock changes.
@@ -27,16 +33,26 @@ interface Props {
 }
 
 async function getProduct(slug: string): Promise<PublicProduct> {
+  if (STATIC_CATALOG_MODE) {
+    const product = getStaticProduct(slug);
+    if (!product) throw new Error('Not found');
+    return product;
+  }
   const product = await apiFetch<PublicProduct>('/products/' + encodeURIComponent(slug));
   if (!product) throw new Error('Not found');
   return product;
 }
 
 async function getRelatedProducts(categoryId: string, productId: string): Promise<PublicProduct[]> {
+  if (STATIC_CATALOG_MODE) return getStaticRelatedProducts(productId, categoryId);
   const result = await apiFetch<{ items: PublicProduct[] }>(
     `/products?categoryId=${encodeURIComponent(categoryId)}&pageSize=8`,
   );
   return (result.items ?? []).filter((p) => p.id !== productId);
+}
+
+export function generateStaticParams(): { slug: string }[] {
+  return STATIC_CATALOG_MODE ? STATIC_PRODUCTS.map(({ slug }) => ({ slug })) : [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -162,7 +178,14 @@ export default async function ProductPage({ params }: Props) {
               <div className="mt-6">
                 <h1 className="text-2xl font-bold tracking-tight">{product.name}</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Sold by <Link href={`/stores/${product.store.slug}`} className="text-primary hover:underline">{product.store.name}</Link>
+                  Sold by{' '}
+                  {STATIC_CATALOG_MODE ? (
+                    product.store.name
+                  ) : (
+                    <Link href={`/stores/${product.store.slug}`} className="text-primary hover:underline">
+                      {product.store.name}
+                    </Link>
+                  )}
                   {product.brand ? ` · ${product.brand.name}` : ''}
                 </p>
 
@@ -214,7 +237,7 @@ export default async function ProductPage({ params }: Props) {
 
         {/* Purchase Panel */}
         <Reveal3D delay={0.15}>
-          <PurchasePanel product={product} />
+          <PurchasePanel product={product} catalogOnly={STATIC_CATALOG_MODE} />
         </Reveal3D>
       </div>
 
@@ -228,11 +251,13 @@ export default async function ProductPage({ params }: Props) {
       )}
 
       {/* Reviews Section */}
-      <Reveal3D delay={0.3}>
-        <div className="mt-10">
-          <ReviewsSection productId={product.id} />
-        </div>
-      </Reveal3D>
+      {!STATIC_CATALOG_MODE && (
+        <Reveal3D delay={0.3}>
+          <div className="mt-10">
+            <ReviewsSection productId={product.id} />
+          </div>
+        </Reveal3D>
+      )}
 
       {/* Related Products */}
       {related.length > 0 && (

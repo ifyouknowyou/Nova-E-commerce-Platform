@@ -62,6 +62,24 @@ npm run db:migrate     # create/apply migrations
 npm run db:seed        # roles, permissions, admin, categories, sample data
 ```
 
+## Database-free catalog deployment
+
+For a browse-only deployment that does not require PostgreSQL, Redis, or the API,
+set `NEXT_PUBLIC_CATALOG_MODE=static` in the web app's build environment before
+building. The storefront then uses its bundled sample products, categories, and
+brands, with local SVG product artwork under `apps/web/public/catalog/`.
+
+```bash
+cd apps/web
+NEXT_PUBLIC_CATALOG_MODE=static npm run build
+npm run start
+```
+
+Static catalog mode supports browsing, product filters, search, product details,
+and deals. Cart, checkout, authentication, reviews, and seller/admin features
+remain unavailable because those require the commerce API and database. Omit the
+setting to use the normal API-backed deployment.
+
 ## Documentation
 
 See [docs/](docs/) for architecture, database design, and the phased roadmap.

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { apiFetch, getCookie } from '@/lib/api';
+import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 
 /**
  * Non-httpOnly marker cookie the API sets on login (see apps/api auth/cookies.ts).
@@ -35,6 +36,13 @@ export function useAuthenticated(): AuthState {
 
   useEffect(() => {
     async function sync(): Promise<void> {
+      if (STATIC_CATALOG_MODE) {
+        setAuthed(false);
+        setRoles([]);
+        setReady(true);
+        return;
+      }
+
       // Marker cookie is the authoritative "are we logged in" signal.
       const hasSession = !!getCookie(AUTH_MARKER_COOKIE);
       setAuthed(hasSession);

@@ -14,6 +14,7 @@ import type { PublicProduct } from '@/lib/api/types';
 import { useWishlist } from '@/lib/wishlist';
 import { cn } from '@/lib/utils';
 import { useCountdown } from '@/lib/use-countdown';
+import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 import { AddToCartButton } from './add-to-cart-button';
 import { ComingSoonBadge } from './coming-soon-badge';
 import { QuickViewDialog } from './quick-view-dialog';
@@ -110,15 +111,17 @@ export function ProductCard({ product }: { product: PublicProduct }) {
 
             {/* Quick actions (visible on hover / focus-within) */}
             <div className="absolute right-2 top-2 flex flex-col gap-1.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-within:opacity-100">
-              <Button
-                variant="secondary"
-                size="icon"
-                className="h-8 w-8 rounded-full shadow"
-                aria-label={isWishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-                onClick={() => void toggleWishlist()}
-              >
-                <Heart className={cn('h-4 w-4', isWishlisted && 'fill-danger text-danger')} />
-              </Button>
+              {!STATIC_CATALOG_MODE && (
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="h-8 w-8 rounded-full shadow"
+                  aria-label={isWishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+                  onClick={() => void toggleWishlist()}
+                >
+                  <Heart className={cn('h-4 w-4', isWishlisted && 'fill-danger text-danger')} />
+                </Button>
+              )}
               <Button
                 variant="secondary"
                 size="icon"
@@ -162,7 +165,11 @@ export function ProductCard({ product }: { product: PublicProduct }) {
             </div>
 
             <div className="mt-3 flex items-center justify-between gap-2">
-              {comingSoon ? (
+              {STATIC_CATALOG_MODE ? (
+                <Button variant="outline" size="lg" disabled className="h-9 flex-1 rounded-full text-xs">
+                  Catalog preview
+                </Button>
+              ) : comingSoon ? (
                 <Button
                   variant="outline"
                   size="lg"

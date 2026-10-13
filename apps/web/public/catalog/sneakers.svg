@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720">
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#e3e6ff"/><stop offset="1" stop-color="#d6f1ec"/></linearGradient>
+    <linearGradient id="shoe" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#c6d3e8"/></linearGradient>
+    <filter id="s" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dy="22" stdDeviation="20" flood-color="#444b79" flood-opacity=".22"/></filter>
+  </defs>
+  <rect width="720" height="720" rx="54" fill="url(#bg)"/><circle cx="145" cy="155" r="96" fill="#fff" opacity=".38"/>
+  <g filter="url(#s)" transform="rotate(-8 360 360)">
+    <path d="M159 419c63-17 111-69 143-161l54 31c26 60 69 105 139 126l64 20c43 13 66 44 58 79H151c-34-8-28-82 8-95z" fill="url(#shoe)" stroke="#aab8d0" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M356 290l-51 118h89l34-66m-90-23 57 40m-83 1 66 39m-96-6 70 28" fill="none" stroke="#7388bb" stroke-width="10" stroke-linecap="round"/>
+    <path d="M157 472h455c8 12 10 28 5 42H159c-15-8-16-28-2-42z" fill="#6d7da4"/>
+    <path d="M237 523h314" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".7"/>
+  </g>
+</svg>

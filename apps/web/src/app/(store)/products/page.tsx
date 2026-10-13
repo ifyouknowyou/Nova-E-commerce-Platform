@@ -16,6 +16,9 @@ interface Props {
 export default async function ProductsPage({ searchParams }: Props) {
   const params = await searchParams;
   const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+  const requestedSale = first(params.sale);
+  const sale: '' | 'true' | 'false' =
+    requestedSale === 'true' || requestedSale === 'false' ? requestedSale : '';
 
   const initial = {
     q: first(params.q) ?? '',
@@ -23,6 +26,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     brandId: first(params.brandId) ?? '',
     minPrice: first(params.minPrice) ?? '',
     maxPrice: first(params.maxPrice) ?? '',
+    sale,
     sort: (first(params.sort) ?? 'newest') as 'newest' | 'popular' | 'price_asc' | 'price_desc' | 'rating',
     page: Number(first(params.page) ?? 1),
   };

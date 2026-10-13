@@ -12,6 +12,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ProductCard } from '@/components/product/product-card';
 import { apiFetch } from '@/lib/api';
 import type { CategoryNode, PaginatedResult, ProductQuery, PublicBrand, PublicProduct } from '@/lib/api/types';
+import {
+  listStaticProducts,
+  STATIC_BRANDS,
+  STATIC_CATALOG_MODE,
+  STATIC_CATEGORIES,
+} from '@/lib/static-catalog';
 
 export interface ListingInitial {
   q: string;
@@ -19,6 +25,7 @@ export interface ListingInitial {
   brandId: string;
   minPrice: string;
   maxPrice: string;
+  sale: 'true' | 'false' | '';
   sort: NonNullable<ProductQuery['sort']>;
   page: number;
 }
@@ -45,6 +52,7 @@ export function ProductListing({ initial }: { initial: ListingInitial }) {
       brandId: filters.brandId || undefined,
       minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
       maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
+      sale: filters.sale || undefined,
       sort: filters.sort,
       inStock: 'true',
     }),
@@ -53,16 +61,19 @@ export function ProductListing({ initial }: { initial: ListingInitial }) {
 
   const products = useQuery({
     queryKey: ['products', query],
-    queryFn: () => apiFetch<PaginatedResult<PublicProduct>>(`/products?${toQuery(query)}`),
+    queryFn: () =>
+      STATIC_CATALOG_MODE
+        ? listStaticProducts(query)
+        : apiFetch<PaginatedResult<PublicProduct>>(`/products?${toQuery(query)}`),
   });
 
   const categories = useQuery({
     queryKey: ['categories'],
-    queryFn: () => apiFetch<CategoryNode[]>('/categories'),
+    queryFn: () => (STATIC_CATALOG_MODE ? STATIC_CATEGORIES : apiFetch<CategoryNode[]>('/categories')),
   });
   const brands = useQuery({
     queryKey: ['brands'],
-    queryFn: () => apiFetch<PublicBrand[]>('/brands'),
+    queryFn: () => (STATIC_CATALOG_MODE ? STATIC_BRANDS : apiFetch<PublicBrand[]>('/brands')),
   });
 
   const apply = useCallback((patch: Partial<ListingInitial>, resetPage = true) => {
@@ -200,7 +211,7 @@ export function ProductListing({ initial }: { initial: ListingInitial }) {
               ))}
             </div>
           ) : (
-            <EmptyResults onClear={() => apply({ q: '', categoryId: '', brandId: '', minPrice: '', maxPrice: '' })} />
+            <EmptyResults onClear={() => apply({ q: '', categoryId: '', brandId: '', minPrice: '', maxPrice: '', sale: '' })} />
           )}
 
           {totalPages > 1 && (
@@ -296,6 +307,7 @@ function queryFromFilters(f: ListingInitial): ProductQuery {
     brandId: f.brandId || undefined,
     minPrice: f.minPrice ? Number(f.minPrice) : undefined,
     maxPrice: f.maxPrice ? Number(f.maxPrice) : undefined,
+    sale: f.sale || undefined,
     sort: f.sort,
     inStock: 'true',
   };

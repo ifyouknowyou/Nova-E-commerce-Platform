@@ -11,11 +11,12 @@ import { DepthCard } from '@/components/3d/depth-card';
 import { apiFetch } from '@/lib/api';
 import type { CategoryNode } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
+import { STATIC_CATALOG_MODE, STATIC_CATEGORIES } from '@/lib/static-catalog';
 
 export function CollectionsListing() {
   const { data: categories, isLoading } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => apiFetch<CategoryNode[]>('/categories'),
+    queryFn: () => (STATIC_CATALOG_MODE ? STATIC_CATEGORIES : apiFetch<CategoryNode[]>('/categories')),
   });
 
   // Flatten: show top-level categories, and if they have children, show them too

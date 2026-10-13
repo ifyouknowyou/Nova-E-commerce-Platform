@@ -14,11 +14,18 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiFetch } from '@/lib/api';
 import type { PublicProduct } from '@/lib/api/types';
+import { listStaticProducts, STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 
 export default function DealsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['deals'],
-    queryFn: () => apiFetch<{ items: PublicProduct[]; meta: { totalItems: number } }>('/products?sale=true&pageSize=20'),
+    queryFn: async () => {
+      if (STATIC_CATALOG_MODE) {
+        const result = listStaticProducts({ sale: 'true', pageSize: 20 });
+        return { items: result.items, meta: { totalItems: result.meta.totalItems } };
+      }
+      return apiFetch<{ items: PublicProduct[]; meta: { totalItems: number } }>('/products?sale=true&pageSize=20');
+    },
   });
 
   return (

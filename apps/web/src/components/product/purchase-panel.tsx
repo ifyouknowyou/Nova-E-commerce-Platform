@@ -15,7 +15,7 @@ import { useCountdown } from '@/lib/use-countdown';
 import type { PublicProduct } from '@/lib/api/types';
 import { ComingSoonBadge } from './coming-soon-badge';
 
-export function PurchasePanel({ product }: { product: PublicProduct }) {
+export function PurchasePanel({ product, catalogOnly = false }: { product: PublicProduct; catalogOnly?: boolean }) {
   const { addItem, addingItem } = useCart();
   const router = useRouter();
   const { authed, ready } = useAuthenticated();
@@ -61,6 +61,17 @@ export function PurchasePanel({ product }: { product: PublicProduct }) {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not update wishlist');
     }
+  }
+
+  if (catalogOnly) {
+    return (
+      <SpatialPanel depth={3} spotlight className="space-y-4 p-5">
+        <Badge variant="outline">Catalog preview</Badge>
+        <p className="text-sm text-muted-foreground">
+          This deployment uses a built-in sample catalog. Cart, account, and checkout features require a connected commerce API.
+        </p>
+      </SpatialPanel>
+    );
   }
 
   return (

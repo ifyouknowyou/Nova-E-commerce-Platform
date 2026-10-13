@@ -1,5 +1,6 @@
 import { Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 
 const COLUMNS = [
   {
@@ -40,6 +41,13 @@ const COLUMNS = [
 ];
 
 export function SiteFooter() {
+  const columns = STATIC_CATALOG_MODE
+    ? COLUMNS.filter((column) => column.title !== 'Account' && column.title !== 'Sell').map((column) => ({
+        ...column,
+        links: column.links.filter((link) => link.href !== '/wishlist'),
+      }))
+    : COLUMNS;
+
   return (
     <footer className="relative overflow-hidden border-t bg-muted/30">
       {/* Enhanced footer top glow line */}
@@ -64,15 +72,16 @@ export function SiteFooter() {
               NOVA<span className="text-primary">.</span>
             </p>
             <p className="mt-2 max-w-xs text-sm text-muted-foreground">
-              A premium multi-vendor marketplace. Shop trusted products from independent
-              sellers with secure payments and fast delivery.
+              {STATIC_CATALOG_MODE
+                ? 'Explore a bundled sample catalog with locally hosted product artwork. This preview is for browsing only.'
+                : 'A premium multi-vendor marketplace. Shop trusted products from independent sellers with secure payments and fast delivery.'}
             </p>
             <p className="mt-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              Verified sellers · Buyer protection
+              {STATIC_CATALOG_MODE ? 'Bundled products · Browse-only preview' : 'Verified sellers · Buyer protection'}
             </p>
           </div>
-          {COLUMNS.map((column) => (
+          {columns.map((column) => (
             <div key={column.title}>
               <h3 className="text-sm font-semibold">{column.title}</h3>
               <ul className="mt-3 space-y-2">
