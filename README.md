@@ -6,6 +6,8 @@ and **NestJS** (API) with **PostgreSQL/Prisma**, **Redis**, and **S3-compatible 
 > Running Url: https://novaecommerce-platform.netlify.app/
 
 > Original design language. No third-party brand assets are used.
+<img width="1906" height="803" alt="Screenshot From 2026-10-14 04-56-46" src="https://github.com/user-attachments/assets/345b8e6a-fba7-45a1-ae01-469a9af50eab" />
+
 
 ## Stack
 
