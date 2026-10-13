@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 
 interface MobileNavProps {
   open: boolean;
@@ -14,12 +13,8 @@ interface MobileNavProps {
 const LINKS = [
   { label: 'Shop', href: '/products' },
   { label: 'Deals', href: '/deals' },
-  { label: 'Sell', href: '/sell' },
+  { label: 'Collections', href: '/collections' },
   { label: 'Help', href: '/help' },
-  { label: 'Wishlist', href: '/wishlist' },
-  { label: 'Cart', href: '/cart' },
-  { label: 'Sign in', href: '/login' },
-  { label: 'Create account', href: '/register' },
 ];
 
 /**
@@ -38,11 +33,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
           </DialogTitle>
 
           <AnimatePresence initial={false}>
-            {LINKS.filter(
-              (link) =>
-                !STATIC_CATALOG_MODE ||
-                !['/wishlist', '/cart', '/login', '/register', '/sell'].includes(link.href),
-            ).map((link, i) => (
+            {LINKS.map((link, i) => (
               <motion.div
                 key={link.href}
                 initial={{ opacity: 0, x: -20 }}
@@ -69,7 +60,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
             <div className="rounded-xl bg-gradient-to-br from-primary/10 to-success/5 p-3">
               <p className="text-xs font-semibold text-primary">✨ Fresh Deals</p>
               <p className="mt-0.5 text-[11px] text-muted-foreground">
-                Up to 70% off this week only
+                Browse featured discounts this week
               </p>
               <Link
                 href="/deals"

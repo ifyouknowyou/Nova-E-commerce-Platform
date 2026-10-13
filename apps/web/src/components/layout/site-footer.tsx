@@ -1,6 +1,5 @@
 import { Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 
 const COLUMNS = [
   {
@@ -9,26 +8,10 @@ const COLUMNS = [
       { label: 'All products', href: '/products' },
       { label: 'Deals', href: '/deals' },
       { label: 'New arrivals', href: '/products?sort=newest' },
-      { label: 'Wishlist', href: '/wishlist' },
+      { label: 'Collections', href: '/collections' },
     ],
   },
-  {
-    title: 'Account',
-    links: [
-      { label: 'My orders', href: '/account/orders' },
-      { label: 'Track an order', href: '/account/track' },
-      { label: 'Returns', href: '/help/returns' },
-      { label: 'Help center', href: '/help' },
-    ],
-  },
-  {
-    title: 'Sell',
-    links: [
-      { label: 'Become a seller', href: '/sell' },
-      { label: 'Seller dashboard', href: '/dashboard' },
-      { label: 'Fees & policies', href: '/help/seller-policies' },
-    ],
-  },
+  { title: 'Support', links: [{ label: 'Help center', href: '/help' }] },
   {
     title: 'Company',
     links: [
@@ -41,13 +24,6 @@ const COLUMNS = [
 ];
 
 export function SiteFooter() {
-  const columns = STATIC_CATALOG_MODE
-    ? COLUMNS.filter((column) => column.title !== 'Account' && column.title !== 'Sell').map((column) => ({
-        ...column,
-        links: column.links.filter((link) => link.href !== '/wishlist'),
-      }))
-    : COLUMNS;
-
   return (
     <footer className="relative overflow-hidden border-t bg-muted/30">
       {/* Enhanced footer top glow line */}
@@ -72,16 +48,14 @@ export function SiteFooter() {
               NOVA<span className="text-primary">.</span>
             </p>
             <p className="mt-2 max-w-xs text-sm text-muted-foreground">
-              {STATIC_CATALOG_MODE
-                ? 'Explore a bundled sample catalog with locally hosted product artwork. This preview is for browsing only.'
-                : 'A premium multi-vendor marketplace. Shop trusted products from independent sellers with secure payments and fast delivery.'}
+              Explore a bundled sample catalog with locally hosted product artwork. This preview is for browsing only.
             </p>
             <p className="mt-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              {STATIC_CATALOG_MODE ? 'Bundled products · Browse-only preview' : 'Verified sellers · Buyer protection'}
+              Bundled products · Browse-only preview
             </p>
           </div>
-          {columns.map((column) => (
+          {COLUMNS.map((column) => (
             <div key={column.title}>
               <h3 className="text-sm font-semibold">{column.title}</h3>
               <ul className="mt-3 space-y-2">
@@ -103,7 +77,7 @@ export function SiteFooter() {
           <p className="text-xs text-muted-foreground" suppressHydrationWarning>
             © {new Date().getFullYear()} NOVA Commerce. All rights reserved.
           </p>
-          <p className="text-xs text-muted-foreground">Built with care for customers and sellers.</p>
+          <p className="text-xs text-muted-foreground">Built with care for curious shoppers.</p>
         </div>
       </div>
     </footer>

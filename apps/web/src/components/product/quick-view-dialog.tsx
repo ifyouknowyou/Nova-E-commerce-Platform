@@ -5,12 +5,8 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { useCountdown } from '@/lib/use-countdown';
-import { AddToCartButton } from './add-to-cart-button';
-import { ComingSoonBadge } from './coming-soon-badge';
 import { formatCurrency } from '@/lib/utils';
-import type { PublicProduct } from '@/lib/api/types';
-import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
+import type { PublicProduct } from '@/lib/catalog-types';
 
 /** Lightweight quick-view dialog shown from a product card. */
 export function QuickViewDialog({
@@ -22,9 +18,6 @@ export function QuickViewDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { released } = useCountdown(product.releaseDate);
-  const comingSoon = product.releaseDate != null && !released;
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
@@ -66,26 +59,10 @@ export function QuickViewDialog({
               )}
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              {STATIC_CATALOG_MODE ? (
-                <Button className="w-full" variant="outline" disabled>
-                  Catalog preview
-                </Button>
-              ) : comingSoon ? (
-                <ComingSoonBadge releaseDate={product.releaseDate} />
-              ) : product.stock > 0 ? (
-                `${product.stock} in stock`
-              ) : (
-                <Badge variant="secondary">Out of stock</Badge>
-              )}
+              {product.stock > 0 ? `${product.stock} in stock` : <Badge variant="secondary">Out of stock</Badge>}
             </p>
             <div className="mt-auto space-y-2 pt-4">
-              {comingSoon ? (
-                <Button className="w-full" variant="outline" disabled aria-label="Not yet available">
-                  Coming soon
-                </Button>
-              ) : (
-                <AddToCartButton productId={product.id} stock={product.stock} className="w-full" />
-              )}
+              <Button className="w-full" variant="outline" disabled>Catalog preview</Button>
               <a
                 href={`/products/${product.slug}`}
                 className="block w-full rounded-md border border-input bg-background px-4 py-2 text-center text-sm font-medium transition-colors hover:bg-accent"

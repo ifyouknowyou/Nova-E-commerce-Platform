@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import { Fraunces, Outfit } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { Providers } from '@/providers/providers';
-import { Toaster } from '@/components/ui/sonner';
 import { JsonLd } from '@/components/seo/json-ld';
 import './globals.css';
 
@@ -81,7 +80,6 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         </a>
         <Providers>
           {children}
-          <Toaster />
         </Providers>
       </body>
     </html>

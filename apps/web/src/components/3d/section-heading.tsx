@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 
-/** Consistent storefront/dashboard section heading with a kicker + action slot. */
+/** Consistent section heading with a kicker and optional action slot. */
 export function SectionHeading({
   kicker,
   title,

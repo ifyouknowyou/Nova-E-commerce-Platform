@@ -1,44 +1,22 @@
 # NOVA Commerce Deployment
 
-## Database-free storefront deployment
+## Browse-only storefront
 
-To deploy the storefront as a browse-only catalog without provisioning a
-database, Redis, or API service, set `NEXT_PUBLIC_CATALOG_MODE=static` in the
-web app's build environment. This bundles the sample catalog and its local SVG
-images into the Next.js app. The setting must be present at build time. The
-web-specific `.env.example` now selects this mode and contains no API or
-database connection settings.
+The web app is a self-contained catalog with bundled sample products and local
+SVG artwork. It does not require PostgreSQL, Redis, the API, or external media
+storage.
 
 ```bash
 cd apps/web
-NEXT_PUBLIC_CATALOG_MODE=static npm run build
+cp .env.example .env.local
+npm run build
 npm run start
 ```
 
-This mode supports catalog browsing, search, filters, product pages, and deals.
-Cart, checkout, login, reviews, and seller/admin workflows require the full API
-and database and are not available in catalog-only mode.
+Set `NEXT_PUBLIC_APP_URL` to the public site URL in the deployment environment.
+No catalog-mode flag or database credentials are needed. The storefront
+supports product browsing, search, filters, product details, and deals. Cart,
+checkout, account, seller, and admin workflows are not part of this web app.
 
-## Environment Variables
-- Set `VERCEL_API_KEY` environment variable (already configured)
-- Can be set in Claude settings: `~/.claude/settings.local.json`
-
-## Running Locally
-- API: `http://localhost:4000` (has run locally)
-- Web App: `http://localhost:3001` (had run locally)
-
-## Vercel Deployment
-- Temporary deployment: `https://web-9axn3fpor-build-business.vercel.app`
-
-## Current Status
-- ✅ API and web app deployed to Vercel
-- ✅ Database reset completed (safe confirmation received)
-- ✅ JWT secrets configured properly
-- ⚠️ Redis connection failed (cache disabled)
-- ⚠️ RESEND_API_KEY not set (emails logged)
-
-## Next Steps
-1. Configure RESEND_API_KEY for email functionality
-2. Check PostgreSQL migrations if starting fresh
-3. Set up Redis for caching
-4. Access deployed site via Vercel URL
+The API and database source code remain in `apps/api` and `packages/db` for
+separate development; the storefront does not connect to them.

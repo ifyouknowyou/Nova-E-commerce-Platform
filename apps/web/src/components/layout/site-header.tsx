@@ -1,25 +1,19 @@
 'use client';
 
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
-import { Heart, LogOut, Search, Settings } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { SpatialPanel } from '@/components/3d/spatial-panel';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { useAuthenticated } from '@/hooks/use-auth';
-import { authApi } from '@/lib/auth';
 import { searchApi, type SearchSuggestion } from '@/lib/search';
 import { formatCurrency } from '@/lib/utils';
-import { AnimatedCartButton } from './animated-cart-button';
 import { AnimatedMegaMenu } from './animated-mega-menu';
 import { MobileNav } from './mobile-nav';
-import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
 
 const NAV_LINKS = [
   { label: 'Deals', href: '/deals' },
-  { label: 'Sell', href: '/sell' },
   { label: 'Help', href: '/help' },
 ];
 
@@ -45,8 +39,6 @@ export function SiteHeader() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  const { authed, ready, roles } = useAuthenticated();
 
   // Autocomplete with a short debounce.
   useEffect(() => {
@@ -149,7 +141,7 @@ export function SiteHeader() {
           {/* Desktop nav */}
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
             <AnimatedMegaMenu />
-            {NAV_LINKS.filter((link) => !STATIC_CATALOG_MODE || link.href !== '/sell').map((link, i) => (
+            {NAV_LINKS.map((link, i) => (
               <motion.div
                 key={link.href}
                 initial={{ opacity: 0, y: -8 }}
@@ -254,64 +246,9 @@ export function SiteHeader() {
           <div className="flex items-center gap-1">
             <ThemeToggle />
 
-            {STATIC_CATALOG_MODE ? (
-              <span className="rounded-full border px-3 py-1 text-xs text-muted-foreground">
-                Catalog preview
-              </span>
-            ) : (
-              <>
-                <Button variant="ghost" size="icon" asChild aria-label="Wishlist">
-                  <Link href="/wishlist">
-                    <motion.div
-                      whileHover={{ scale: 1.15, rotate: -8 }}
-                      whileTap={{ scale: 0.85 }}
-                    >
-                      <Heart className="h-5 w-5 text-foreground/70" />
-                    </motion.div>
-                  </Link>
-                </Button>
-
-                <AnimatedCartButton />
-
-                {!authed && ready && (
-                  <Link href="/login">
-                    <Button variant="default" size="sm" className="h-8 rounded-full px-4 text-sm font-medium">
-                      Sign in
-                    </Button>
-                  </Link>
-                )}
-
-                {authed && ready && (
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={async () => {
-                        await authApi.logout();
-                      }}
-                      aria-label="Sign out"
-                    >
-                      <LogOut className="h-5 w-5 text-foreground/70" />
-                    </Button>
-                  </div>
-                )}
-
-                {roles.includes('ADMIN') && (
-                  <Link href="/admin">
-                    <Button variant="default" size="sm" className="h-8 rounded-full px-4 text-sm font-medium">
-                      Admin
-                    </Button>
-                  </Link>
-                )}
-                {roles.includes('SELLER') && !roles.includes('ADMIN') && (
-                  <Link href="/dashboard">
-                    <Button variant="default" size="sm" className="h-8 rounded-full px-4 text-sm font-medium">
-                      Seller
-                    </Button>
-                  </Link>
-                )}
-              </>
-            )}
+            <span className="rounded-full border px-3 py-1 text-xs text-muted-foreground">
+              Catalog preview
+            </span>
           </div>
         </div>
       </motion.header>

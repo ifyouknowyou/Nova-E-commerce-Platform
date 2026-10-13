@@ -4,10 +4,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================================
-   NOVA DESIGN SYSTEM — role-aware 3D tokens
-   Base (customer) tokens first, then role-scoped overrides.
-   All three roles share typography, spacing, radius, and the
-   accessibility rules — only the accent identity differs.
+   NOVA DESIGN SYSTEM — storefront 3D tokens
    ============================================================ */
 
 :root {
@@ -50,41 +47,6 @@
   --ambient-c: oklch(0.70 0.12 160 / 0.12);
 }
 
-/* CUSTOMER — premium commerce (default accent) */
-[data-role='customer'] {
-  --primary: oklch(0.55 0.14 200);
-  --ring: oklch(0.55 0.14 200);
-  --shadow-color: oklch(0.28 0.06 200 / 0.16);
-  --glow: oklch(0.62 0.15 200 / 0.26);
-  --ambient-a: oklch(0.65 0.16 200 / 0.18);
-  --ambient-b: oklch(0.60 0.14 260 / 0.15);
-  --ambient-c: oklch(0.70 0.12 160 / 0.12);
-}
-
-/* SELLER — premium business workspace */
-[data-role='seller'] {
-  --primary: oklch(0.58 0.19 162);
-  --ring: oklch(0.58 0.19 162);
-  --shadow-color: oklch(0.32 0.05 162 / 0.18);
-  --glow: oklch(0.62 0.18 162 / 0.28);
-  --radius: 0.9rem;
-  --ambient-a: oklch(0.62 0.16 162 / 0.18);
-  --ambient-b: oklch(0.58 0.12 140 / 0.15);
-  --ambient-c: oklch(0.68 0.14 180 / 0.12);
-}
-
-/* ADMIN — command center */
-[data-role='admin'] {
-  --primary: oklch(0.58 0.18 225);
-  --ring: oklch(0.58 0.18 225);
-  --shadow-color: oklch(0.25 0.06 225 / 0.28);
-  --glow: oklch(0.62 0.17 225 / 0.34);
-  --radius: 0.8rem;
-  --ambient-a: oklch(0.65 0.16 225 / 0.18);
-  --ambient-b: oklch(0.60 0.14 200 / 0.15);
-  --ambient-c: oklch(0.70 0.12 240 / 0.12);
-}
-
 .dark {
   --background: oklch(0.08 0.015 240);
   --foreground: oklch(0.97 0.005 240);
@@ -120,29 +82,6 @@
   --ambient-a: oklch(0.78 0.13 200 / 0.12);
   --ambient-b: oklch(0.72 0.12 260 / 0.10);
   --ambient-c: oklch(0.80 0.10 160 / 0.08);
-}
-
-.dark[data-role='seller'] {
-  --primary: oklch(0.78 0.15 162);
-  --ring: oklch(0.78 0.15 162);
-  --glow: oklch(0.78 0.15 162 / 0.38);
-  --ambient-a: oklch(0.78 0.15 162 / 0.12);
-  --ambient-b: oklch(0.72 0.12 140 / 0.10);
-  --ambient-c: oklch(0.80 0.14 180 / 0.08);
-}
-.dark[data-role='admin'] {
-  --primary: oklch(0.75 0.15 225);
-  --ring: oklch(0.75 0.15 225);
-  --glow: oklch(0.75 0.15 225 / 0.40);
-  --ambient-a: oklch(0.78 0.15 225 / 0.12);
-  --ambient-b: oklch(0.72 0.12 200 / 0.10);
-  --ambient-c: oklch(0.80 0.10 240 / 0.08);
-}
-
-/* Admin command-center shell gets a subtly deeper, cooler surface than the
-   customer/seller shells — reinforcing its distinct identity. */
-[data-role='admin'] body {
-  background-image: radial-gradient(1200px 600px at 70% -10%, color-mix(in oklch, var(--primary) 10%, transparent), transparent 60%);
 }
 
 @theme inline {

@@ -7,29 +7,19 @@ import Link from 'next/link';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { DepthCard, LayeredCard, Magnetic, ParallaxSection, Reveal3D, SceneContainer } from '@/components/3d';
 import { HoverTiltCard } from '@/components/3d/hover-tilt-card';
-import { NewsletterCard } from '@/components/3d/newsletter-card';
 import { SectionHeading } from '@/components/3d/section-heading';
 import { ProductCard } from '@/components/product/product-card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { apiFetch } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import type { CategoryNode, PaginatedResult, ProductQuery, PublicBrand, PublicProduct } from '@/lib/api/types';
+import type { ProductQuery, PublicProduct } from '@/lib/catalog-types';
 import {
   listStaticProducts,
   STATIC_BRANDS,
-  STATIC_CATALOG_MODE,
   STATIC_CATEGORIES,
 } from '@/lib/static-catalog';
 
 const TRUST = [
-  { icon: ShieldCheck, title: 'Secure payments', text: 'PCI-compliant checkout.', accent: 'text-success' },
-  { icon: Truck, title: 'Fast delivery', text: 'Reliable tracked shipping.', accent: 'text-primary' },
-  { icon: RefreshCcw, title: 'Easy returns', text: '14-day return window.', accent: 'text-primary' },
-  { icon: BadgeCheck, title: 'Verified sellers', text: 'Every store reviewed.', accent: 'text-warning' },
-];
-
-const CATALOG_PREVIEW_TRUST = [
   { icon: ShieldCheck, title: 'Curated catalog', text: 'A bundled sample collection.', accent: 'text-success' },
   { icon: Truck, title: 'Local artwork', text: 'Product images ship with the app.', accent: 'text-primary' },
   { icon: RefreshCcw, title: 'Browse freely', text: 'Search, filter, and explore.', accent: 'text-primary' },
@@ -152,10 +142,7 @@ function productsQuery(sort: ProductQuery['sort'], sale?: 'true', pageSize = 4):
 function useProducts(query: ProductQuery, key: string) {
   return useQuery({
     queryKey: ['home', key, query],
-    queryFn: () =>
-      STATIC_CATALOG_MODE
-        ? listStaticProducts(query)
-        : apiFetch<PaginatedResult<PublicProduct>>(`/products?${toQuery(query)}`),
+    queryFn: async () => listStaticProducts(query),
   });
 }
 
@@ -166,11 +153,11 @@ export function Homepage() {
 
   const categories = useQuery({
     queryKey: ['home-categories'],
-    queryFn: () => (STATIC_CATALOG_MODE ? STATIC_CATEGORIES : apiFetch<CategoryNode[]>('/categories')),
+    queryFn: async () => STATIC_CATEGORIES,
   });
   const brands = useQuery({
     queryKey: ['home-brands'],
-    queryFn: () => (STATIC_CATALOG_MODE ? STATIC_BRANDS : apiFetch<PublicBrand[]>('/brands')),
+    queryFn: async () => STATIC_BRANDS,
   });
 
   // No personalization endpoint exists; "Recommended" degrades to top-rated.
@@ -178,10 +165,7 @@ export function Homepage() {
 
   const bestSellers = useQuery({
     queryKey: ['home-best-sellers'],
-    queryFn: () =>
-      STATIC_CATALOG_MODE
-        ? listStaticProducts({ sort: 'popular', pageSize: 8 }).items
-        : apiFetch<PublicProduct[]>('/products/best-sellers'),
+    queryFn: async () => listStaticProducts({ sort: 'popular', pageSize: 8 }).items,
   });
 
   // Recently viewed — persisted in localStorage
@@ -277,7 +261,7 @@ export function Homepage() {
               transition={{ delay: 0.5, duration: 0.7 }}
               className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4"
             >
-              {(STATIC_CATALOG_MODE ? CATALOG_PREVIEW_TRUST : TRUST).map((item) => (
+              {TRUST.map((item) => (
                 <DepthCard key={item.title} className="rounded-xl border bg-card/70 p-3 depth-1" glow>
                   <item.icon className={`h-5 w-5 ${item.accent}`} />
                   <p className="mt-2 text-xs font-semibold">{item.title}</p>
@@ -474,17 +458,11 @@ export function Homepage() {
       <Reveal3D delay={0.1}>
       <section className="page-container py-8">
         <div className="grid gap-4 sm:grid-cols-3">
-          {(STATIC_CATALOG_MODE
-            ? [
-                { title: 'A self-contained catalog', text: 'Sample product data is bundled with the site.', icon: Package },
-                { title: 'No external image host', text: 'Product artwork is served from local files.', icon: Sparkles },
-                { title: 'Preview experience', text: 'Cart and checkout need the full commerce backend.', icon: ShieldCheck },
-              ]
-            : [
-                { title: 'Free shipping over $50', text: 'On eligible orders, automatically applied at checkout.', icon: Truck },
-                { title: '14-day returns', text: 'Changed your mind? Send it back within two weeks.', icon: RefreshCcw },
-                { title: 'Verified sellers only', text: 'Every store is vetted before it can list products.', icon: ShieldCheck },
-              ]).map((p) => (
+          {[
+            { title: 'A self-contained catalog', text: 'Sample product data is bundled with the site.', icon: Package },
+            { title: 'No external image host', text: 'Product artwork is served from local files.', icon: Sparkles },
+            { title: 'Browse-only preview', text: 'Commerce actions require a backend.', icon: ShieldCheck },
+          ].map((p) => (
             <LayeredCard key={p.title} className="p-5">
               <p.icon className="h-6 w-6 text-primary" />
               <h3 className="mt-3 font-semibold">{p.title}</h3>
@@ -581,20 +559,6 @@ export function Homepage() {
         </Reveal3D>
       )}
 
-      {/* ========================= NEWSLETTER ========================= */}
-      <Reveal3D delay={0.1}>
-      <section className="page-container py-8">
-        <NewsletterCard />
-      </section>
-      </Reveal3D>
     </div>
   );
-}
-
-function toQuery(q: ProductQuery): string {
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(q)) {
-    if (value !== undefined && value !== '' && value !== null) params.set(key, String(value));
-  }
-  return params.toString();
 }

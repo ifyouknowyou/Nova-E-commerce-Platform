@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import type { PublicProduct } from '@/lib/api/types';
+import type { PublicProduct } from '@/lib/catalog-types';
 
 const STORAGE_KEY = 'nova_recently_viewed';
 const MAX_ITEMS = 10;

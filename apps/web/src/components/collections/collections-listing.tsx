@@ -8,15 +8,14 @@ import { HoverTiltCard } from '@/components/3d/hover-tilt-card';
 import { PageHeader } from '@/components/3d/page-header';
 import { Reveal3D } from '@/components/3d/reveal-3d';
 import { DepthCard } from '@/components/3d/depth-card';
-import { apiFetch } from '@/lib/api';
-import type { CategoryNode } from '@/lib/api/types';
+import type { CategoryNode } from '@/lib/catalog-types';
 import { cn } from '@/lib/utils';
-import { STATIC_CATALOG_MODE, STATIC_CATEGORIES } from '@/lib/static-catalog';
+import { STATIC_CATEGORIES } from '@/lib/static-catalog';
 
 export function CollectionsListing() {
   const { data: categories, isLoading } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => (STATIC_CATALOG_MODE ? STATIC_CATEGORIES : apiFetch<CategoryNode[]>('/categories')),
+    queryFn: async () => STATIC_CATEGORIES,
   });
 
   // Flatten: show top-level categories, and if they have children, show them too

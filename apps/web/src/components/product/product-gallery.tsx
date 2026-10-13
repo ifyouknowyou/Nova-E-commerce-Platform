@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import type { PublicProduct } from '@/lib/api/types';
+import type { PublicProduct } from '@/lib/catalog-types';
 
 /**
  * Interactive product gallery: large stage with crossfade between images,

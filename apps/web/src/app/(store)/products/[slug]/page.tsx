@@ -4,7 +4,6 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { PurchasePanel } from '@/components/product/purchase-panel';
-import { ReviewsSection } from '@/components/product/reviews-section';
 import { DepthCard } from '@/components/3d/depth-card';
 import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Reveal3D } from '@/components/3d/reveal-3d';
@@ -12,47 +11,32 @@ import { HoverTiltCard } from '@/components/3d/hover-tilt-card';
 import { Breadcrumbs } from '@/components/layout/breadcrumbs';
 import { JsonLd } from '@/components/seo/json-ld';
 import { Separator } from '@/components/ui/separator';
-import { apiFetch } from '@/lib/api';
-import type { PublicProduct } from '@/lib/api/types';
+import type { PublicProduct } from '@/lib/catalog-types';
 import { cn } from '@/lib/utils';
 import { notFound } from 'next/navigation';
 import { RecentlyViewedTracker } from '@/components/product/recently-viewed-tracker';
 import {
   getStaticProduct,
   getStaticRelatedProducts,
-  STATIC_CATALOG_MODE,
   STATIC_PRODUCTS,
 } from '@/lib/static-catalog';
-
-// Public, infrequently-changing content — incremental static regeneration keeps
-// TTFB low while staying within ~60s of price/stock changes.
-export const revalidate = 60;
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 async function getProduct(slug: string): Promise<PublicProduct> {
-  if (STATIC_CATALOG_MODE) {
-    const product = getStaticProduct(slug);
-    if (!product) throw new Error('Not found');
-    return product;
-  }
-  const product = await apiFetch<PublicProduct>('/products/' + encodeURIComponent(slug));
+  const product = getStaticProduct(slug);
   if (!product) throw new Error('Not found');
   return product;
 }
 
 async function getRelatedProducts(categoryId: string, productId: string): Promise<PublicProduct[]> {
-  if (STATIC_CATALOG_MODE) return getStaticRelatedProducts(productId, categoryId);
-  const result = await apiFetch<{ items: PublicProduct[] }>(
-    `/products?categoryId=${encodeURIComponent(categoryId)}&pageSize=8`,
-  );
-  return (result.items ?? []).filter((p) => p.id !== productId);
+  return getStaticRelatedProducts(productId, categoryId);
 }
 
 export function generateStaticParams(): { slug: string }[] {
-  return STATIC_CATALOG_MODE ? STATIC_PRODUCTS.map(({ slug }) => ({ slug })) : [];
+  return STATIC_PRODUCTS.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -178,15 +162,7 @@ export default async function ProductPage({ params }: Props) {
               <div className="mt-6">
                 <h1 className="text-2xl font-bold tracking-tight">{product.name}</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Sold by{' '}
-                  {STATIC_CATALOG_MODE ? (
-                    product.store.name
-                  ) : (
-                    <Link href={`/stores/${product.store.slug}`} className="text-primary hover:underline">
-                      {product.store.name}
-                    </Link>
-                  )}
-                  {product.brand ? ` · ${product.brand.name}` : ''}
+                  Sample catalog{product.brand ? ` · ${product.brand.name}` : ''}
                 </p>
 
                 <div className="mt-4 flex items-center gap-4">
@@ -217,10 +193,10 @@ export default async function ProductPage({ params }: Props) {
             <Reveal3D delay={0.3}>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { icon: Truck, label: 'Free Shipping', desc: 'On orders over $50' },
-                  { icon: ShieldCheck, label: 'Secure Payment', desc: '100% protected' },
-                  { icon: RefreshCw, label: 'Easy Returns', desc: '14-day policy' },
-                  { icon: Package, label: 'Fast Delivery', desc: '3-7 business days' },
+                  { icon: Package, label: 'Bundled catalog', desc: 'Sample product information' },
+                  { icon: ShieldCheck, label: 'Local artwork', desc: 'Images ship with the site' },
+                  { icon: RefreshCw, label: 'Browse only', desc: 'No cart or checkout' },
+                  { icon: Truck, label: 'No database', desc: 'Catalog works standalone' },
                 ].map((item, i) => (
                   <DepthCard key={i} level={1} className="flex items-center gap-3 p-3">
                     <item.icon className="h-5 w-5 text-primary shrink-0" />
@@ -237,7 +213,7 @@ export default async function ProductPage({ params }: Props) {
 
         {/* Purchase Panel */}
         <Reveal3D delay={0.15}>
-          <PurchasePanel product={product} catalogOnly={STATIC_CATALOG_MODE} />
+          <PurchasePanel />
         </Reveal3D>
       </div>
 
@@ -247,15 +223,6 @@ export default async function ProductPage({ params }: Props) {
           <Section3D title="Product Details" subtitle="Complete specification and description">
             <p className="text-sm text-muted-foreground whitespace-pre-wrap">{product.description}</p>
           </Section3D>
-        </Reveal3D>
-      )}
-
-      {/* Reviews Section */}
-      {!STATIC_CATALOG_MODE && (
-        <Reveal3D delay={0.3}>
-          <div className="mt-10">
-            <ReviewsSection productId={product.id} />
-          </div>
         </Reveal3D>
       )}
 

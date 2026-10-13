@@ -10,12 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ProductCard } from '@/components/product/product-card';
-import { apiFetch } from '@/lib/api';
-import type { CategoryNode, PaginatedResult, ProductQuery, PublicBrand, PublicProduct } from '@/lib/api/types';
+import type { ProductQuery } from '@/lib/catalog-types';
 import {
   listStaticProducts,
   STATIC_BRANDS,
-  STATIC_CATALOG_MODE,
   STATIC_CATEGORIES,
 } from '@/lib/static-catalog';
 
@@ -61,19 +59,16 @@ export function ProductListing({ initial }: { initial: ListingInitial }) {
 
   const products = useQuery({
     queryKey: ['products', query],
-    queryFn: () =>
-      STATIC_CATALOG_MODE
-        ? listStaticProducts(query)
-        : apiFetch<PaginatedResult<PublicProduct>>(`/products?${toQuery(query)}`),
+    queryFn: async () => listStaticProducts(query),
   });
 
   const categories = useQuery({
     queryKey: ['categories'],
-    queryFn: () => (STATIC_CATALOG_MODE ? STATIC_CATEGORIES : apiFetch<CategoryNode[]>('/categories')),
+    queryFn: async () => STATIC_CATEGORIES,
   });
   const brands = useQuery({
     queryKey: ['brands'],
-    queryFn: () => (STATIC_CATALOG_MODE ? STATIC_BRANDS : apiFetch<PublicBrand[]>('/brands')),
+    queryFn: async () => STATIC_BRANDS,
   });
 
   const apply = useCallback((patch: Partial<ListingInitial>, resetPage = true) => {

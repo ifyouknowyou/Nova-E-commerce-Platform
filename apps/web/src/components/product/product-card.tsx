@@ -1,54 +1,28 @@
 'use client';
 
-import { Eye, Heart, Star } from 'lucide-react';
+import { Eye, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { HoverTiltCard } from '@/components/3d/hover-tilt-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useAuthenticated } from '@/hooks/use-auth';
 import { formatCurrency } from '@/lib/utils';
-import type { PublicProduct } from '@/lib/api/types';
-import { useWishlist } from '@/lib/wishlist';
+import type { PublicProduct } from '@/lib/catalog-types';
 import { cn } from '@/lib/utils';
-import { useCountdown } from '@/lib/use-countdown';
-import { STATIC_CATALOG_MODE } from '@/lib/static-catalog';
-import { AddToCartButton } from './add-to-cart-button';
-import { ComingSoonBadge } from './coming-soon-badge';
 import { QuickViewDialog } from './quick-view-dialog';
 
 export function ProductCard({ product }: { product: PublicProduct }) {
   const primary = product.images[0];
   const secondary = product.images[1];
-  const { authed } = useAuthenticated();
-  const wishlist = useWishlist();
   const [quickOpen, setQuickOpen] = useState(false);
 
-  const isWishlisted = wishlist.isWishlisted(product.id);
   const outOfStock = product.stock <= 0;
-  const { released } = useCountdown(product.releaseDate);
-  const comingSoon = product.releaseDate != null && !released;
 
   // Never render removed/archived (or unapproved) products, even if a stale
   // cache still holds them. Missing status = pre-status API payload, show it.
   // Placed after the hooks so the Rules-of-Hooks hold.
   if (product.status && product.status !== 'APPROVED') return null;
-
-  async function toggleWishlist(): Promise<void> {
-    if (!authed) {
-      toast.info('Sign in to save items to your wishlist');
-      return;
-    }
-    try {
-      if (isWishlisted) await wishlist.remove(product.id);
-      else await wishlist.add(product.id);
-      toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not update wishlist');
-    }
-  }
 
   return (
     <>
@@ -96,7 +70,6 @@ export function ProductCard({ product }: { product: PublicProduct }) {
 
             {/* Badges */}
             <div className="absolute left-2 top-2 flex flex-col gap-1.5">
-              {comingSoon && <ComingSoonBadge releaseDate={product.releaseDate} />}
               {product.salePrice !== null && (
                 <Badge variant="destructive" className="text-xs shadow">
                   Sale
@@ -111,17 +84,6 @@ export function ProductCard({ product }: { product: PublicProduct }) {
 
             {/* Quick actions (visible on hover / focus-within) */}
             <div className="absolute right-2 top-2 flex flex-col gap-1.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-within:opacity-100">
-              {!STATIC_CATALOG_MODE && (
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="h-8 w-8 rounded-full shadow"
-                  aria-label={isWishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-                  onClick={() => void toggleWishlist()}
-                >
-                  <Heart className={cn('h-4 w-4', isWishlisted && 'fill-danger text-danger')} />
-                </Button>
-              )}
               <Button
                 variant="secondary"
                 size="icon"
@@ -165,23 +127,9 @@ export function ProductCard({ product }: { product: PublicProduct }) {
             </div>
 
             <div className="mt-3 flex items-center justify-between gap-2">
-              {STATIC_CATALOG_MODE ? (
-                <Button variant="outline" size="lg" disabled className="h-9 flex-1 rounded-full text-xs">
-                  Catalog preview
-                </Button>
-              ) : comingSoon ? (
-                <Button
-                  variant="outline"
-                  size="lg"
-                  disabled
-                  className="h-9 flex-1 rounded-full text-xs"
-                  aria-label={`${product.name} is not available yet`}
-                >
-                  Coming soon
-                </Button>
-              ) : (
-                <AddToCartButton productId={product.id} stock={product.stock} className="h-9 flex-1 rounded-full text-xs" />
-              )}
+              <Button variant="outline" size="lg" disabled className="h-9 flex-1 rounded-full text-xs">
+                Catalog preview
+              </Button>
               <Button
                 variant="outline"
                 size="sm"

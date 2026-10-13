@@ -1,8 +1,7 @@
 # NOVA Commerce
 
-A production-ready, multi-vendor e-commerce platform with a customer storefront,
-seller dashboard, and admin dashboard — built on a monorepo of **Next.js** (web)
-and **NestJS** (API) with **PostgreSQL/Prisma**, **Redis**, and **S3-compatible storage**.
+A monorepo containing a database-free, browse-only **Next.js** product catalog
+and the preserved **NestJS** API / **PostgreSQL/Prisma** backend source.
 
 > Original design language. No third-party brand assets are used.
 
@@ -21,7 +20,7 @@ and **NestJS** (API) with **PostgreSQL/Prisma**, **Redis**, and **S3-compatible 
 
 ```
 apps/
-  web/     # Customer storefront + seller/admin dashboards (Next.js)
+  web/     # Browse-only catalog storefront (Next.js; bundled sample data)
   api/     # REST API (NestJS)
 packages/
   db/      # Prisma schema, migrations, seed, client
@@ -64,21 +63,21 @@ npm run db:seed        # roles, permissions, admin, categories, sample data
 
 ## Database-free catalog deployment
 
-For a browse-only deployment that does not require PostgreSQL, Redis, or the API,
-set `NEXT_PUBLIC_CATALOG_MODE=static` in the web app's build environment before
-building. The storefront then uses its bundled sample products, categories, and
-brands, with local SVG product artwork under `apps/web/public/catalog/`.
+The web storefront is a browse-only catalog and does not require PostgreSQL,
+Redis, the API, or external media storage. It uses bundled sample products,
+categories, and brands, with local SVG product artwork under
+`apps/web/public/catalog/`.
 
 ```bash
 cd apps/web
-NEXT_PUBLIC_CATALOG_MODE=static npm run build
+cp .env.example .env.local
+npm run build
 npm run start
 ```
 
-Static catalog mode supports browsing, product filters, search, product details,
-and deals. Cart, checkout, authentication, reviews, and seller/admin features
-remain unavailable because those require the commerce API and database. Omit the
-setting to use the normal API-backed deployment.
+The storefront supports browsing, product filters, search, product details, and
+deals. Cart, checkout, authentication, and seller/admin workflows are not part
+of this web app. The API and database source remain available for separate use.
 
 ## Documentation
 

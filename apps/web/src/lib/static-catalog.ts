@@ -4,9 +4,7 @@ import type {
   ProductQuery,
   PublicBrand,
   PublicProduct,
-} from '@/lib/api/types';
-
-export const STATIC_CATALOG_MODE = process.env.NEXT_PUBLIC_CATALOG_MODE === 'static';
+} from '@/lib/catalog-types';
 
 export const STATIC_CATEGORIES: CategoryNode[] = [
   { id: 'cat-electronics', name: 'Electronics', slug: 'electronics', imageUrl: null, children: [], productCount: 2, _count: { products: 2 } },

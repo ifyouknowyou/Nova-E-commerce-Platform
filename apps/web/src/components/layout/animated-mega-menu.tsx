@@ -5,10 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef, useCallback } from 'react';
-import { apiFetch } from '@/lib/api';
-import type { CategoryNode } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
-import { STATIC_CATALOG_MODE, STATIC_CATEGORIES } from '@/lib/static-catalog';
+import { STATIC_CATEGORIES } from '@/lib/static-catalog';
 
 /**
  * AnimatedMegaMenu — 3D perspective mega menu with staggered category entrances.
@@ -21,12 +19,12 @@ export function AnimatedMegaMenu() {
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ['categories-full'],
-    queryFn: () => (STATIC_CATALOG_MODE ? STATIC_CATEGORIES : apiFetch<CategoryNode[]>('/categories')),
+    queryFn: async () => STATIC_CATEGORIES,
   });
 
   const rootCategories = categories.filter((c) => !c.parent);
   const topDeals = [
-    { label: 'Flash Sales', href: '/deals?sale=true', desc: 'Up to 70% off' },
+    { label: 'Flash Sales', href: '/deals?sale=true', desc: 'Curated discounts' },
     { label: 'New Arrivals', href: '/products?sort=newest', desc: 'Just dropped' },
     { label: 'Best Sellers', href: '/products?sort=popular', desc: 'Top picks' },
   ];
@@ -187,7 +185,7 @@ export function AnimatedMegaMenu() {
                   <div className="mt-4 rounded-xl bg-gradient-to-br from-primary/10 to-success/5 p-3">
                     <p className="text-xs font-semibold text-primary">✨ Hot Deals</p>
                     <p className="mt-0.5 text-[11px] text-muted-foreground">
-                      Up to 70% off selected items
+                      Discover curated discounts
                     </p>
                     <Link
                       href="/deals"

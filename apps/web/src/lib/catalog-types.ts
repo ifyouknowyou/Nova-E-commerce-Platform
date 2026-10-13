@@ -1,4 +1,4 @@
-/** Client-side mirrors of the NOVA API response shapes. */
+/** Data shapes used by the bundled, browse-only product catalog. */
 
 export interface PaginatedResult<T> {
   items: T[];
@@ -59,31 +59,6 @@ export interface PublicBrand {
   slug: string;
   logoUrl: string | null;
   productCount: number;
-}
-
-export interface CartItem {
-  id: string;
-  productId: string;
-  variantId: string | null;
-  quantity: number;
-  priceSnapshot: number;
-  savedForLater: boolean;
-  product: {
-    id: string;
-    name: string;
-    slug: string;
-    image: string | null;
-    stock: number;
-    effectivePrice: number;
-  };
-}
-
-export interface CartResponse {
-  id: string;
-  items: CartItem[];
-  itemCount: number;
-  subtotal: number;
-  savedCount: number;
 }
 
 export interface ProductQuery {
