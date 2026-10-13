@@ -3,6 +3,7 @@
 A production-ready, multi-vendor e-commerce platform with a customer storefront,
 seller dashboard, and admin dashboard — built on a monorepo of **Next.js** (web)
 and **NestJS** (API) with **PostgreSQL/Prisma**, **Redis**, and **S3-compatible storage**.
+> Running Url: https://novaecommerce-platform.netlify.app/
 
 > Original design language. No third-party brand assets are used.
 
