@@ -1,9 +1,19 @@
 import type { NextConfig } from 'next';
 
+const apiInternalBase = (process.env.API_INTERNAL_URL ?? 'http://localhost:4000').replace(/\/api\/?$/, '');
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: 'standalone',
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${apiInternalBase}/api/:path*`,
+      },
+    ];
+  },
   // Baseline security headers for the standalone storefront.
   async headers() {
     // React dev mode calls eval()/new Function() to reconstruct component

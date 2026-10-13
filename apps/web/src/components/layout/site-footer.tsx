@@ -48,11 +48,11 @@ export function SiteFooter() {
               NOVA<span className="text-primary">.</span>
             </p>
             <p className="mt-2 max-w-xs text-sm text-muted-foreground">
-              Explore a bundled sample catalog with locally hosted product artwork. This preview is for browsing only.
+              Explore a bundled sample catalog and sign in to your NOVA account.
             </p>
             <p className="mt-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              Bundled products · Browse-only preview
+              Bundled products · Locally hosted artwork
             </p>
           </div>
           {COLUMNS.map((column) => (

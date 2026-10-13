@@ -1,17 +1,18 @@
 {
   "extends": "@nova/config/tsconfig/tsconfig.base",
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "target": "ES2023",
+    "rootDir": "../..",
     "outDir": "./dist",
-    "baseUrl": "..",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "declaration": false,
     "sourceMap": true,
     "incremental": false,
+    "isolatedModules": true,
     "skipLibCheck": true,
     "typeRoots": [
       "node_modules/@types",

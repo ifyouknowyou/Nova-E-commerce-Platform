@@ -1,4 +1,5 @@
-import { BadRequestException, Controller, Headers, HttpCode, HttpStatus, Param, Post, RawBodyRequest, Req, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Controller, Headers, HttpCode, HttpStatus, Param, Post, Req, UnauthorizedException } from '@nestjs/common';
+import type { RawBodyRequest } from '@nestjs/common';
 import type { Request } from 'express';
 import { CurrentUser } from '../rbac/decorators/current-user.decorator';
 import { Public } from '../rbac/decorators/public.decorator';

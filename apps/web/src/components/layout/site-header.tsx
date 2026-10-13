@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { SpatialPanel } from '@/components/3d/spatial-panel';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Button } from '@/components/ui/button';
 import { searchApi, type SearchSuggestion } from '@/lib/search';
 import { formatCurrency } from '@/lib/utils';
 import { AnimatedMegaMenu } from './animated-mega-menu';
@@ -245,10 +246,9 @@ export function SiteHeader() {
           {/* Action buttons */}
           <div className="flex items-center gap-1">
             <ThemeToggle />
-
-            <span className="rounded-full border px-3 py-1 text-xs text-muted-foreground">
-              Catalog preview
-            </span>
+            <Button asChild size="sm" className="h-8 rounded-full px-4 text-sm font-medium">
+              <Link href="/login">Sign in</Link>
+            </Button>
           </div>
         </div>
       </motion.header>
