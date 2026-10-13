@@ -286,22 +286,8 @@ export function SiteHeader() {
                 >
                   <LogOut className="h-5 w-5 text-foreground/70" />
                 </Button>
-
-                <Button variant="ghost" size="icon" asChild aria-label="Settings">
-                  <Link href="/control-center/settings">
-                    <Settings className="h-5 w-5 text-foreground/70" />
-                  </Link>
-                </Button>
               </div>
             )}
-
-            {!authed || !ready ? (
-              <Button variant="ghost" size="icon" asChild aria-label="Settings">
-                <Link href="/control-center/settings">
-                  <Settings className="h-5 w-5 text-foreground/70" />
-                </Link>
-              </Button>
-            ) : null}
 
             {roles.includes('ADMIN') && (
               <Link href="/admin">
