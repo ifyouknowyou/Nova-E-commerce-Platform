@@ -5,7 +5,9 @@
 To deploy the storefront as a browse-only catalog without provisioning a
 database, Redis, or API service, set `NEXT_PUBLIC_CATALOG_MODE=static` in the
 web app's build environment. This bundles the sample catalog and its local SVG
-images into the Next.js app. The setting must be present at build time.
+images into the Next.js app. The setting must be present at build time. The
+web-specific `.env.example` now selects this mode and contains no API or
+database connection settings.
 
 ```bash
 cd apps/web
